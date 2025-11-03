@@ -3,7 +3,6 @@
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
@@ -12,6 +11,3 @@
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
-###> lexik/jwt-authentication-bundle ###
-/config/jwt/*.pem
-###< lexik/jwt-authentication-bundle ###
