@@ -13,6 +13,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
 #[ApiResource(
     operations: [
@@ -28,21 +30,29 @@ class Theme
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:read', 'article:list','site:list'])]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['article:read', 'article:list','site:list'])]
+
     private ?string $Nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:read','site:list'])]
     private ?string $Slug = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:read','site:list'])]
     private ?string $Link = null;
 
     #[ORM\OneToMany(targetEntity: Site::class, mappedBy: 'Theme')]
+    // Pas de Groups
     private Collection $sites;
 
     #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'theme')]
+    // Pas de Groups (référence circulaire)
     private Collection $articles;
 
     public function __construct()

@@ -12,8 +12,12 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
+#[Vich\Uploadable] // ✅ important pour activer l’upload
 #[ApiResource(
     operations: [
         new GetCollection(),
@@ -28,24 +32,34 @@ class Image
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:blocs', 'article:read', 'article:list'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $url = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['article:blocs', 'article:read', 'article:list'])]
+    private ?string $fileName = null;
+
+    #[Vich\UploadableField(mapping: 'image_file', fileNameProperty: 'fileName')] // ✅ mapping image_file
+    #[Groups(['article:write'])]
+    private ?File $file = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:blocs', 'article:read', 'article:list'])]
     private ?string $alt = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Slug = null;
+    #[Groups(['article:blocs', 'article:read', 'article:read'])]
+    private ?string $slug = null;
 
     #[ORM\ManyToOne(inversedBy: 'images')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Blocs $Blocs = null;
+    private ?Blocs $blocs = null;
 
     #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'Image_Principale')]
     private Collection $articles;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null; 
     public function __construct()
     {
         $this->articles = new ArrayCollection();
@@ -55,15 +69,29 @@ class Image
     {
         return $this->id;
     }
-    public function getUrl(): ?string
+
+    public function getFileName(): ?string
     {
-        return $this->url;
+        return $this->fileName;
     }
-    public function setUrl(string $url): self
+    public function setFileName(?string $fileName): self
     {
-        $this->url = $url;
+        $this->fileName = $fileName;
         return $this;
     }
+
+    public function setFile(?File $file = null): void
+    {
+        $this->file = $file;
+        if ($file) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
     public function getAlt(): ?string
     {
         return $this->alt;
@@ -73,22 +101,25 @@ class Image
         $this->alt = $alt;
         return $this;
     }
+
     public function getSlug(): ?string
     {
-        return $this->Slug;
+        return $this->slug;
     }
-    public function setSlug(string $Slug): self
+    public function setSlug(string $slug): self
     {
-        $this->Slug = $Slug;
+        $this->slug = $slug;
         return $this;
     }
+
+
     public function getBlocs(): ?Blocs
     {
-        return $this->Blocs;
+        return $this->blocs;
     }
-    public function setBlocs(?Blocs $Blocs): self
+    public function setBlocs(?Blocs $blocs): self
     {
-        $this->Blocs = $Blocs;
+        $this->blocs = $blocs;
         return $this;
     }
 
@@ -106,10 +137,24 @@ class Image
     }
     public function removeArticle(Articles $article): self
     {
-        if ($this->articles->removeElement($article)) {
-            if ($article->getImagePrincipale() === $this)
-                $article->setImagePrincipale(null);
-        }
+        if ($this->articles->removeElement($article) && $article->getImagePrincipale() === $this)
+            $article->setImagePrincipale(null);
         return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    #[Groups(['article:blocs', 'article:read', 'article:list'])]
+    public function getUrl(): ?string
+    {
+        return $this->fileName ? '/uploads/images/' . $this->fileName : null;
     }
 }

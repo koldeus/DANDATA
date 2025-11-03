@@ -10,17 +10,25 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SiteRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
-        new Post(security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_ADMIN')"),
+        new GetCollection(normalizationContext: ['groups' => ['site:list']]),
+        new Post(
+            security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_ADMIN')",
+            denormalizationContext: ['groups' => ['site:write']]
+        ),
         new Get(),
-        new Put(security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_ADMIN')"),
+        new Put(
+            security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_ADMIN')",
+            denormalizationContext: ['groups' => ['site:write']]
+        ),
         new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
 )]
+
 class Site
 {
     #[ORM\Id]
@@ -33,6 +41,8 @@ class Site
 
     #[ORM\ManyToOne(inversedBy: 'sites')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['site:list', 'site:write'])]
+
     private ?Theme $Theme = null;
 
     #[ORM\ManyToOne(inversedBy: 'sites')]

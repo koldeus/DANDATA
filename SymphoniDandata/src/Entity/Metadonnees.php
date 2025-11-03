@@ -12,8 +12,12 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: MetadonneesRepository::class)]
+#[Vich\Uploadable]
 #[ApiResource(
     operations: [
         new GetCollection(),
@@ -28,22 +32,37 @@ class Metadonnees
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?string $url = null;
 
     #[ORM\Column]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?bool $api_fichier = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?string $extension_retour = null;
 
     #[ORM\OneToMany(targetEntity: Variable::class, mappedBy: 'Meta', cascade: ['persist', 'remove'])]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private Collection $variables;
-
-    #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'Metadonnees', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'metadonnees', cascade: ['persist', 'remove'])]
     private Collection $graphiques;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['meta:read', 'article:blocs', 'bloc:read', 'article:read'])]
+    private ?string $fileName = null;
+
+    #[Vich\UploadableField(mapping: 'metadonnees_file', fileNameProperty: 'fileName')]
+    #[Groups(['meta:write', 'article:blocs', 'bloc:read', 'article:read'])]
+    private ?File $file = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null; // ✅ nécessaire
 
     public function __construct()
     {
@@ -51,10 +70,13 @@ class Metadonnees
         $this->graphiques = new ArrayCollection();
     }
 
+    // Getters/Setters...
+
     public function getId(): ?int
     {
         return $this->id;
     }
+
     public function getUrl(): ?string
     {
         return $this->url;
@@ -64,6 +86,7 @@ class Metadonnees
         $this->url = $url;
         return $this;
     }
+
     public function isApiFichier(): ?bool
     {
         return $this->api_fichier;
@@ -73,6 +96,7 @@ class Metadonnees
         $this->api_fichier = $api_fichier;
         return $this;
     }
+
     public function getExtensionRetour(): ?string
     {
         return $this->extension_retour;
@@ -97,10 +121,8 @@ class Metadonnees
     }
     public function removeVariable(Variable $variable): self
     {
-        if ($this->variables->removeElement($variable)) {
-            if ($variable->getMeta() === $this)
-                $variable->setMeta(null);
-        }
+        if ($this->variables->removeElement($variable) && $variable->getMeta() === $this)
+            $variable->setMeta(null);
         return $this;
     }
 
@@ -118,10 +140,40 @@ class Metadonnees
     }
     public function removeGraphique(Graphique $graphique): self
     {
-        if ($this->graphiques->removeElement($graphique)) {
-            if ($graphique->getMetadonnees() === $this)
-                $graphique->setMetadonnees(null);
+        if ($this->graphiques->removeElement($graphique) && $graphique->getMetadonnees() === $this)
+            $graphique->setMetadonnees(null);
+        return $this;
+    }
+
+    public function getFileName(): ?string
+    {
+        return $this->fileName;
+    }
+    public function setFileName(?string $fileName): self
+    {
+        $this->fileName = $fileName;
+        return $this;
+    }
+
+    public function setFile(?File $file = null): void
+    {
+        $this->file = $file;
+        if ($file) {
+            $this->updatedAt = new \DateTimeImmutable();
         }
+    }
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 }

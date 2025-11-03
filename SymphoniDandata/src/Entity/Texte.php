@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TexteRepository::class)]
 #[ApiResource(
@@ -26,14 +27,16 @@ class Texte
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?string $titre = null;
 
     #[ORM\ManyToOne(inversedBy: 'textes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Blocs $Blocs = null;
+    private ?Blocs $blocs = null;
 
     public function getId(): ?int
     {
@@ -50,11 +53,11 @@ class Texte
     }
     public function getBlocs(): ?Blocs
     {
-        return $this->Blocs;
+        return $this->blocs;
     }
-    public function setBlocs(?Blocs $Blocs): self
+    public function setBlocs(?Blocs $blocs): self
     {
-        $this->Blocs = $Blocs;
+        $this->blocs = $blocs;
         return $this;
     }
 }

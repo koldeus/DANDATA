@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: VariableRepository::class)]
 #[ApiResource(
@@ -26,12 +27,15 @@ class Variable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:read'])]
     private ?string $nom = null;
 
     #[ORM\Column]
+    #[Groups(['article:read'])]
     private ?bool $num_string = null;
 
     #[ORM\ManyToOne(inversedBy: 'variables')]

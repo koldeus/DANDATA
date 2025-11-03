@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
@@ -38,18 +39,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:read', 'article:list'])] 
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['article:read'])]
     private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
+    #[Groups(['article:read'])]
     private array $roles = [];
 
     #[ORM\Column]
     private ?string $password = null;
 
     #[ORM\Column(length: 50)]
+
+
+    #[Groups(['article:read', 'article:list'])] 
     private ?string $pseudo = null;
 
     #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'auteur')]

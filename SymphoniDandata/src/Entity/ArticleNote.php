@@ -9,13 +9,14 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity]
 #[ApiResource(
     operations: [
         new GetCollection(),
         new Post(
-            security: "is_granted('ROLE_SUBSCRIBER') or is_granted('ROLE_AUTHOR') or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"
+            security: "is_granted('ROLE_SUBSCRIBER')"
         ),
         new Get(
             security: "object.getUser() == user or is_granted('ROLE_ADMIN')"
@@ -41,9 +42,13 @@ class ArticleNote
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'articleNotes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['article:read'])]
+
     private ?User $user = null;
 
     #[ORM\Column(type: 'float')]
+    #[Groups(['article:read'])]
+
     private ?float $note = null;
 
     public function getId(): ?int

@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GraphiqueRepository::class)]
 #[ApiResource(
@@ -26,21 +27,25 @@ class Graphique
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?string $Titre = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?string $Type = null;
 
     #[ORM\ManyToOne(inversedBy: 'graphiques')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Metadonnees $metadonnees_id = null;
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])] 
+    private ?Metadonnees $metadonnees = null;
 
     #[ORM\ManyToOne(inversedBy: 'graphiques')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Blocs $Blocs = null;
+    private ?Blocs $blocs = null;
 
     public function getId(): ?int
     {
@@ -66,20 +71,20 @@ class Graphique
     }
     public function getMetadonnees(): ?Metadonnees
     {
-        return $this->metadonnees_id;
+        return $this->metadonnees;
     }
-    public function setMetadonnees(?Metadonnees $metadonnees_id): self
+    public function setMetadonnees(?Metadonnees $metadonnees): self
     {
-        $this->metadonnees_id = $metadonnees_id;
+        $this->metadonnees = $metadonnees;
         return $this;
     }
     public function getBlocs(): ?Blocs
     {
-        return $this->Blocs;
+        return $this->blocs;
     }
-    public function setBlocs(?Blocs $Blocs): self
+    public function setBlocs(?Blocs $blocs): self
     {
-        $this->Blocs = $Blocs;
+        $this->blocs = $blocs;
         return $this;
     }
 }

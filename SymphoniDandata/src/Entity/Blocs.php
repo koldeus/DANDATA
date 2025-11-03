@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BlocsRepository::class)]
 #[ApiResource(
@@ -28,29 +29,35 @@ class Blocs
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
+    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
     private ?string $type = null;
 
     #[ORM\Column]
+    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
     private ?int $ordre = null;
 
     #[ORM\ManyToOne(inversedBy: 'blocs')]
     private ?Articles $article = null;
 
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'Blocs')]
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'blocs')]
+    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
     private Collection $images;
 
-    #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'Blocs')]
+    #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'blocs')]
+    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
     private Collection $graphiques;
 
-    #[ORM\OneToMany(targetEntity: Texte::class, mappedBy: 'Blocs')]
+    #[ORM\OneToMany(targetEntity: Texte::class, mappedBy: 'blocs')]
+    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
     private Collection $textes;
 
-    #[ORM\OneToMany(targetEntity: Titre::class, mappedBy: 'Blocs')]
+    #[ORM\OneToMany(targetEntity: Titre::class, mappedBy: 'blocs')]
+    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
     private Collection $titres;
-
     public function __construct()
     {
         $this->images = new ArrayCollection();
