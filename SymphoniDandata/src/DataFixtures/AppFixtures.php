@@ -143,7 +143,8 @@ class AppFixtures extends Fixture
             $meta = new Metadonnees();
             $meta->setUrl('https://api.example.com/data.csv')
                 ->setApiFichier(true)
-                ->setExtensionRetour('csv');
+                ->setExtensionRetour('csv')
+                ->setNom('Metadandata');
             $manager->persist($meta);
 
             $graphique = new Graphique();

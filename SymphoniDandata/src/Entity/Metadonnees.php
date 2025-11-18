@@ -39,6 +39,10 @@ class Metadonnees
     #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?string $url = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    private ?string $nom = null;
+
     #[ORM\Column]
     #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?bool $api_fichier = null;
@@ -62,7 +66,7 @@ class Metadonnees
     private ?File $file = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null; // ✅ nécessaire
+    private ?\DateTimeImmutable $updatedAt = null; 
 
     public function __construct()
     {
@@ -84,6 +88,15 @@ class Metadonnees
     public function setUrl(string $url): self
     {
         $this->url = $url;
+        return $this;
+    }
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
         return $this;
     }
 
