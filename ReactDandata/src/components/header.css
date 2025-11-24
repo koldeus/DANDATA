@@ -1,0 +1,145 @@
+.header {
+  display: flex;
+  justify-content: space-around;
+  position: fixed;
+  left: 10%;
+  right: 10%;
+  width: 80%;
+  top: 2%;
+  color: #fff;
+  height: 60px;
+  padding: 2px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: #ffffff03;
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(100%);
+  z-index: 1;
+}
+
+.logo {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+}
+.logo img {
+  height: 80%;
+  margin-right: 10px;
+}
+h2 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: 0em;
+  text-align: left;
+  margin-top: 8px;
+  color: #ad1b3b;
+}
+
+h2 span {
+  color: #7577bd;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+}
+
+.navbar a {
+  position: relative;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 20px;
+  margin: 4px 2px;
+  font-size: 16px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.navbar a:before,
+.navbar a:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  background: #fff;
+  transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.navbar a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+.navbar a:before {
+  left: 0;
+}
+.navbar a:after {
+  right: 0;
+  background: #fff;
+}
+
+.navbar a:hover:before {
+  background: #fff;
+  width: 100%;
+}
+
+.navbar a:hover:after {
+  background: transparent;
+  width: 100%;
+  transition: 0s;
+}
+
+.btn-connect {
+  background-color: transparent;
+  border: white 2px solid;
+  border-radius: 20px;
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.9 rem;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  margin-top: 10px;
+}
+
+.btn-connect:hover {
+  background-color: white;
+  color: #0d0205;
+}
+
+
+.navbar-desktop {
+  display: flex;
+}
+
+.navbar-mobile {
+  display: none;
+}
+
+.btn-connect-desktop {
+  display: flex;
+}
+
+
+@media (max-width: 1024px) {
+  .navbar-desktop {
+    display: none; 
+  }
+  .navbar-mobile {
+    display: flex; 
+  }
+  .btn-connect-desktop {
+    display: none; 
+  }
+}
+
+@media (max-width: 768px) {
+
+}
+
