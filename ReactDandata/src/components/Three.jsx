@@ -7,14 +7,15 @@ export default function ThreeCanvas() {
   const mountRef = useRef(null);
 
   useEffect(() => {
+    const mount = mountRef.current;
+
     // === SCENE & RENDERER ===
     const scene = new THREE.Scene();
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    const mount = mountRef.current;
     mount.appendChild(renderer.domElement);
+    renderer.domElement.style.display = "inline-block";
 
     // === OUTLINE EFFECT ===
     const effect = new OutlineEffect(renderer, {
@@ -27,11 +28,12 @@ export default function ThreeCanvas() {
     // === CAMERA ===
     const camera = new THREE.PerspectiveCamera(
       45,
-      window.innerWidth / window.innerHeight,
-      0.1,
+      mount.clientWidth / mount.clientHeight,
+      0.01,
       100
     );
-    camera.position.set(0, 1, 5);
+    camera.position.set(0, 1, 6);
+    camera.lookAt(0, 1, 0);
 
     // === LIGHT ===
     const light = new THREE.DirectionalLight(0x7577bd, 5);
@@ -48,19 +50,27 @@ export default function ThreeCanvas() {
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
+    // === RESIZE HANDLER ===
+    const handleResize = () => {
+      renderer.setSize(mount.clientWidth, mount.clientHeight);
+      camera.aspect = mount.clientWidth / mount.clientHeight;
+      camera.updateProjectionMatrix();
+    };
+    window.addEventListener("resize", handleResize);
+
     // === LOAD MODEL ===
     new GLTFLoader().load(
       "dandatabeforbake.glb",
       (gltf) => {
         model = gltf.scene;
-        model.scale.set(0.2, 0.2, 0.2);
+        model.scale.set(0.35, 0.35, 0.35);
         groundY = model.position.y;
 
         model.traverse((child) => {
           if (child.isMesh) {
             child.material.userData.outlineParameters = {
               thickness: 0.01,
-              color: new THREE.Color(0x75CEEE).toArray(),
+              color: new THREE.Color(0x75ceee).toArray(),
               alpha: 1,
               visible: true,
             };
@@ -73,8 +83,11 @@ export default function ThreeCanvas() {
       (error) => console.error("Erreur chargement modèle :", error)
     );
 
-    // === INTERACTION: CLICK JUMP ===
+    // === INTERACTION ===
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     const handleClick = (event) => {
+      if (isMobile) return; // désactive le clic sur mobile
       if (!model || isJumping) return;
 
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -87,10 +100,21 @@ export default function ThreeCanvas() {
         rotationSpeed = 0.18;
       }
     };
-
     window.addEventListener("click", handleClick);
 
-    // === ANIMATION ===
+    // Change cursor en pointer quand survol du modèle
+    const handleMouseMove = (event) => {
+      if (!model) return;
+      mouse.x = (event.clientX / mount.clientWidth) * 2 - 1;
+      mouse.y = -(event.clientY / mount.clientHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+
+      const intersects = raycaster.intersectObject(model, true);
+      mount.style.cursor = intersects.length > 0 ? "pointer" : "default";
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+
+    // === ANIMATION LOOP ===
     const animate = () => {
       requestAnimationFrame(animate);
 
@@ -124,13 +148,16 @@ export default function ThreeCanvas() {
 
     animate();
 
-
-
+    // === CLEANUP ===
     return () => {
-      mount.removeChild(renderer.domElement);
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("click", handleClick);
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (mount.contains(renderer.domElement)) {
+        mount.removeChild(renderer.domElement);
+      }
     };
   }, []);
 
-  return <div ref={mountRef} className="canvas" />;
+  return <div ref={mountRef} style={{ width: "100%", height: "100%" }} />;
 }
