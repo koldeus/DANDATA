@@ -1,4 +1,5 @@
 import LightRays from "../components/LightRays";
+import ModelViewer from "../components/Three";
 
 export function Accueil() {
   return (
@@ -15,6 +16,7 @@ export function Accueil() {
         distortion={0.05}
         className="custom-rays"
       />
+      <ModelViewer />
       <h1>Bienvenue sur DanData</h1>
       <p>Votre plateforme de données et d'analyses</p>
     </div>
