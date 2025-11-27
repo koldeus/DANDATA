@@ -3,6 +3,5 @@
   height: 100%;
   position: absolute;
   pointer-events: none;
-  z-index: 0;
   overflow: hidden;
 }

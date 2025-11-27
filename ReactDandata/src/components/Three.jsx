@@ -64,7 +64,7 @@ export default function ThreeCanvas() {
       (gltf) => {
         model = gltf.scene;
         model.scale.set(0.35, 0.35, 0.35);
-        model.position.y = -0.5;
+        model.position.y = -0.75;
         groundY = model.position.y;
 
         model.traverse((child) => {
@@ -160,5 +160,14 @@ export default function ThreeCanvas() {
     };
   }, []);
 
-  return <div ref={mountRef} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div
+      ref={mountRef}
+      style={{
+        width: "100%",
+        height: "60vh", // <— REAL height!!
+        minHeight: "350px", // <— Prevent shrinking too much
+      }}
+    />
+  );
 }

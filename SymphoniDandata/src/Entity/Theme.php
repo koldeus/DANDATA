@@ -43,10 +43,6 @@ class Theme
     #[Groups(['article:read','site:list'])]
     private ?string $Slug = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['article:read','site:list'])]
-    private ?string $Link = null;
-
     #[ORM\OneToMany(targetEntity: Site::class, mappedBy: 'Theme')]
     // Pas de Groups
     private Collection $sites;
@@ -81,15 +77,6 @@ class Theme
     public function setSlug(string $Slug): self
     {
         $this->Slug = $Slug;
-        return $this;
-    }
-    public function getLink(): ?string
-    {
-        return $this->Link;
-    }
-    public function setLink(string $Link): self
-    {
-        $this->Link = $Link;
         return $this;
     }
 

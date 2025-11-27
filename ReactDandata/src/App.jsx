@@ -10,10 +10,11 @@ import {SignIn} from "./pages/SignIn";
 import {Dashboard} from "./pages/Dashboard";
 
 import "./App.css"
+import "./pages/theme.css"
 
 function App() {
   return (
-    <div className="body-dark-theme">
+    <div className="body DarkTheme_body">
       <Header />
       <Routes>
         <Route path="/" element={<Accueil />} />

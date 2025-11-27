@@ -1,0 +1,63 @@
+/* dark theme */
+
+.DarkTheme_Border {
+  border: 1px solid #fce9ed;
+}
+
+.DarkTheme_body {
+  color: #fce9ed;
+  background-color: #0d0205;
+}
+
+.DarkTheme_subbtle-texte {
+  color: rgba(252, 233, 237, 0.5);
+}
+.DarkTheme_subbtle-backrgound {
+  color: #23050E;
+}
+.DarkTheme_light-background {
+  color: #360815;
+}
+
+/* Night theme */
+.NightTheme_Border {
+  border: 1px solid #fce9ed;
+}
+
+.NightTheme_body {
+  color: #fce9ed;
+  background-color: #0d0205;
+}
+
+.NightTheme_subbtle-texte {
+  color: rgba(252, 233, 237, 0.5);
+}
+.NightTheme_subbtle-backrgound {
+  color: #0F172B;
+}
+
+.NightTheme_light-background {
+  color: #15203C;
+
+}
+/* Light theme */
+
+.LightTheme_Border {
+  border: 1px solid #E2E8F0;
+}
+
+.LightTheme_body {
+  color: #fce9ed;
+  background-color: #212245;
+}
+
+.LightTheme_subbtle-texte {
+  color: rgba(252, 233, 237, 0.5);
+}
+.LightTheme_subbtle-backrgound {
+  color: #212245;
+}
+.LightTheme_light-background {
+  color: #191A34;
+}
+

@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./header.css";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Drawer, IconButton, List, ListItemButton, ListItemText } from "@mui/material";
-import { Link } from "react-router-dom";    
+import {
+  Drawer,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+import { Link } from "react-router-dom";
 import { Boutton } from "./compte/Boutton";
 import { Navbar } from "./compte/navbar";
 
@@ -15,7 +21,9 @@ export function Header() {
     <header className="header">
       <div className="logo">
         <img src="public/images/logo.png" alt="Logo Dandata" />
-        <h2>Dan<span>Data</span></h2>
+        <h2>
+          Dan<span>Data</span>
+        </h2>
       </div>
 
       {/* Navbar desktop */}
