@@ -1,6 +1,7 @@
 import LightRays from "../components/LightRays";
 import ModelViewer from "../components/Three";
 import "./Accueil.css";
+import "./theme.css";
 
 export function Accueil() {
   return (
@@ -59,7 +60,7 @@ export function Accueil() {
             <p>Extrayez des statistiques d’après vos données</p>
           </div>
           <div className="BoiteDeTexte">
-            <h2>Analysez</h2>
+            <h3>Analysez</h3>
             <p>Extrayez des statistiques d’après vos données</p>
           </div>
         </div>

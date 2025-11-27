@@ -15,9 +15,9 @@
   border-radius: 50px;
   border: 1px solid rgba(255, 255, 255, 0.07);
   background: #ffffff0e;
-  backdrop-filter: blur(50px);
+  backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(100%);
-  z-index: 1;
+  z-index: 2;
 }
 
 /* Logo */
