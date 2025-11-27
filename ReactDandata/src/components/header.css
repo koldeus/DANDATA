@@ -1,3 +1,6 @@
+/* --- MOBILE FIRST --- */
+
+/* Header */
 .header {
   display: flex;
   justify-content: space-around;
@@ -17,6 +20,7 @@
   z-index: 1;
 }
 
+/* Logo */
 .logo {
   display: flex;
   justify-content: space-between;
@@ -26,6 +30,7 @@
   height: 80%;
   margin-right: 10px;
 }
+
 h2 {
   font-size: 24px;
   font-weight: 600;
@@ -40,9 +45,10 @@ h2 span {
   color: #7577bd;
 }
 
+/* Navbar : en mobile on masque la desktop */
 .navbar {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   width: 50%;
 }
@@ -92,6 +98,7 @@ h2 span {
   transition: 0s;
 }
 
+/* Bouton connexion */
 .btn-connect {
   background-color: transparent;
   border: white 2px solid;
@@ -113,33 +120,32 @@ h2 span {
   color: #0d0205;
 }
 
-
+/* Etat par défaut en mobile */
 .navbar-desktop {
-  display: flex;
-}
-
-.navbar-mobile {
   display: none;
 }
 
-.btn-connect-desktop {
+.navbar-mobile {
   display: flex;
 }
 
+.btn-connect-desktop {
+  display: none;
+}
 
-@media (max-width: 1024px) {
+/* --- TABLETTE & DESKTOP --- */
+@media (min-width: 1024px) {
   .navbar-desktop {
-    display: none; 
+    display: flex;
   }
   .navbar-mobile {
-    display: flex; 
+    display: none;
   }
   .btn-connect-desktop {
-    display: none; 
+    display: flex;
   }
 }
 
-@media (max-width: 768px) {
-
+/* (Tu peux ajouter des styles spécifiques ici si besoin) */
+@media (min-width: 768px) {
 }
-

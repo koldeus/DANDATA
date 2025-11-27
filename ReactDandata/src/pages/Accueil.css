@@ -1,114 +1,120 @@
+/* --- MOBILE FIRST --- */
+
 .accueil {
   position: relative;
   width: 100%;
-  min-height: 100vh; /* permet au contenu de pousser si nécessaire */
+  min-height: 100vh;
   overflow: hidden;
   display: flex;
-  justify-content: flex-start; /* aligner vers le haut */
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
-  padding: 2rem 1rem; /* padding responsive */
+  padding: 2rem 1rem;
   box-sizing: border-box;
 }
 
 .accueil h1 {
   margin: 0 auto 2rem auto;
-  font-size: clamp(2rem, 5vw, 3rem); /* taille adaptative */
+  font-size: clamp(2rem, 5vw, 3rem);
   color: #fce9ed;
   z-index: 2;
   text-align: center;
-  margin-top: 10%;
+  margin-top: 5%;
 }
 
+/* Sur mobile, tout est en colonne */
 .accueil-content {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
-  gap: 5%; /* espace entre texte et canvas */
+  gap: 2rem;
   width: 100%;
-  max-width: 1200px; /* limiter la largeur pour grands écrans */
 }
 
-/* Texte de gauche : 15% */
-.accueil-content p:first-of-type {
-  flex: 0 0 15%;
-  min-width: 120px; /* pour ne pas trop réduire sur petit écran */
+/* Textes sur mobile : prennent la largeur */
+.accueil-content p:first-of-type,
+.accueil-content p:last-of-type {
+  flex: 0 0 30%;
+  min-width: 120px;
+  width: 100%;
 }
 
-/* Canvas : 30% sur desktop */
 .model-wrapper {
   flex: 0 0 30%;
-  height: 400px;
+  height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
   min-width: 200px;
+  width: 100%;
 }
 
-/* Le canvas Three.js remplit son conteneur */
 .model-wrapper > div {
   width: 100%;
   height: 100%;
 }
 
-/* Texte de droite : 15% */
-.accueil-content p:last-of-type {
-  flex: 0 0 15%;
-  min-width: 120px;
-}
-
 .BoiteDeBoite {
   display: flex;
+  flex-direction: column;
   justify-content: space-evenly;
   width: 100%;
 }
 
-.BoiteDeTexte{
-    border: 1px solid #FCE9ED;
-    border-radius: 20px;
-    margin: 10px;
-    padding: 10px;
-    min-width: 40vw;
-    align-content: center;
-}
-.BoiteDeTexte h2{
-    color: #FCE9ED;
-    font-size: 1.5rem;
-}
-.BoiteDeTexte h3{
-    color: #FCE9ED;
-    font-size: 1.2rem;
-}
-.BoiteDeTexte p{
-    color: #FCE9ED;
-    font-size: 1rem;
-    color:rgba(252, 233, 237, 0.5);
+.BoiteDeTexte {
+  border: 1px solid #FCE9ED;
+  border-radius: 20px;
+  margin: 10px;
+  padding: 5px 10px;
+  min-width: 40vw;
+  align-content: center;
 }
 
-@media (max-width: 1024px) {
+.BoiteDeTexte h2 {
+  color: #FCE9ED;
+  font-size: 1.5rem;
+}
+
+.BoiteDeTexte h3 {
+  color: #FCE9ED;
+  font-size: 1.2rem;
+}
+
+.BoiteDeTexte p {
+  color: rgba(252, 233, 237, 0.5);
+  font-size: 1rem;
+}
+
+/* --- TABLETTE --- */
+@media (min-width: 1024px) {
   .accueil-content {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 2rem;
-  }
-
-  .accueil-content p,
-  .model-wrapper {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
+    gap: 5%;
+    max-width: 1200px;
   }
 
   .model-wrapper {
-    height: 300px;
+    height: 400px;
   }
+
   .BoiteDeBoite {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    width: 100%;
+    flex-direction: row;
   }
 }
 
-@media (max-width: 768px) {
+/* --- DESKTOP (>= 1024px) --- */
+@media (min-width: 1024px) {
+  .accueil-content p:first-of-type {
+    flex: 0 0 30%;
+  }
+
+  .model-wrapper {
+    flex: 0 0 30%;
+  }
+
+  .accueil-content p:last-of-type {
+    flex: 0 0 30%;
+  }
 }

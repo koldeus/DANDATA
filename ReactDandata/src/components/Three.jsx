@@ -64,6 +64,7 @@ export default function ThreeCanvas() {
       (gltf) => {
         model = gltf.scene;
         model.scale.set(0.35, 0.35, 0.35);
+        model.position.y = -0.5;
         groundY = model.position.y;
 
         model.traverse((child) => {
