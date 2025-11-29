@@ -165,8 +165,8 @@ export default function ThreeCanvas() {
       ref={mountRef}
       style={{
         width: "100%",
-        height: "60vh", // <— REAL height!!
-        minHeight: "350px", // <— Prevent shrinking too much
+        height: "60vh", 
+        minHeight: "350px", 
       }}
     />
   );

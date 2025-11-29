@@ -39,7 +39,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:read', 'article:list'])] 
+    #[Groups(['article:read', 'article:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -56,7 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50)]
 
 
-    #[Groups(['article:read', 'article:list'])] 
+    #[Groups(['article:read', 'article:list'])]
     private ?string $pseudo = null;
 
     #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'auteur')]
@@ -167,4 +167,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this;
     }
+
+    #[Groups(['user:write'])]
+    private ?string $plainPassword = null;
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
 }

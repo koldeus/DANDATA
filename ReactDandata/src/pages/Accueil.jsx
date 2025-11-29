@@ -1,14 +1,20 @@
+import { use } from "react";
 import LightRays from "../components/LightRays";
 import ModelViewer from "../components/Three";
 import "./Accueil.css";
 import "./theme.css";
 
-export function Accueil() {
+export function Accueil({ theme }) {
+  const LightRaysColor = {
+    DarkTheme: "#AD1B3B",
+    LightTheme: "#4146df",
+    NightTheme: "#7577bd",
+  };
   return (
     <div className="accueil">
       <LightRays
         raysOrigin="top-center"
-        raysColor="#AD1B3B"
+        raysColor={LightRaysColor[theme]}
         raysSpeed={0.8}
         lightSpread={0.8}
         rayLength={5}
@@ -42,7 +48,9 @@ export function Accueil() {
       </div>
 
       <div className="BoiteDeBoite">
-        <div className="BoiteDeTexte">
+        <div
+          className={`BoiteDeTexte ${theme}_subbtle-background ${theme}_Border`}
+        >
           <h2>XXX Utilisateurs nous font confiances</h2>
           <p>
             Aujourd’hui plus de XXX utilisateurs ont lancés leur site web en
@@ -51,17 +59,29 @@ export function Accueil() {
         </div>
 
         <div>
-          <div className="BoiteDeTexte">
+          <div
+            className={`BoiteDeTexte ${theme}_subbtle-background ${theme}_Border`}
+          >
             <h3>Visualisez</h3>
-            <p>Extrayez des statistiques d’après vos données</p>
+            <p className={`p ${theme}_subbtle-texte`}>
+              Extrayez des statistiques d’après vos données
+            </p>
           </div>
-          <div className="BoiteDeTexte">
+          <div
+            className={`BoiteDeTexte ${theme}_subbtle-background ${theme}_Border`}
+          >
             <h3>Importez vos données</h3>
-            <p>Extrayez des statistiques d’après vos données</p>
+            <p className={`p ${theme}_subbtle-texte`}>
+              Extrayez des statistiques d’après vos données
+            </p>
           </div>
-          <div className="BoiteDeTexte">
+          <div
+            className={`BoiteDeTexte ${theme}_subbtle-background ${theme}_Border`}
+          >
             <h3>Analysez</h3>
-            <p>Extrayez des statistiques d’après vos données</p>
+            <p className={`p ${theme}_subbtle-texte`}>
+              Extrayez des statistiques d’après vos données
+            </p>
           </div>
         </div>
       </div>
