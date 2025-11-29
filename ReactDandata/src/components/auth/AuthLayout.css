@@ -1,0 +1,42 @@
+.auth-layout {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #220e16;
+  flex-direction: row; /* par défaut */
+}
+
+.auth-left {
+  flex: 1 1 45%;
+  background: #090406;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.auth-right {
+  flex: 1 1 55%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Version mobile */
+@media (max-width: 1280px) {
+  .auth-layout {
+    flex-direction: column;
+  }
+
+  .auth-left {
+    flex: 1 1 100%;
+    min-height: 100%; /* occupe tout l'écran verticalement */
+    padding: 2rem;
+  }
+
+  .auth-right {
+    display: none; /* optionnel : cacher la partie droite */
+  }
+}

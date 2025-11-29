@@ -2,9 +2,10 @@ import "../header.css";
 import { Link } from "react-router-dom";
 
 export function Boutton() {
-  const loggedUser = localStorage.getItem("LoggedUser");
+  const localtoken = localStorage.getItem("jwt");
+  const sessiontoken = localStorage.getItem("jwt");
 
-  if (!loggedUser) {
+  if (!localtoken && !sessiontoken) {
     return (
       <div>
         <Link to="/LogIn">

@@ -1,0 +1,59 @@
+.inscription-left-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.plasma-container {
+  position: absolute;
+  inset: 0;
+}
+
+.inscription-left-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #fff;
+  padding: 4rem;
+  text-align: center;
+}
+
+.inscription-left-content .meta {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.inscription-left-content .description {
+  margin-top: 1rem;
+  max-width: 520px;
+  color: rgba(255,255,255,0.9);
+}
+
+.inscription-left-content .metrics {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  justify-content: center;
+}
+
+.inscription-left-content .metrics div span {
+  font-weight: 700;
+  display:block;
+  font-size: 1.1rem;
+}
+
+.inscription-left-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,10,40,0.25), rgba(10,10,40,0.25));
+  z-index: 1;
+  pointer-events: none;
+}

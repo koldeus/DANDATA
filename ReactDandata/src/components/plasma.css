@@ -1,0 +1,17 @@
+.plasma-container {
+  position: absolute;
+  inset: 0;
+}
+
+.plasma-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.plasma-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.35));
+  pointer-events: none;
+}

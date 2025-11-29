@@ -21,6 +21,12 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             
+    App\DataPersister\UserDataPersister:
+        decorates: 'api_platform.doctrine.orm.state.persist_processor'
+        arguments:
+            - '@security.password_hasher'
+            - '@App\DataPersister\UserDataPersister.inner'
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

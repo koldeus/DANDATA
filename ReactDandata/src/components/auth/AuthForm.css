@@ -1,0 +1,130 @@
+.auth-card {
+  padding: 2.4rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+.auth-card h2 {
+  margin: 0 0 0.2rem 0;
+}
+
+.auth-card .subtitle {
+  margin-bottom: 1.4rem;
+}
+
+.field-password {
+  position: relative;
+}
+
+.field-password input {
+  padding-right: 2.8rem;
+}
+
+.field-password {
+  position: relative; 
+}
+
+
+.toggle-password {
+  position: absolute;
+  right: 0.6rem;
+  top: 35%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.50rem;
+}
+
+.toggle-password:focus {
+  outline: 2px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+}
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.field input {
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.8rem 0.9rem;
+  margin-top: 0.4rem;
+}
+
+.forgot {
+  align-self: flex-end;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.remember {
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0 1.2rem 0;
+}
+
+.btn-primary {
+  background-color: transparent;
+  border-radius: 20px;
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.9 rem;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background-color: white;
+  color: #0d0205;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-radius: 20px;
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.9 rem;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.btn-outline:hover {
+  background-color: white;
+  color: #0d0205;
+}
+
+.divider {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 1rem 0;
+}
+
+.signup {
+  margin-top: 1rem;
+  text-align: center;
+}
