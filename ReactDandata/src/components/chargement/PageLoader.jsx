@@ -8,7 +8,7 @@ export default function PageLoader({ onComplete }) {
 
   useEffect(() => {
     const startTime = Date.now();
-    const duration = 1500;
+    const duration = 1500;   
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -18,7 +18,7 @@ export default function PageLoader({ onComplete }) {
 
       if (elapsed >= duration) {
         clearInterval(interval);
-        setProgress(100); // Force absolument 100%
+        setProgress(100); 
         
         setTimeout(() => {
           setIsExiting(true);
@@ -27,7 +27,7 @@ export default function PageLoader({ onComplete }) {
           }, 600);
         }, 200);
       }
-    }, 50); // 20fps suffit pour une barre de progression
+    }, 50); 
 
     return () => clearInterval(interval);
   }, [onComplete]);

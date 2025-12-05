@@ -1,5 +1,5 @@
 
-export function Categories() {
+export default function FichierData() {
   return (
     <div>
       <h1>Catégories de Données</h1>

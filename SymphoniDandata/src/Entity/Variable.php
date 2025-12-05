@@ -34,6 +34,10 @@ class Variable
     #[Groups(['article:read'])]
     private ?string $nom = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(['article:read'])]
+    private ?string $color = null;
+
     #[ORM\Column]
     #[Groups(['article:read'])]
     private ?bool $num_string = null;
@@ -53,6 +57,15 @@ class Variable
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
+        return $this;
+    }
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+    public function setColor(string $Color): self
+    {
+        $this->color = $Color;
         return $this;
     }
     public function isNumString(): ?bool

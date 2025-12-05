@@ -1,41 +1,78 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import Sidebar from "../components/Dashboard/Sidebar";
+import BottomTabBar from "../components/Dashboard/BottomTabBar";
+import { useUser } from "../hooks/useUser";
 
-export function Dashboard() {
-  const [user, setUser] = useState(null);
+import DashboardHome from "../pages/Dashboard/UserPage";
+import ArticlesPage from "../pages/Dashboard/ArticlesPage";
+import UsersPage from "../pages/Dashboard/UserPage";
+import FichierDataPage from "../pages/Dashboard/FichierData";
+import AdministrationPage from "../pages/Dashboard/Administration";
+import ThemePage from "../pages/Dashboard/ThemeSettingPage";
+import ProfilePage from "../pages/Dashboard/ProfilePage";
+import SousChargement from "../components/SousChargement/SousChargement";
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("jwt") || sessionStorage.getItem("jwt");
-      if (!token) return;
+import "./Dashboard.css";
 
-      try {
-        const res = await fetch("http://localhost:8000/api/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+export default function DashboardLayout({ theme }) {
+  const { user, loading } = useUser();
+  const [activeTab, setActiveTab] = useState("dashboard");
+  if (loading)
+    return (
+      <div className="dashboard-page">
+        <Sidebar
+          user={user}
+          theme={theme}
+          setActiveTab={setActiveTab}
+          activeTab={activeTab}
+        />
+        <main className="main-content">
+        </main>
+        <BottomTabBar
+          user={user}
+          theme={theme}
+          setActiveTab={setActiveTab}
+          activeTab={activeTab}
+        />
+      </div>
+    );
+  if (!user) return <div>Utilisateur non connecté</div>;
 
-        if (!res.ok) {
-          console.error("Erreur API:", res.status);
-          return;
-        }
-
-        const userData = await res.json();
-        setUser(userData);
-        console.log(userData);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const renderContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return <ProfilePage theme={theme}/>;
+      case "articles":
+        return <ArticlesPage />;
+      case "users":
+        return <UsersPage />;
+      case "FichierData":
+        return <FichierDataPage />;
+      case "Administration":
+        return <AdministrationPage />;
+      case "Theme":
+        return <ThemePage />;
+      default:
+        return <DashboardHome />;
+    }
+  };
 
   return (
-    <div>
-      <h1>Dashboard de Données</h1>
-      {user && (
-        <p>Connecté en tant que {user.pseudo} ({user.email})</p>
-      )}
-      <p>Explorez diverses catégories de données disponibles sur DanData.</p>
+    <div className="dashboard-page">
+      <Sidebar
+        user={user}
+        theme={theme}
+        setActiveTab={setActiveTab}
+        activeTab={activeTab}
+      />
+
+      <main className="main-content">{renderContent()}</main>
+      <BottomTabBar
+        user={user}
+        theme={theme}
+        setActiveTab={setActiveTab}
+        activeTab={activeTab}
+      />
     </div>
   );
 }

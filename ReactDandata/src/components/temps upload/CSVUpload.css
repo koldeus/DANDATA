@@ -1,0 +1,411 @@
+.csv-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.csv-upload-container h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.csv-upload-container h4 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.csv-upload-container h5 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #555;
+  font-weight: 600;
+}
+
+.upload-zone {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.upload-zone:hover {
+  border-color: #4a90e2;
+  background: #f0f7ff;
+}
+
+.upload-zone.active {
+  border-color: #4a90e2;
+  background: #f0f7ff;
+  transform: scale(1.02);
+}
+
+.upload-zone label {
+  cursor: pointer;
+  display: block;
+}
+
+.upload-prompt {
+  margin: 0;
+}
+
+.upload-prompt p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.upload-prompt p:first-child {
+  font-weight: 600;
+}
+
+.upload-prompt small {
+  display: block;
+  color: #999;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.error-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Configuration */
+.csv-config {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.variables-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.variable-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+}
+
+.variable-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.variable-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid #ddd;
+}
+
+.variable-color:hover {
+  transform: scale(1.1);
+  border-color: #999;
+}
+
+.variable-name {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.variable-name:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+}
+
+.variable-type {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.variable-type label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.variable-type select {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.variable-type select:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+.variable-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preview-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.preview-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.value-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  background: #e8e8e8;
+  border-radius: 3px;
+  font-size: 11px;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* Aperçu tableau */
+.csv-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+table thead {
+  background: #f5f5f5;
+}
+
+table th {
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+table th {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #555;
+}
+
+table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.row-count {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: #4a90e2;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #357abd;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #d0d0d0;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .csv-upload-container {
+    background: #1e1e1e;
+    border-color: #333;
+  }
+
+  .csv-upload-container h3,
+  .csv-upload-container h4,
+  .csv-upload-container h5 {
+    color: #e0e0e0;
+  }
+
+  .upload-zone {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+
+  .upload-zone:hover,
+  .upload-zone.active {
+    background: #2d3d52;
+    border-color: #4a90e2;
+  }
+
+  .upload-prompt p {
+    color: #e0e0e0;
+  }
+
+  .upload-prompt small {
+    color: #888;
+  }
+
+  .variables-list,
+  .csv-preview {
+    background: #2a2a2a;
+    border-color: #333;
+  }
+
+  .variable-item {
+    background: #333;
+    border-color: #444;
+  }
+
+  .variable-name,
+  .variable-type select {
+    background: #404040;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .variable-name:focus,
+  .variable-type select:focus {
+    border-color: #4a90e2;
+  }
+
+  .preview-label,
+  .variable-type label {
+    color: #bbb;
+  }
+
+  .value-badge {
+    background: #404040;
+    color: #e0e0e0;
+    border-color: #555;
+  }
+
+  table th {
+    background: #333;
+    color: #e0e0e0;
+    border-color: #444;
+  }
+
+  table td {
+    border-color: #333;
+    color: #bbb;
+  }
+
+  table tbody tr:hover {
+    background: #333;
+  }
+
+  .row-count {
+    color: #888;
+  }
+
+  .btn-secondary {
+    background: #404040;
+    color: #e0e0e0;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: #505050;
+  }
+}

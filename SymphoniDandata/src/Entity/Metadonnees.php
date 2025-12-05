@@ -9,19 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: MetadonneesRepository::class)]
-#[Vich\Uploadable]
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(security: "is_granted('ROLE_DATA_PROVIDER') or is_granted('ROLE_ADMIN')"),
         new Get(),
         new Put(security: "is_granted('ROLE_DATA_PROVIDER') or is_granted('ROLE_ADMIN')"),
         new Delete(security: "is_granted('ROLE_ADMIN')")
@@ -54,16 +49,13 @@ class Metadonnees
     #[ORM\OneToMany(targetEntity: Variable::class, mappedBy: 'Meta', cascade: ['persist', 'remove'])]
     #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private Collection $variables;
+
     #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'metadonnees', cascade: ['persist', 'remove'])]
     private Collection $graphiques;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['meta:read', 'article:blocs', 'bloc:read', 'article:read'])]
     private ?string $fileName = null;
-
-    #[Vich\UploadableField(mapping: 'metadonnees_file', fileNameProperty: 'fileName')]
-    #[Groups(['meta:write', 'article:blocs', 'bloc:read', 'article:read'])]
-    private ?File $file = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null; 
@@ -74,8 +66,6 @@ class Metadonnees
         $this->graphiques = new ArrayCollection();
     }
 
-    // Getters/Setters...
-
     public function getId(): ?int
     {
         return $this->id;
@@ -85,15 +75,18 @@ class Metadonnees
     {
         return $this->url;
     }
+
     public function setUrl(string $url): self
     {
         $this->url = $url;
         return $this;
     }
+
     public function getNom(): ?string
     {
         return $this->nom;
     }
+
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
@@ -104,6 +97,7 @@ class Metadonnees
     {
         return $this->api_fichier;
     }
+
     public function setApiFichier(bool $api_fichier): self
     {
         $this->api_fichier = $api_fichier;
@@ -114,6 +108,7 @@ class Metadonnees
     {
         return $this->extension_retour;
     }
+
     public function setExtensionRetour(string $extension_retour): self
     {
         $this->extension_retour = $extension_retour;
@@ -124,6 +119,7 @@ class Metadonnees
     {
         return $this->variables;
     }
+
     public function addVariable(Variable $variable): self
     {
         if (!$this->variables->contains($variable)) {
@@ -132,10 +128,12 @@ class Metadonnees
         }
         return $this;
     }
+
     public function removeVariable(Variable $variable): self
     {
-        if ($this->variables->removeElement($variable) && $variable->getMeta() === $this)
+        if ($this->variables->removeElement($variable) && $variable->getMeta() === $this) {
             $variable->setMeta(null);
+        }
         return $this;
     }
 
@@ -143,6 +141,7 @@ class Metadonnees
     {
         return $this->graphiques;
     }
+
     public function addGraphique(Graphique $graphique): self
     {
         if (!$this->graphiques->contains($graphique)) {
@@ -151,10 +150,12 @@ class Metadonnees
         }
         return $this;
     }
+
     public function removeGraphique(Graphique $graphique): self
     {
-        if ($this->graphiques->removeElement($graphique) && $graphique->getMetadonnees() === $this)
+        if ($this->graphiques->removeElement($graphique) && $graphique->getMetadonnees() === $this) {
             $graphique->setMetadonnees(null);
+        }
         return $this;
     }
 
@@ -162,28 +163,18 @@ class Metadonnees
     {
         return $this->fileName;
     }
+
     public function setFileName(?string $fileName): self
     {
         $this->fileName = $fileName;
         return $this;
     }
 
-    public function setFile(?File $file = null): void
-    {
-        $this->file = $file;
-        if ($file) {
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-    public function getFile(): ?File
-    {
-        return $this->file;
-    }
-
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
+
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
