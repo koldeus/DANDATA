@@ -9,19 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
-#[Vich\Uploadable] // ✅ important pour activer l’upload
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"),
         new Get(),
         new Put(security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"),
         new Delete(security: "is_granted('ROLE_ADMIN')")
@@ -39,30 +34,27 @@ class Image
     #[Groups(['article:blocs', 'article:read', 'article:list'])]
     private ?string $fileName = null;
 
-    #[Vich\UploadableField(mapping: 'image_file', fileNameProperty: 'fileName')] // ✅ mapping image_file
-    #[Groups(['article:write'])]
-    private ?File $file = null;
-
     #[ORM\Column(length: 255)]
     #[Groups(['article:blocs', 'article:read', 'article:list'])]
     private ?string $alt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:blocs', 'article:read', 'article:read'])]
+    #[Groups(['article:blocs', 'article:read', 'article:list'])]
     private ?string $slug = null;
 
-    #[ORM\ManyToOne(inversedBy: 'images')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Blocs $blocs = null;
+    #[ORM\ManyToMany(targetEntity: Blocs::class, mappedBy: 'images')]
+    private Collection $blocs;
 
-    #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'Image_Principale')]
+    #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'imagePrincipale')]
     private Collection $articles;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null; 
+    private ?\DateTimeImmutable $updatedAt = null;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->blocs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -74,28 +66,18 @@ class Image
     {
         return $this->fileName;
     }
+
     public function setFileName(?string $fileName): self
     {
         $this->fileName = $fileName;
         return $this;
     }
 
-    public function setFile(?File $file = null): void
-    {
-        $this->file = $file;
-        if ($file) {
-            $this->updatedAt = new \DateTimeImmutable();
-        }
-    }
-    public function getFile(): ?File
-    {
-        return $this->file;
-    }
-
     public function getAlt(): ?string
     {
         return $this->alt;
     }
+
     public function setAlt(string $alt): self
     {
         $this->alt = $alt;
@@ -106,20 +88,32 @@ class Image
     {
         return $this->slug;
     }
+
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
         return $this;
     }
 
-
-    public function getBlocs(): ?Blocs
+    public function getBlocs(): Collection
     {
         return $this->blocs;
     }
-    public function setBlocs(?Blocs $blocs): self
+
+    public function addBloc(Blocs $bloc): self
     {
-        $this->blocs = $blocs;
+        if (!$this->blocs->contains($bloc)) {
+            $this->blocs->add($bloc);
+            $bloc->addImage($this);
+        }
+        return $this;
+    }
+
+    public function removeBloc(Blocs $bloc): self
+    {
+        if ($this->blocs->removeElement($bloc)) {
+            $bloc->removeImage($this);
+        }
         return $this;
     }
 
@@ -127,6 +121,7 @@ class Image
     {
         return $this->articles;
     }
+
     public function addArticle(Articles $article): self
     {
         if (!$this->articles->contains($article)) {
@@ -135,10 +130,12 @@ class Image
         }
         return $this;
     }
+
     public function removeArticle(Articles $article): self
     {
-        if ($this->articles->removeElement($article) && $article->getImagePrincipale() === $this)
+        if ($this->articles->removeElement($article) && $article->getImagePrincipale() === $this) {
             $article->setImagePrincipale(null);
+        }
         return $this;
     }
 
@@ -146,6 +143,7 @@ class Image
     {
         return $this->updatedAt;
     }
+
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;

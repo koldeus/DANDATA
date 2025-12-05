@@ -117,9 +117,11 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1024px) {
   .three-wrapper {
     height: 200px;
+    position: relative;
+    top: -300px;
   }
   
   .loader-content {

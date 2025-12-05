@@ -12,9 +12,11 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Patch;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
@@ -23,8 +25,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(),
         new Get(security: "object == user or is_granted('ROLE_ADMIN')"),
         new Put(security: "object == user or is_granted('ROLE_ADMIN')"),
+        new Patch(security: "object == user or is_granted('ROLE_ADMIN')"),
         new Delete(security: "object == user or is_granted('ROLE_ADMIN')"),
-    ]
+    ],
+    normalizationContext: ['groups' => ['user:read', 'article:read', 'article:list']],
+    denormalizationContext: ['groups' => ['user:write']]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -39,28 +44,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:read', 'article:list'])]
+    #[Groups(['user:read', 'article:read', 'article:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['article:read'])]
+    #[Groups(['user:read', 'user:write', 'article:read'])]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
-    #[Groups(['article:read'])]
+    #[Groups(['user:read', 'user:write', 'article:read'])]
     private array $roles = [];
 
     #[ORM\Column]
+    #[Groups(['user:write'])]
+    #[Assert\NotBlank(groups: ['user:create'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 50)]
-
-
-    #[Groups(['article:read', 'article:list'])]
+    #[Groups(['user:read', 'user:write', 'article:read', 'article:list'])]
+    #[Assert\NotBlank]
     private ?string $pseudo = null;
+
+    #[Groups(['user:write'])]
+    #[Assert\Length(min: 6, groups: ['user:create'])]
+    private ?string $plainPassword = null;
 
     #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'auteur')]
     private Collection $articles;
+
+    #[ORM\OneToMany(targetEntity: Site::class, mappedBy: 'Admin')]
+    private Collection $sites;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ArticleNote::class, cascade: ['persist', 'remove'])]
     private Collection $articleNotes;
@@ -68,6 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->articles = new ArrayCollection();
+        $this->sites = new ArrayCollection();
         $this->articleNotes = new ArrayCollection();
     }
 
@@ -75,15 +91,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->id;
     }
+
     public function getEmail(): ?string
     {
         return $this->email;
     }
+
     public function setEmail(string $email): self
     {
         $this->email = $email;
         return $this;
     }
+
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -96,6 +115,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $roles[] = self::ROLE_SUBSCRIBER;
         return array_unique($roles);
     }
+
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
@@ -106,6 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->password;
     }
+
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -114,15 +135,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
+        $this->plainPassword = null;
     }
 
     public function getPseudo(): ?string
     {
         return $this->pseudo;
     }
+
     public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 
@@ -130,6 +164,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->articles;
     }
+
     public function addArticle(Articles $article): self
     {
         if (!$this->articles->contains($article)) {
@@ -138,6 +173,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this;
     }
+
     public function removeArticle(Articles $article): self
     {
         if ($this->articles->removeElement($article)) {
@@ -151,6 +187,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->articleNotes;
     }
+
     public function addArticleNote(ArticleNote $note): self
     {
         if (!$this->articleNotes->contains($note)) {
@@ -159,6 +196,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this;
     }
+
     public function removeArticleNote(ArticleNote $note): self
     {
         if ($this->articleNotes->removeElement($note)) {
@@ -168,18 +206,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[Groups(['user:write'])]
-    private ?string $plainPassword = null;
-
-    public function getPlainPassword(): ?string
+    public function getSites(): Collection
     {
-        return $this->plainPassword;
+        return $this->sites;
     }
 
-    public function setPlainPassword(?string $plainPassword): self
+    public function addSite(Site $site): self
     {
-        $this->plainPassword = $plainPassword;
+        if (!$this->sites->contains($site)) {
+            $this->sites->add($site);
+            $site->setAdmin($this);
+        }
         return $this;
     }
 
+    public function removeSite(Site $site): self
+    {
+        if ($this->sites->removeElement($site)) {
+            if ($site->getAdmin() === $this)
+                $site->setAdmin(null);
+        }
+        return $this;
+    }
+
+    #[Groups(['user:update'])]
+    private ?string $currentPassword = null;
+
+    public function getCurrentPassword(): ?string
+    {
+        return $this->currentPassword;
+    }
+
+    public function setCurrentPassword(?string $currentPassword): self
+    {
+        $this->currentPassword = $currentPassword;
+        return $this;
+    }
 }

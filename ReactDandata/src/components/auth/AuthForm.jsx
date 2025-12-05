@@ -25,12 +25,10 @@ export default function AuthForm({ theme }) {
 
         const data = await res.json();
         if (data.token) {
+          localStorage.setItem("jwt", data.token);
+            window.history.back();
           if (remember) {
-            localStorage.setItem("jwt", data.token);
-            window.history.back();
-          } else {
-            sessionStorage.setItem("jwt", data.token);
-            window.history.back();
+            localStorage.setItem("remember", true);
           }
         } else {
           console.error("Erreur login", data);

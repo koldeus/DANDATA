@@ -54,7 +54,13 @@
   padding: 0.50rem;
 }
 
+
 .toggle-password-2:focus {
+  outline: 2px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+}
+
+.toggle-password:focus {
   outline: 2px solid rgba(255,255,255,0.12);
   border-radius: 4px;
 }

@@ -43,8 +43,9 @@ class Blocs
     #[ORM\ManyToOne(inversedBy: 'blocs')]
     private ?Articles $article = null;
 
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'blocs')]
-    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
+    #[ORM\ManyToMany(targetEntity: Image::class, inversedBy: 'blocs')]
+    #[ORM\JoinTable(name: 'blocs_images')]
+    #[Groups(['article:read', 'article:blocs', 'bloc:read'])]
     private Collection $images;
 
     #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'blocs')]
@@ -106,15 +107,14 @@ class Blocs
     {
         if (!$this->images->contains($image)) {
             $this->images->add($image);
-            $image->setBlocs($this);
+            $image->addBloc($this);
         }
         return $this;
     }
     public function removeImage(Image $image): self
     {
         if ($this->images->removeElement($image)) {
-            if ($image->getBlocs() === $this)
-                $image->setBlocs(null);
+            $image->removeBloc($this);
         }
         return $this;
     }

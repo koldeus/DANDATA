@@ -1,4 +1,3 @@
-// src/components/inscription/InscriptionForm.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./InscriptionForm.css";
@@ -15,53 +14,138 @@ export default function InscriptionForm({ theme }) {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
+  const passwordRegex =
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-+]).{8,}$/;
+
+  const checkEmailExists = async (candidateEmail) => {
+    try {
+      const url = `http://localhost:8000/api/check-email?email=${encodeURIComponent(
+        candidateEmail
+      )}`;
+      const res = await fetch(url, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+
+      if (res.status === 404) return false;
+
+      if (res.ok) {
+        const data = await res.json().catch(() => ({}));
+
+        if (typeof data.exists === "boolean") return data.exists;
+        if (typeof data.available === "boolean") return !data.available;
+
+        return null;
+      }
+
+      return null;
+    } catch (err) {
+      console.warn("checkEmailExists error:", err);
+      return null;
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setError(null);
 
-    if (!name.trim()) return setError("Veuillez entrer votre nom.");
-    if (!validateEmail(email)) return setError("Veuillez entrer un mail valide.");
-    if (password.length < 8)
-      return setError("Le mot de passe doit contenir au moins 8 caractères.");
-    if (password !== confirm) return setError("Les mots de passe ne correspondent pas");
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
+    const cleanConfirm = confirm.trim();
 
-    // Optional: call API to register the user
+    if (!cleanName) return setError("Veuillez entrer votre nom.");
+    if (!validateEmail(cleanEmail))
+      return setError("Veuillez entrer un mail valide.");
+    if (!passwordRegex.test(cleanPassword))
+      return setError(
+        "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial."
+      );
+    if (cleanPassword !== cleanConfirm)
+      return setError("Les mots de passe ne correspondent pas.");
+
     try {
       setLoading(true);
-      // Replace with your real API endpoint & payload
-      const res = await fetch("http://localhost:8000/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        // Back-end may return validation errors; adjust parsing according to your API
-        const msg = data?.message || "Erreur lors de l'inscription";
-        setError(msg);
+
+      const existsCheck = await checkEmailExists(cleanEmail);
+      if (existsCheck === true) {
+        setError("Cet e-mail est déjà utilisé.");
         setLoading(false);
         return;
       }
-      // On success: maybe redirect to login page
+
+      const payload = {
+        email: cleanEmail,
+        pseudo: cleanName,
+        roles: ["ROLE_SUBSCRIBER"],
+        plainPassword: cleanPassword,
+      };
+
+      const res = await fetch("http://localhost:8000/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/ld+json",
+          Accept: "application/ld+json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.status === 409) {
+        setError("Cet e-mail est déjà utilisé.");
+        setLoading(false);
+        return;
+      }
+
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (err) {
+        /* ignore */
+      }
+
+      if (!res.ok) {
+        console.warn("Register failed:", res.status, data);
+        if (data?.error && typeof data.error === "string") {
+          setError("Impossible de créer le compte. Vérifiez vos informations.");
+        } else {
+          setError("Impossible de créer le compte. Vérifiez vos informations.");
+        }
+        setLoading(false);
+        return;
+      }
+
+      setPassword("");
+      setConfirm("");
+
       setLoading(false);
       navigate("/LogIn?registered=1");
     } catch (err) {
-      console.error(err);
+      console.error("Erreur réseau:", err);
       setError("Erreur réseau. Réessayez plus tard.");
       setLoading(false);
     }
+
+    document.location.href="/LogIn";
+
   };
 
   return (
     <div className={`auth-card ${theme}_subtle-background`}>
       <h2>Créer un compte</h2>
-      <p className={`subbtitle ${theme}_subbtle-texte`}>Inscrivez-vous pour continuer</p>
+      <p className={`subbtitle ${theme}_subbtle-texte`}>
+        Inscrivez-vous pour continuer
+      </p>
 
-      {error && <div className="auth-error">{error}</div>}
+      {error && (
+        <div className="auth-error" role="alert">
+          {error}
+        </div>
+      )}
 
-      <form className="auth-form" onSubmit={handleSubmit}>
+      <form className="auth-form" onSubmit={handleSubmit} noValidate>
         <label className="field">
           <span>Nom</span>
           <input
@@ -71,6 +155,7 @@ export default function InscriptionForm({ theme }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            autoComplete="name"
           />
         </label>
 
@@ -83,10 +168,10 @@ export default function InscriptionForm({ theme }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="email"
           />
         </label>
 
-        {/* Password input with toggle */}
         <label className="field field-password">
           <span>Mot de passe</span>
           <input
@@ -96,29 +181,71 @@ export default function InscriptionForm({ theme }) {
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="Mot de passe (min 8 caractères)"
+            autoComplete="new-password"
           />
           <button
             type="button"
             className="toggle-password-2"
             aria-pressed={showPassword}
-            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            aria-label={
+              showPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
             onClick={() => setShowPassword((s) => !s)}
           >
             {showPassword ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M1 1L23 23" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M17.94 17.94C16.11 18.66 14.07 19 12 19C7 19 2.73 15.89 1 12C1.88 9.96 3.47 8.16 5.4 6.84" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 1L23 23"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M17.94 17.94C16.11 18.66 14.07 19 12 19C7 19 2.73 15.89 1 12C1.88 9.96 3.47 8.16 5.4 6.84"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             )}
           </button>
         </label>
 
-        {/* Confirm password input with toggle */}
         <label className="field field-password">
           <span>Confirmer le mot de passe</span>
           <input
@@ -127,29 +254,76 @@ export default function InscriptionForm({ theme }) {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             required
+            autoComplete="new-password"
           />
           <button
             type="button"
             className="toggle-password-2"
             aria-pressed={showConfirm}
-            aria-label={showConfirm ? "Masquer la confirmation" : "Afficher la confirmation"}
+            aria-label={
+              showConfirm
+                ? "Masquer la confirmation"
+                : "Afficher la confirmation"
+            }
             onClick={() => setShowConfirm((s) => !s)}
           >
             {showConfirm ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M1 1L23 23" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M17.94 17.94C16.11 18.66 14.07 19 12 19C7 19 2.73 15.89 1 12C1.88 9.96 3.47 8.16 5.4 6.84" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 1L23 23"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M17.94 17.94C16.11 18.66 14.07 19 12 19C7 19 2.73 15.89 1 12C1.88 9.96 3.47 8.16 5.4 6.84"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             )}
           </button>
         </label>
 
-        <button className={`btn-primary ${theme}_Border`} type="submit" disabled={loading}>
+        <button
+          className={`btn-primary ${theme}_Border`}
+          type="submit"
+          disabled={loading}
+        >
           {loading ? "Inscription..." : "S'inscrire"}
         </button>
 
