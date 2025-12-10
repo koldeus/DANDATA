@@ -223,19 +223,10 @@ export default function Administration({ theme }) {
       {success && <div className="success-message">{success}</div>}
 
       {/* Onglets */}
-      <div className="tabs-container">
-        <button
-          className={`tab-btn ${activeTab === "utilisateurs" ? "active" : ""} ${
-            theme
-          }_tab-btn`}
-          onClick={() => setActiveTab("utilisateurs")}
-        >
+      <div>
           Utilisateurs ({utilisateurs.length})
-        </button>
-      </div>
+     
 
-
-      {/* ONGLET UTILISATEURS */}
       {activeTab === "utilisateurs" && (
         <div className={`admin-section ${theme}_subbtle-background`}>
           {loadingData ? (
@@ -363,5 +354,7 @@ export default function Administration({ theme }) {
         </div>
       )}
     </div>
+ </div>
   );
 }
+
