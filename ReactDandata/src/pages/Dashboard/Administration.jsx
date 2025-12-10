@@ -6,7 +6,7 @@ import "./Administration.css";
 
 export default function Administration({ theme }) {
   const { user, loading } = useUser();
-  const [activeTab, setActiveTab] = useState("articles");
+  const [activeTab, setActiveTab] = useState("utilisateurs");
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [error, setError] = useState("");
@@ -46,6 +46,11 @@ export default function Administration({ theme }) {
     }
   };
 
+  useEffect(() => {
+    if (activeTab === "utilisateurs") {
+      fetchUtilisateurs();
+    }
+  }, [activeTab]);
   const handleEditUser = (u) => {
     setEditingUser(u);
     setUserFormData({
