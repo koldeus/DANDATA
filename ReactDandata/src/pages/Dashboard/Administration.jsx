@@ -7,18 +7,11 @@ import "./Administration.css";
 export default function Administration({ theme }) {
   const { user, loading } = useUser();
   const [activeTab, setActiveTab] = useState("articles");
-  const [articles, setArticles] = useState([]);
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [editingArticle, setEditingArticle] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
-  const [articleFormData, setArticleFormData] = useState({
-    titre: "",
-    slug: "",
-    resume: "",
-  });
   const [userFormData, setUserFormData] = useState({
     email: "",
     pseudo: "",
@@ -30,27 +23,6 @@ export default function Administration({ theme }) {
     return <Navigate to="/" />;
   }
 
-  const fetchArticles = async () => {
-    setLoadingData(true);
-    setError("");
-    try {
-      const token = localStorage.getItem("jwt");
-      const res = await fetch("http://localhost:8000/api/articles", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setArticles(data["hydra:member"] || []);
-      }
-    } catch (err) {
-      setError("Erreur lors du chargement des articles");
-      console.error(err);
-    } finally {
-      setLoadingData(false);
-    }
-  };
 
   const fetchUtilisateurs = async () => {
     setLoadingData(true);
@@ -73,105 +45,6 @@ export default function Administration({ theme }) {
       setLoadingData(false);
     }
   };
-
-  useEffect(() => {
-    if (activeTab === "articles") {
-      fetchArticles();
-    } else {
-      fetchUtilisateurs();
-    }
-  }, [activeTab]);
-
-
-  const handleEditArticle = (article) => {
-    setEditingArticle(article);
-    setArticleFormData({
-      titre: article.titre || "",
-      slug: article.slug || "",
-      resume: article.resume || "",
-    });
-    setError("");
-    setSuccess("");
-  };
-
-  const handleCancelEditArticle = () => {
-    setEditingArticle(null);
-    setArticleFormData({ titre: "", slug: "", resume: "" });
-  };
-
-  const handleArticleChange = (e) => {
-    const { name, value } = e.target;
-    setArticleFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSaveArticle = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    try {
-      const token = localStorage.getItem("jwt");
-      const res = await fetch(
-        `http://localhost:8000/api/articles/${editingArticle.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/merge-patch+json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(articleFormData),
-        }
-      );
-
-      if (res.ok) {
-        setSuccess("Article modifié avec succès");
-        setEditingArticle(null);
-        fetchArticles();
-      } else {
-        const data = await res.json();
-        setError(data.message || "Erreur lors de la modification");
-      }
-    } catch (err) {
-      setError("Erreur réseau");
-      console.error(err);
-    }
-  };
-
-  const handleDeleteArticle = async (articleId) => {
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet article ?")) {
-      return;
-    }
-
-    setError("");
-    setSuccess("");
-
-    try {
-      const token = localStorage.getItem("jwt");
-      const res = await fetch(
-        `http://localhost:8000/api/articles/${articleId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (res.ok) {
-        setSuccess("Article supprimé avec succès");
-        fetchArticles();
-      } else {
-        setError("Erreur lors de la suppression");
-      }
-    } catch (err) {
-      setError("Erreur réseau");
-      console.error(err);
-    }
-  };
-
 
   const handleEditUser = (u) => {
     setEditingUser(u);
@@ -342,7 +215,7 @@ export default function Administration({ theme }) {
       <div className="admin-header">
         <h1>Administration</h1>
         <p className={`${theme}_subbtle-texte`}>
-          Gérez les articles et les utilisateurs de la plateforme
+          Gérez les utilisateurs de la plateforme
         </p>
       </div>
 
@@ -351,14 +224,6 @@ export default function Administration({ theme }) {
 
       {/* Onglets */}
       <div className="tabs-container">
-        <button
-          className={`tab-btn ${activeTab === "articles" ? "active" : ""} ${
-            theme
-          }_tab-btn`}
-          onClick={() => setActiveTab("articles")}
-        >
-          Articles ({articles.length})
-        </button>
         <button
           className={`tab-btn ${activeTab === "utilisateurs" ? "active" : ""} ${
             theme
@@ -369,110 +234,6 @@ export default function Administration({ theme }) {
         </button>
       </div>
 
-      {/* ONGLET ARTICLES */}
-      {activeTab === "articles" && (
-        <div className={`admin-section ${theme}_subbtle-background`}>
-          {loadingData ? (
-            <SousChargement />
-          ) : articles.length === 0 ? (
-            <p className={`${theme}_subbtle-texte`}>Aucun article trouvé</p>
-          ) : (
-            <div className="articles-list">
-              {articles.map((article) => (
-                <div
-                  key={article.id}
-                  className={`article-item ${theme}_subbtle-texte`}
-                >
-                  {editingArticle?.id === article.id ? (
-                    <form onSubmit={handleSaveArticle} className="edit-form">
-                      <div className="form-group">
-                        <label>Titre:</label>
-                        <input
-                          type="text"
-                          name="titre"
-                          value={articleFormData.titre}
-                          onChange={handleArticleChange}
-                          className={`form-input ${theme}_subbtle-background`}
-                          required
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>Slug:</label>
-                        <input
-                          type="text"
-                          name="slug"
-                          value={articleFormData.slug}
-                          onChange={handleArticleChange}
-                          className={`form-input ${theme}_input-background`}
-                          required
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>Résumé:</label>
-                        <textarea
-                          name="resume"
-                          value={articleFormData.resume}
-                          onChange={handleArticleChange}
-                          className={`form-input ${theme}_input-background`}
-                          rows="3"
-                        />
-                      </div>
-
-                      <div className="form-actions">
-                        <button
-                          type="submit"
-                          className="btn-primary"
-                        >
-                          Enregistrer
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-secondary"
-                          onClick={handleCancelEditArticle}
-                        >
-                          Annuler
-                        </button>
-                      </div>
-                    </form>
-                  ) : (
-                    <>
-                      <div className="article-info">
-                        <h3>{article.titre}</h3>
-                        <p className={`${theme}_subbtle-texte`}>
-                          Slug: <code>{article.slug}</code>
-                        </p>
-                        <p className={`${theme}_subbtle-texte`}>
-                          Auteur: <strong>{article.auteur?.pseudo}</strong>
-                        </p>
-                        {article.resume && (
-                          <p className="article-resume">{article.resume}</p>
-                        )}
-                      </div>
-
-                      <div className="article-actions">
-                        <button
-                          className="btn-primary"
-                          onClick={() => handleEditArticle(article)}
-                        >
-                          Modifier
-                        </button>
-                        <button
-                          className="btn-danger"
-                          onClick={() => handleDeleteArticle(article.id)}
-                        >
-                          Supprimer
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
 
       {/* ONGLET UTILISATEURS */}
       {activeTab === "utilisateurs" && (
