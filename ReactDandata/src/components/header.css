@@ -45,14 +45,12 @@ header h2 span {
   color: #7577bd;
 }
 
-/* Navbar : en mobile on masque la desktop */
 .navbar {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   width: 50%;
 }
-
 
 
 .navbar a {

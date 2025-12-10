@@ -1,6 +1,6 @@
 .sidebar {
   width: 350px;
-  height: 100vh;
+  height: auto;
   padding: 40px 32px;
   box-sizing: border-box;
   border-radius: 0% 25px 0% 0%;
@@ -196,17 +196,22 @@
   color: #fce9ed;
 }
 
-@media (min-width: 901px) {
+@media (min-width: 1024px) {
   .bottom-tab-bar {
     display: none;
   }
 }
 
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .sidebar {
     display: none;
   }
+  .main-content {
+  flex: 1;
+  padding: 10px;
+  box-sizing: border-box;
+}
   .articles-grid {
     grid-template-columns: repeat(1, 1fr);
   }

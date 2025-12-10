@@ -10,7 +10,7 @@ import Log_SignIn from "./pages/Log_SignIn";
 import DashboardLayout from "./pages/Dashboard";
 
 // ---- Sous-pages Dashboard ----
-import ArticlesPage from "./pages/Dashboard/ArticlesPage"
+import ArticlesPage from "./pages/Dashboard/ArticlesPage";
 import UserPage from "./pages/Dashboard/UserPage";
 import ProfilePage from "./pages/Dashboard/ProfilePage";
 import FichierData from "./pages/Dashboard/FichierData";
@@ -21,7 +21,6 @@ import "./App.css";
 import "./pages/theme.css";
 
 function App() {
-
   window.addEventListener("beforeunload", () => {
     if (!localStorage.getItem("remember")) {
       localStorage.removeItem("jwt");
@@ -53,16 +52,13 @@ function App() {
     <div className={`body ${themeSlug}_body`}>
       {loading && <PageLoader onComplete={() => setLoading(false)} />}
 
-      <Header />
+      <Header theme={themeSlug} />
 
       <Routes>
-
-        {/* pages normales */}
         <Route path="/" element={<Accueil theme={themeSlug} />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/*" element={<Log_SignIn theme={themeSlug} />} />
 
-        {/* ------------ DASHBOARD PARENT (layout permanent) ------------ */}
         <Route
           path="/dashboard"
           element={<DashboardLayout theme={themeSlug} />}
@@ -78,7 +74,6 @@ function App() {
           <Route path="users" element={<UserPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
-
       </Routes>
 
       <Footer />

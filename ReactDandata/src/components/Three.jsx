@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { OutlineEffect } from "three/addons/effects/OutlineEffect.js";
+import { OutlineEffect } from "three/examples/jsm/effects/OutlineEffect.js";
+
 
 export default function ThreeCanvas() {
   const mountRef = useRef(null);

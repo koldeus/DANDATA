@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Post;
 use App\Repository\MetadonneesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -57,8 +58,8 @@ class Metadonnees
     #[Groups(['meta:read', 'article:blocs', 'bloc:read', 'article:read'])]
     private ?string $fileName = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null; 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {

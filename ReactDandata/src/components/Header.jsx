@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./header.css";
+import "../Pages/theme.css";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
   Drawer,
@@ -12,15 +13,21 @@ import { Link } from "react-router-dom";
 import { Boutton } from "./compte/Boutton";
 import { Navbar } from "./compte/navbar";
 
-export function Header() {
+export function Header({ theme }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const lightBackground = {
+    'DarkTheme': "#360815",
+    'NightTheme': "#15203c",
+    'LightTheme': "#191a34",
+  };
 
   const toggleDrawer = (open) => () => setDrawerOpen(open);
 
   return (
     <header className="header">
       <div className="logo">
-        <img src="public/images/logo.png" alt="Logo Dandata" />
+        <img src="/images/logo.png" alt="Logo Dandata" />
         <h2>
           Dan<span>Data</span>
         </h2>
@@ -36,7 +43,7 @@ export function Header() {
         <Boutton />
       </div>
 
-      {/* Menu burger mobile/tablette */}
+      {/* Menu burger mobile */}
       <div className="navbar-mobile">
         <IconButton
           edge="start"
@@ -44,7 +51,7 @@ export function Header() {
           aria-label="menu"
           onClick={toggleDrawer(true)}
         >
-          <MenuIcon sx={{ color: "#ffffffff" }} />
+          <MenuIcon sx={{ color: "#fff" }} />
         </IconButton>
 
         <Drawer
@@ -53,19 +60,15 @@ export function Header() {
           onClose={toggleDrawer(false)}
           PaperProps={{
             sx: {
-              backgroundColor: "#23050E",
+              backgroundColor: lightBackground[theme],
               color: "#fff",
               width: 250,
             },
           }}
         >
-          <List>
-            <ListItemButton
-              component={Link}
-              to="/"
-              onClick={toggleDrawer(false)}
-            >
-              <ListItemText primary="Accueil" sx={{ color: "#fff" }} />
+          <List sx={{ margin: "12px 10px" }}>
+            <ListItemButton component={Link} to="/" onClick={toggleDrawer(false)}>
+              <ListItemText primary="Accueil" sx={{ color: "#fff", marginTop: "10px" }} />
             </ListItemButton>
 
             <ListItemButton

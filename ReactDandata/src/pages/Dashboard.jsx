@@ -47,7 +47,7 @@ export default function DashboardLayout({ theme }) {
       case "users":
         return <UsersPage />;
       case "FichierData":
-        return <FichierDataPage />;
+        return <FichierDataPage theme={theme}/>;
       case "Administration":
         return <AdministrationPage />;
       case "Theme":

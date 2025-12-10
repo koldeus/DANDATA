@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SousChargement from '../SousChargement/SousChargement';
 import './ImageUpload.css';
 
 export default function ImageUpload({ onImageUploaded, maxFiles = 1 }) {
@@ -162,6 +163,7 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1 }) {
 
   return (
     <div className="image-upload-container">
+      {uploading && <SousChargement />}
       <h3>Ajouter des images</h3>
       {error && <div className="error-message">{error}</div>}
 
