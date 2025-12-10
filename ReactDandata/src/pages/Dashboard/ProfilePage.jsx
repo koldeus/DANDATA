@@ -9,7 +9,7 @@ export default function ProfilePage({ theme }) {
   const [formData, setFormData] = useState({
     email: "",
     pseudo: "",
-    currentPassword: "", // 🔥 AJOUT
+    currentPassword: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -20,7 +20,7 @@ export default function ProfilePage({ theme }) {
       setFormData({
         email: user.email || "",
         pseudo: user.pseudo || "",
-        currentPassword: "", // 🔥 réinitialisé
+        currentPassword: "",
       });
     }
   }, [user]);
@@ -80,7 +80,6 @@ export default function ProfilePage({ theme }) {
         return;
       }
 
-      // 🔥🔥 RECONNEXION AUTOMATIQUE POUR GARDER LA SESSION
       const loginRes = await fetch("http://localhost:8000/api/login_check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
