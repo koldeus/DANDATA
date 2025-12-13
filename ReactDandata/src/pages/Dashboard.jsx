@@ -26,8 +26,7 @@ export default function DashboardLayout({ theme }) {
           setActiveTab={setActiveTab}
           activeTab={activeTab}
         />
-        <main className="main-content">
-        </main>
+        <main className="main-content"></main>
         <BottomTabBar
           user={user}
           theme={theme}
@@ -41,15 +40,15 @@ export default function DashboardLayout({ theme }) {
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <ProfilePage theme={theme}/>;
+        return <ProfilePage theme={theme} />;
       case "articles":
         return <ArticlesPage />;
       case "users":
         return <UsersPage />;
       case "FichierData":
-        return <FichierDataPage theme={theme}/>;
+        return <FichierDataPage theme={theme} />;
       case "Administration":
-        return <AdministrationPage />;
+        return <AdministrationPage theme={theme} />;
       case "Theme":
         return <ThemePage />;
       default:

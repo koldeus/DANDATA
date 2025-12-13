@@ -1,9 +1,10 @@
 import './Footer.css';
 
 export function Footer() {
+  const annee = new Date().getFullYear();
   return (
     <footer className="footer">
-      <p>&copy; 2024 DanData. Tous droits réservés.</p>
+      <p>&copy; {annee} DanData. Tous droits réservés.</p>
     </footer>
   );
 }

@@ -63,7 +63,6 @@ export default function Administration({ theme }) {
     fetchUtilisateurs();
   }, [activeTab]);
 
-  // --- Handlers ---
   const handleEditUser = (u) => {
     setEditingUser(u);
     setUserFormData({
@@ -120,7 +119,6 @@ export default function Administration({ theme }) {
       if (res.ok) {
         setSuccess("Utilisateur modifié avec succès");
         setEditingUser(null);
-        // Re-fetch users
         const data = await res.json();
         setUtilisateurs((prev) =>
           prev.map((u) => (u.id === editingUser.id ? data : u))
@@ -128,47 +126,6 @@ export default function Administration({ theme }) {
       } else {
         const data = await res.json();
         setError(data.message || "Erreur lors de la modification");
-      }
-    } catch (err) {
-      setError("Erreur réseau");
-      console.error(err);
-    }
-  };
-
-  const handleBanUser = async (userId) => {
-    if (
-      !window.confirm(
-        "Êtes-vous sûr de vouloir bannir cet utilisateur ? Il ne pourra plus se connecter."
-      )
-    )
-      return;
-
-    setError("");
-    setSuccess("");
-
-    try {
-      const token = localStorage.getItem("jwt");
-      const userToBan = utilisateurs.find((u) => u.id === userId);
-      const newRoles = userToBan.roles.filter((r) => r !== "ROLE_VISITOR");
-
-      const res = await fetch(`http://localhost:8000/api/users/${userId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/merge-patch+json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ roles: newRoles }),
-      });
-
-      if (res.ok) {
-        setSuccess("Utilisateur banni avec succès");
-        setUtilisateurs((prev) =>
-          prev.map((u) =>
-            u.id === userId ? { ...u, roles: newRoles } : u
-          )
-        );
-      } else {
-        setError("Erreur lors du bannissement");
       }
     } catch (err) {
       setError("Erreur réseau");
@@ -213,12 +170,11 @@ export default function Administration({ theme }) {
     }
   };
 
-  // --- Rendu conditionnel ---
   if (loading) return <SousChargement />;
   if (!user || !user.roles.includes("ROLE_ADMIN")) return <Navigate to="/" />;
 
   return (
-    <div className={`administration ${theme}_subbtle-background`}>
+    <div className={`administration ${theme}_Border ${theme}_light-background`}>
       <div className="admin-header">
         <h1>Administration</h1>
         <p className={`${theme}_subbtle-texte`}>
@@ -246,7 +202,7 @@ export default function Administration({ theme }) {
                 }`}
               >
                 {editingUser?.id === u.id ? (
-                  <form onSubmit={handleSaveUser} className="edit-form">
+                  <form onSubmit={handleSaveUser} className= {`edit-form ${theme}_subbtle-background`}>
                     <div className="form-group">
                       <label>Email:</label>
                       <input
@@ -288,11 +244,11 @@ export default function Administration({ theme }) {
                     </div>
 
                     <div className="form-actions">
-                      <button type="submit" className="btn-primary">
+                      <button type="submit" className={`btn-primary ${theme}_subbtle-background`}>
                         Enregistrer
                       </button>
                       <button
-                        type="button"
+                        type={`btn-secondary ${theme}_subbtle-background`}
                         className="btn-secondary"
                         onClick={handleCancelEditUser}
                       >
@@ -331,13 +287,7 @@ export default function Administration({ theme }) {
                             Modifier
                           </button>
                           <button
-                            className="btn-warning"
-                            onClick={() => handleBanUser(u.id)}
-                          >
-                            Bannir
-                          </button>
-                          <button
-                            className="btn-danger"
+                            className="btn-supp"
                             onClick={() => handleDeleteUser(u.id)}
                           >
                             Supprimer

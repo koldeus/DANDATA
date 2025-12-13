@@ -163,7 +163,7 @@ export default function AuthForm({ theme }) {
 
         <div className={`signup ${theme}_subbtle-texte`}>
           Pas encore de compte ?{" "}
-          <a href="#" className={`${theme}_link`}>
+          <a href="/SignIn" className={`${theme}_link`}>
             Créer un compte
           </a>
         </div>
