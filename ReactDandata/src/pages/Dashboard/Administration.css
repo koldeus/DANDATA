@@ -78,7 +78,6 @@
 
 .badge-current {
   display: inline-block;
-  border: 2px solid #fce9ed;
   color: inherit;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
@@ -100,7 +99,6 @@
 
 .role-badge {
   display: inline-block;
-  border: #fce9ed 2px solid;
   padding: 0.3rem 0.75rem;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -178,11 +176,10 @@
   justify-content: flex-end;
 }
 
-.btn-primary,
-.btn-secondary
+.btn-primaire-user,
+.btn-secondaire-user
 {
   padding: 0.75rem 1.5rem;
-  border: none;
   border-radius: 100px;
   margin-top: 25px;
   font-weight: 600;
@@ -191,11 +188,11 @@
   font-size: 0.85rem;
 }
 
-.btn-primary:hover {
+.btn-primaire-user:hover {
   transform: translateY(-1px);
 }
 
-.btn-primary:disabled {
+.btn-primaire-user:disabled {
   cursor: not-allowed;
   transform: none;
 }
@@ -204,19 +201,19 @@
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 100px;
-  margin-top:10px;
+  margin-top:25px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   background-color: #dc3545;
   border: 2px solid #dc3545;
   color: #fff;
 }
 
 .btn-supp:hover {
-  transform: translateY(-1px);
   background-color: transparent;
+  color: #dc3545;
 }
 
 .btn-supp:disabled {
@@ -225,20 +222,7 @@
 }
 
 
-.btn-secondary {
-  background-color: currentColor;
-  color: inherit;
-}
-
-.btn-secondary:hover {
-  opacity: 0.3;
-}
-
-
-
-
-
-.btn-primary,
+.btn-primaire-user,
 .btn-danger {
   min-width: 120px;
 }
@@ -269,8 +253,8 @@
     flex-wrap: wrap;
   }
 
-  .btn-primary,
-  .btn-secondary,
+  .btn-primaire-user,
+  .btn-secondaire-user,
   .btn-danger,
   .btn-warning {
     flex: 1;
@@ -289,8 +273,8 @@
     flex-direction: column;
   }
 
-  .form-actions .btn-primary,
-  .form-actions .btn-secondary {
+  .form-actions .btn-primaire-user,
+  .form-actions .btn-secondaire-user {
     width: 100%;
   }
 }

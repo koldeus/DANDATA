@@ -133,7 +133,7 @@ export default function InscriptionForm({ theme }) {
   };
 
   return (
-    <div className={`auth-card ${theme}_subtle-background`}>
+    <div className={`auth-card ${theme}_subbtle-background`}>
       <h2>Créer un compte</h2>
       <p className={`subbtitle ${theme}_subbtle-texte`}>
         Inscrivez-vous pour continuer
@@ -320,7 +320,7 @@ export default function InscriptionForm({ theme }) {
         </label>
 
         <button
-          className={`btn-primary ${theme}_Border`}
+          className={`btn-primaire-co ${theme}_Light-Btn-inverse`}
           type="submit"
           disabled={loading}
         >
@@ -332,10 +332,10 @@ export default function InscriptionForm({ theme }) {
         </div>
 
         <div className="social">
-          <button className={`btn-outline ${theme}_Border`} type="button">
+          <button className={`btn-outline ${theme}_Light-Btn`} type="button">
             Continuer avec GitHub
           </button>
-          <button className={`btn-outline ${theme}_Border`} type="button">
+          <button className={`btn-outline ${theme}_Light-Btn`} type="button">
             Continuer avec Google
           </button>
         </div>

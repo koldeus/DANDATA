@@ -11,11 +11,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\ExpressionLanguage\Expression;
 
 class MetadonneesUploadController extends AbstractController
 {
     #[Route('/api/metadonnees', name: 'metadonnees_upload', methods: ['POST'])]
-
+    #[IsGranted(
+        new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_DATA_PROVIDER")'),
+        message: 'Vous n\'avez pas les droits pour uploader des métadonnées'
+    )]
     public function upload(Request $request, EntityManagerInterface $em): JsonResponse
     {
         try {
@@ -99,11 +103,11 @@ class MetadonneesUploadController extends AbstractController
             foreach ($variablesArray as $varData) {
                 $variable = new Variable();
                 $variable->setNom($varData['name'] ?? 'Variable');
-                
+
                 // Convertir le type string en boolean (false = categorical, true = numeric)
                 $isNumeric = ($varData['type'] ?? 'categorical') === 'numeric';
                 $variable->setNumString($isNumeric);
-                
+
                 $variable->setColor($varData['color'] ?? '#000000');
                 $variable->setMeta($metadonnees);
 

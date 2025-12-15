@@ -1,4 +1,3 @@
-
 import React from "react";
 import Plasma from "../Plasma";
 import "./InscriptionRight.css";
@@ -9,6 +8,7 @@ export default function AuthRight({ theme }) {
     DarkTheme: "#AD1B3B",
     LightTheme: "#363ab8",
     NightTheme: "#7577bd ",
+    CreamTheme: "#ecd5a3 ",
   };
   return (
     <div className="inscription-left-wrapper">
@@ -25,4 +25,3 @@ export default function AuthRight({ theme }) {
     </div>
   );
 }
-

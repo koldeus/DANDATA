@@ -104,7 +104,6 @@
   min-width: 260px;
   min-height: 96px;
   border-radius: 10px;
-  border: 1px solid var(--glass);
   display: flex;
   align-items: center;
 }
@@ -120,12 +119,10 @@
 }
 
 .card-title {
-  color: #fff;
   font-weight: 700;
   font-size: 1rem;
 }
 .card-desc {
-  color: var(--muted);
   font-size: 0.85rem;
 }
 

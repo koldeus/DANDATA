@@ -1,0 +1,138 @@
+/* ===== GLOBAL ===== */
+
+.titreTheme {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.sousTitreTheme {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ===== BLOCS ===== */
+
+.choixTheme {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid;
+  margin-top: 8px;
+}
+
+/* ===== FORM ===== */
+  .selectTheme,
+  .buttonSaveTheme {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+
+
+/* ===== TABLE ===== */
+
+.tableTheme {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.tabTheme {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.rowTheme {
+  text-align: left;
+}
+
+.optionTexte {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  padding: 10px;
+}
+
+.rowTheme {
+  padding: 12px;
+}
+
+.trTheme {
+  border-bottom: 1px solid;
+}
+
+.optionTheme {
+  text-transform: capitalize;
+}
+
+
+.selectThemeSite,
+.selectThemeArticle {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.selectThemeSite:disabled,
+.selectThemeArticle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.selectThemeSite:focus,
+.selectThemeArticle:focus {
+  box-shadow: 0 0 0 2px rgba(100, 150, 255, 0.3);
+}
+
+.optionTheme {
+  font-size: 14px;
+}
+
+/* ===== ERREUR ===== */
+
+.error {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+/* ===== TEXTE SECONDARY ===== */
+.buttonSaveTheme {
+  font-size: 0.85rem;
+}
+.buttonSaveTheme:disabled {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 720px) {
+  .tableauTheme {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .trTheme {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid;
+  }
+
+  .rowTheme {
+    padding: 4px 0;
+  }
+
+  .selectTheme,
+  .buttonSaveTheme {
+    width: 100%;
+  }
+}

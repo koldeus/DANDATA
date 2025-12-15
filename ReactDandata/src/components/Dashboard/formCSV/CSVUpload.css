@@ -124,7 +124,6 @@
 .variable-name {
   flex: 1;
   padding: 6px 10px;
-  border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 13px;
   font-weight: 600;
@@ -354,7 +353,6 @@ table tbody tr:hover {
   min-height: 96px;
   border-radius: 10px;
   padding: 16px;
-  border: 1px solid var(--glass);
   display: flex;
   gap: 12px;
   align-items: center;
@@ -371,7 +369,6 @@ table tbody tr:hover {
 }
 
 .card-title {
-  color: #fff;
   font-weight: 700;
   font-size: 16px;
 }

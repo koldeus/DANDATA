@@ -367,13 +367,6 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
           Glissez-déposez votre fichier CSV ou sélectionnez-le depuis votre
           ordinateur
         </p>
-        <label htmlFor="name-csv">Nom du fichier</label>
-        <input
-          className={`file-name-input ${theme}_subbtle-background ${theme}_Border`}
-          type="text"
-          id="name-csv"
-          placeholder="Nom du fichier CSV"
-        />
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -428,7 +421,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
                     onChange={(e) =>
                       updateVariable(variable.id, { name: e.target.value })
                     }
-                    className={`variable-name ${theme}_subbtle-background`}
+                    className={`variable-name ${theme}_subbtle-background ${theme}_Border`}
                     placeholder="Nom de la variable"
                   />
                 </div>
@@ -440,7 +433,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
                     onChange={(e) =>
                       updateVariable(variable.id, { type: e.target.value })
                     }
-                    className={`${theme}_subbtle-background`}
+                    className={`${theme}_light-background`}
                   >
                     <option value="numeric">Numérique</option>
                     <option value="categorical">Catégorique</option>

@@ -137,17 +137,17 @@ export default function ProfilePage({ theme }) {
         >
           <div className="info-item">
             <label>Email:</label>
-            <p>{user.email}</p>
+            <p className={`${theme}_subbtle-texte`}>{user.email}</p>
           </div>
           <div className="info-item">
             <label>Nom d'utilisateur:</label>
-            <p>{user.pseudo}</p>
+            <p className={`${theme}_subbtle-texte`}>{user.pseudo}</p>
           </div>
           <div className="profile-actions">
-            <button className="btn-primary" onClick={() => setIsEditing(true)}>
+            <button className={`btn-primaire ${theme}_Light-Btn`} onClick={() => setIsEditing(true)}>
               Modifier
             </button>
-            <button className="btn-secondary" onClick={logout}>
+            <button className={`btn-secondaire ${theme}_Light-Btn-inverse`} onClick={logout}>
               Déconnexion
             </button>
           </div>

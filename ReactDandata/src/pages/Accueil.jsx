@@ -9,6 +9,7 @@ export function Accueil({ theme }) {
     DarkTheme: "#AD1B3B",
     LightTheme: "#4146df",
     NightTheme: "#7577bd",
+    CreamTheme: "#ecd5a3",
   };
   return (
     <div className="accueil">
@@ -52,7 +53,7 @@ export function Accueil({ theme }) {
           className={`BoiteDeTexte ${theme}_subbtle-background ${theme}_Border`}
         >
           <h2>XXX Utilisateurs nous font confiances</h2>
-          <p>
+          <p className={`${theme}_subbtle-texte`}>
             Aujourd’hui plus de XXX utilisateurs ont lancés leur site web en
             faisant confiance à notre CMS.
           </p>

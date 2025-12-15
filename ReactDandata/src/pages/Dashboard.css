@@ -16,7 +16,6 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  color: #fce9ed;
 }
 
 .nav-list li {
@@ -27,7 +26,6 @@
 }
 .nav-list li a {
   text-decoration: none;
-  color: #fce9ed;
 }
 
 .nav-list li {
@@ -48,7 +46,6 @@
   display: flex;
   min-height: 100vh;
   margin-top: 100px;
-  color: #fce9ed;
 }
 
 .dashboard-container {
@@ -170,7 +167,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: rgba(252, 233, 237, 0.6);
   cursor: pointer;
   transition: color 0.3s, transform 0.2s;
 }
@@ -185,7 +181,7 @@
 }
 
 .tab-item.active {
-  color: #fce9ed;
+  color: #bd1f4194;
   border: #fce9ed 1px solid;
   border-radius: 5px;
   padding: 4px 8px;

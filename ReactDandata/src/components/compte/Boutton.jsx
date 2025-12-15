@@ -1,7 +1,7 @@
 import "../header.css";
 import { Link } from "react-router-dom";
 
-export function Boutton() {
+export function Boutton({theme}) {
   const localtoken = localStorage.getItem("jwt");
   const sessiontoken = localStorage.getItem("jwt");
 
@@ -9,10 +9,10 @@ export function Boutton() {
     return (
       <div>
         <Link to="/LogIn">
-          <button className="btn-connect">Connexion</button>
+          <button className={`btn-connect ${theme}_Light-Btn`}>Connexion</button>
         </Link>
         <Link to="/SignIn">
-          <button className="btn-connect">Inscription</button>
+          <button className={`btn-connect ${theme}_Light-Btn`}>Inscription</button>
         </Link>
       </div>
     );
@@ -20,7 +20,7 @@ export function Boutton() {
     return (
       <div>
         <Link to="/Dashboard">
-          <button className="btn-connect">Mon Compte</button>
+          <button className={`btn-connect ${theme}_Light-Btn`}>Mon Compte</button>
         </Link>
       </div>
     );

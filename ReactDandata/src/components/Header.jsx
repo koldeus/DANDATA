@@ -17,15 +17,16 @@ export function Header({ theme }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const lightBackground = {
-    'DarkTheme': "#360815",
-    'NightTheme': "#15203c",
-    'LightTheme': "#191a34",
+    DarkTheme: "#360815",
+    NightTheme: "#15203c",
+    LightTheme: "#191a34",
+    CreamTheme: "#fffaf2",
   };
 
   const toggleDrawer = (open) => () => setDrawerOpen(open);
 
   return (
-    <header className="header">
+    <header className={`${theme}_header header`}>
       <div className="logo">
         <img src="/images/logo.png" alt="Logo Dandata" />
         <h2>
@@ -35,12 +36,12 @@ export function Header({ theme }) {
 
       {/* Navbar desktop */}
       <div className="navbar-desktop">
-        <Navbar />
+        <Navbar theme={theme} />
       </div>
 
       {/* Bouton desktop */}
       <div className="btn-connect-desktop">
-        <Boutton />
+        <Boutton theme={theme} />
       </div>
 
       {/* Menu burger mobile */}
@@ -51,7 +52,7 @@ export function Header({ theme }) {
           aria-label="menu"
           onClick={toggleDrawer(true)}
         >
-          <MenuIcon sx={{ color: "#fff" }} />
+          <MenuIcon sx={{ color: theme === "CreamTheme" ? "#0d0205" : "#fff", }} />
         </IconButton>
 
         <Drawer
@@ -61,14 +62,24 @@ export function Header({ theme }) {
           PaperProps={{
             sx: {
               backgroundColor: lightBackground[theme],
-              color: "#fff",
+              color: theme === "CreamTheme" ? "#0d0205" : "#fff",
               width: 250,
             },
           }}
         >
           <List sx={{ margin: "12px 10px" }}>
-            <ListItemButton component={Link} to="/" onClick={toggleDrawer(false)}>
-              <ListItemText primary="Accueil" sx={{ color: "#fff", marginTop: "10px" }} />
+            <ListItemButton
+              component={Link}
+              to="/"
+              onClick={toggleDrawer(false)}
+            >
+              <ListItemText
+                primary="Accueil"
+                sx={{
+                  color: theme === "CreamTheme" ? "#0d0205" : "#fff",
+                  marginTop: "10px",
+                }}
+              />
             </ListItemButton>
 
             <ListItemButton
@@ -76,11 +87,14 @@ export function Header({ theme }) {
               to="/categories"
               onClick={toggleDrawer(false)}
             >
-              <ListItemText primary="Catégories" sx={{ color: "#fff" }} />
+              <ListItemText
+                primary="Catégories"
+                sx={{ color: theme === "CreamTheme" ? "#0d0205" : "#fff" }}
+              />
             </ListItemButton>
 
             <ListItemButton onClick={toggleDrawer(false)}>
-              <Boutton />
+              <Boutton theme={theme} />
             </ListItemButton>
           </List>
         </Drawer>

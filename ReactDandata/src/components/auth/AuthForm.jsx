@@ -64,7 +64,7 @@ export default function AuthForm({ theme }) {
           <span>Mot de passe</span>
           <input
             className={`${theme}_light-background`}
-            type={showPassword ? "text" : "password"} // <-- use toggle state
+            type={showPassword ? "text" : "password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -132,10 +132,10 @@ export default function AuthForm({ theme }) {
             )}
           </button>
 
-          <div className="forgot">Mot de passe oublié ?</div>
+          <div className={`forgot ${theme}_subbtle-texte`}>Mot de passe oublié ?</div>
         </label>
 
-        <label className="remember">
+        <label className={`remember ${theme}_subbtle-texte`}>
           <input
             type="checkbox"
             checked={remember}
@@ -144,7 +144,7 @@ export default function AuthForm({ theme }) {
           Se souvenir de moi
         </label>
 
-        <button className={`btn-primary ${theme}_Border`} type="submit">
+        <button className={`btn-primaraire-co ${theme}_Light-Btn-inverse`} type="submit">
           Se connecter
         </button>
 
@@ -153,10 +153,10 @@ export default function AuthForm({ theme }) {
         </div>
 
         <div className="social">
-          <button className={`btn-outline ${theme}_Border`}>
+          <button className={`btn-outline ${theme}_Light-Btn`}>
             Continuer avec GitHub
           </button>
-          <button className={`btn-outline ${theme}_Border`}>
+          <button className={`btn-outline ${theme}_Light-Btn`}>
             Continuer avec Google
           </button>
         </div>

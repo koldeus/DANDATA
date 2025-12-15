@@ -14,16 +14,54 @@
 }
 .DarkTheme_subbtle-background {
   background-color: #23050e;
+  color: #fce9ed;
 }
 .DarkTheme_light-background {
   background-color: #360815;
   color: #fce9ed;
-
 }
 .DarkTheme_link {
   color: #7577bd;
 }
 
+.DarkTheme_Light-Btn {
+  border: #fce9ed 2px solid;
+  background-color: transparent;
+  color: #fce9ed;
+}
+
+.DarkTheme_Light-Btn:hover {
+  background-color: white;
+  color: #0d0205;
+}
+
+.DarkTheme_Light-Btn-inverse {
+  border: white 2px solid;
+  color: #0d0205;
+  background-color: white;
+}
+
+.DarkTheme_Light-Btn-inverse:hover {
+  background-color: transparent;
+  color: white;
+}
+
+.DarkTheme_header {
+  background: #ffffff0e;
+}
+
+.DarkTheme_link-header {
+  color: #fce9ed;
+}
+
+.DarkTheme_link {
+  color: #ad1b3b;
+  text-decoration: none;
+}
+.DarkTheme_link:hover,
+.DarkTheme_link:focus {
+  text-decoration: underline;
+}
 /* Night theme */
 .NightTheme_Border {
   border: 1px solid #fce9ed;
@@ -39,14 +77,41 @@
 }
 .NightTheme_subbtle-background {
   background-color: #121c35;
+  color: #fce9ed;
+
 }
 
 .NightTheme_light-background {
   background-color: #15203c;
 }
 
+.NightTheme_Light-Btn {
+  border: #fce9ed 2px solid;
+
+  color: #fce9ed;
+}
+
+.NightTheme_link-header {
+  color: #fce9ed;
+}
+
+.NightTheme_Light-Btn {
+  background-color: white;
+  color: #0d0205;
+}
+.NightTheme_header {
+  background: #ffffff0e;
+  color: white;
+}
 .NightTheme_link {
+  text-decoration: none;
+
   color: #ad1b3b;
+}
+
+.NightTheme_link:hover,
+.NightTheme_link:focus {
+  text-decoration: underline;
 }
 /* Light theme */
 
@@ -59,6 +124,9 @@
   background-color: #212245;
 }
 
+.LightTheme_link-header {
+  color: #fce9ed;
+}
 .LightTheme_subbtle-texte {
   color: rgba(252, 233, 237, 0.5);
 }
@@ -69,9 +137,103 @@
 .LightTheme_light-background {
   background-color: #191a34;
   color: #fce9ed;
+}
 
+.LightTheme_Light-Btn {
+  border: #fce9ed 2px solide;
+  color: #fce9ed;
+}
+
+.LightTheme_Light-Btn:hover {
+  background-color: transparent;
+  border: white 2px solid;
+  color: white;
+}
+
+.LightTheme_Light-Btn-inverse {
+  border: white 2px solid;
+  color: #0d0205;
+  background-color: white;
+}
+
+.LightTheme_Light-Btn-inverse:hover {
+  background-color: transparent;
+  color: white;
+}
+
+.LightTheme_header {
+  background: #ffffff0e;
+  color: #0d0205;
 }
 
 .LightTheme_link {
   color: #ad1b3b;
+  text-decoration: none;
+}
+
+.LightTheme_link:hover,
+.LightTheme_link:focus {
+  text-decoration: underline;
+}
+
+/* Cream Theme – base classes only */
+
+.CreamTheme_Border {
+  border: 1px solid #201a1a;
+  color: #0d0205;
+}
+
+.CreamTheme_body {
+  color: #0d0205;
+  background-color: #ffeed3;
+}
+
+.CreamTheme_link-header {
+  color: #0d0205;
+}
+
+.CreamTheme_subbtle-texte {
+  color: rgba(31, 26, 23, 0.521);
+}
+
+.CreamTheme_subbtle-background {
+  background-color: #efe2cf;
+  color: #0d0205;
+}
+
+.CreamTheme_light-background {
+  background-color: #fffaf2;
+  color: #0d0205;
+}
+
+.CreamTheme_link {
+  color: #ad1b3b;
+  text-decoration: none;
+}
+.CreamTheme_Light-Btn {
+  border: #0d0205 2px solid;
+  color: #0d0205;
+}
+
+.CreamTheme_Light-Btn:hover {
+  background-color: #0d0205;
+  color: white;
+}
+.CreamTheme_Light-Btn-inverse {
+  border: #0d0205 2px solid;
+  color: white;
+  background-color: #0d0205;
+}
+
+.CreamTheme_Light-Btn-inverse:hover {
+  background-color: transparent;
+  color: #0d0205;
+}
+.CreamTheme_header {
+  background: #7978780e;
+}
+
+.CreamTheme_link:hover,
+.CreamTheme_link:focus {
+  text-decoration: underline;
 }

@@ -244,12 +244,12 @@ export default function Administration({ theme }) {
                     </div>
 
                     <div className="form-actions">
-                      <button type="submit" className={`btn-primary ${theme}_subbtle-background`}>
+                      <button type="submit" className={`btn-primaire-user ${theme}_Light-Btn`}>
                         Enregistrer
                       </button>
                       <button
-                        type={`btn-secondary ${theme}_subbtle-background`}
-                        className="btn-secondary"
+                        type="button"
+                        className={`btn-secondaire-user ${theme}_Light-Btn-inverse`}
                         onClick={handleCancelEditUser}
                       >
                         Annuler
@@ -262,7 +262,7 @@ export default function Administration({ theme }) {
                       <div className="user-header">
                         <h3>{u.pseudo}</h3>
                         {u.id === user.id && (
-                          <span className="badge-current">Vous</span>
+                          <span className={`badge-current ${theme}_Border`}>Vous</span>
                         )}
                       </div>
                       <p className={`${theme}_subbtle-texte`}>
@@ -270,7 +270,7 @@ export default function Administration({ theme }) {
                       </p>
                       <div className="user-roles">
                         {u.roles?.map((role) => (
-                          <span key={role} className={`role-badge ${role}`}>
+                          <span key={role} className={`role-badge ${role} ${theme}_Border`}>
                             {role.replace("ROLE_", "")}
                           </span>
                         ))}
@@ -281,7 +281,7 @@ export default function Administration({ theme }) {
                       {u.id !== user.id && (
                         <>
                           <button
-                            className="btn-primary"
+                            className={`btn-primaire-user ${theme}_Light-Btn`}
                             onClick={() => handleEditUser(u)}
                           >
                             Modifier

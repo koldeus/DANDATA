@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Patch;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SiteRepository::class)]
@@ -22,6 +23,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Get(),
         new Put(
+            security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_ADMIN')",
+            denormalizationContext: ['groups' => ['site:write']]
+        ),
+        new Patch(
             security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_ADMIN')",
             denormalizationContext: ['groups' => ['site:write']]
         ),

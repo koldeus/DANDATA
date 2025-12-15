@@ -9,12 +9,10 @@
   right: 10%;
   width: 80%;
   top: 2%;
-  color: #fff;
   height: 60px;
   padding: 2px;
   border-radius: 50px;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  background: #ffffff0e;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(100%);
   z-index: 2;
@@ -55,12 +53,10 @@ header h2 span {
 
 .navbar a {
   position: relative;
-  color: #fff;
   text-decoration: none;
   padding: 10px 20px;
   margin: 4px 2px;
   font-size: 16px;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .navbar a:before,
@@ -100,9 +96,7 @@ header h2 span {
 
 .btn-connect {
   background-color: transparent;
-  border: white 2px solid;
   border-radius: 20px;
-  color: #fff;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
@@ -114,10 +108,7 @@ header h2 span {
   margin-top: 10px;
 }
 
-.btn-connect:hover {
-  background-color: white;
-  color: #0d0205;
-}
+
 
 .navbar-desktop {
   display: none;

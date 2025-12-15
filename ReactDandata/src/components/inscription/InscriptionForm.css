@@ -65,25 +65,8 @@
   border-radius: 4px;
 }
 
-.forgot {
-  align-self: flex-end;
-  color: rgba(255,255,255,0.6);
-  font-size: 0.9rem;
-  margin-top: 0.2rem;
-}
-
-.remember {
-  color: rgba(255,255,255,0.7);
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin: 0.5rem 0 1.2rem 0;
-}
-
-.btn-primary {
- background-color: transparent;
+.btn-primaire-co {
   border-radius: 20px;
-  color: #fff;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
@@ -95,15 +78,8 @@
   margin-top: 10px;
 }
 
-.btn-primary:hover {
-  background-color: white;
-  color: #0d0205;
-}
-
 .btn-outline {
- background-color: transparent;
   border-radius: 20px;
-  color: #fff;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
@@ -114,11 +90,6 @@
   transition-duration: 0.4s;
   margin-top: 10px;
   width: 100%;
-}
-
-.btn-outline:hover {
-  background-color: white;
-  color: #0d0205;
 }
 
 .divider {

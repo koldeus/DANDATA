@@ -73,6 +73,13 @@
   align-content: center;
 }
 
+.custom-rays {
+  position: absolute;
+  top: -5%;
+  
+  z-index: 0;
+}
+
 .BoiteDeTexte h2, .BoiteDeTexte p, .BoiteDeTexte h3 {
   margin-left: 2%;
 }
@@ -85,7 +92,6 @@
 }
 
 .BoiteDeTexte p {
-  color: rgba(252, 233, 237, 0.5);
   font-size: 1rem;
 }
 

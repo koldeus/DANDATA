@@ -1,10 +1,10 @@
 import "../header.css";
 
-export function Navbar() {
+export function Navbar({theme}) {
   return (
     <nav className="navbar">
-      <a href="/">Accueil</a>
-      <a href="/categories">Catégories</a>
+      <a className={`${theme}_link-header`} href="/">Accueil</a>
+      <a className={`${theme}_link-header`} href="/categories">Catégories</a>
     </nav>
   );
 }

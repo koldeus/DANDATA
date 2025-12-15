@@ -25,7 +25,7 @@ const FichierData = ({theme}) => {
             </span>
           </div>
           <div className={`card-title ${theme}_subbtle-texte`}>Visualisez</div>
-          <div className="card-desc">
+          <div className={`card-desc`}>
             Créez des graphiques interactifs et poussés
           </div>
         </div>
