@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: GraphiqueRepository::class)]
 #[ApiResource(
@@ -42,6 +43,10 @@ class Graphique
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['article:blocs', 'bloc:read', 'article:read'])] 
     private ?Metadonnees $metadonnees = null;
+
+    #[ORM\ManyToMany(targetEntity: Variable::class, mappedBy: 'Meta', cascade: ['persist', 'remove'])]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    private Collection $variables;
 
     #[ORM\ManyToOne(inversedBy: 'graphiques')]
     #[ORM\JoinColumn(nullable: false)]

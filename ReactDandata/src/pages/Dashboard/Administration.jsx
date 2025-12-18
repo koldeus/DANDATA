@@ -210,7 +210,7 @@ export default function Administration({ theme }) {
                         name="email"
                         value={userFormData.email}
                         onChange={handleUserChange}
-                        className={`form-input ${theme}_subbtle-background`}
+                        className={`form-input ${theme}_light-background`}
                         required
                       />
                     </div>
@@ -222,7 +222,7 @@ export default function Administration({ theme }) {
                         name="pseudo"
                         value={userFormData.pseudo}
                         onChange={handleUserChange}
-                        className={`form-input ${theme}_subbtle-background`}
+                        className={`form-input ${theme}_light-background`}
                         required
                       />
                     </div>

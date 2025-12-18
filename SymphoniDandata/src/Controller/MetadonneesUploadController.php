@@ -12,6 +12,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Filesystem\Filesystem;
 
 class MetadonneesUploadController extends AbstractController
 {
@@ -140,6 +142,57 @@ class MetadonneesUploadController extends AbstractController
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
             ], 500);
+        }
+    }
+
+    #[Route('/api/metadonnees/{id}', name: 'metadonnees_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits pour supprimer des métadonnées')]
+    public function delete(
+        int $id,
+        EntityManagerInterface $em
+    ): JsonResponse {
+        try {
+            $metadonnees = $em->getRepository(Metadonnees::class)->find($id);
+
+            if (!$metadonnees) {
+                return $this->json(
+                    ['error' => 'Métadonnées introuvables'],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+           
+            $filesystem = new Filesystem();
+
+            $filePath = $this->getParameter('kernel.project_dir')
+                . '/public/uploads/metadonnees/'
+                . $metadonnees->getFileName();
+
+            if ($filesystem->exists($filePath)) {
+                try {
+                    $filesystem->remove($filePath);
+                } catch (\Throwable $e) {
+                    return $this->json([
+                        'error' => 'Impossible de supprimer le fichier sur le serveur',
+                        'details' => $e->getMessage()
+                    ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
+
+            
+            $em->remove($metadonnees);
+            $em->flush();
+
+            return $this->json(
+                null,
+                Response::HTTP_NO_CONTENT
+            );
+
+        } catch (\Throwable $e) {
+            return $this->json([
+                'error' => 'Erreur serveur lors de la suppression',
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

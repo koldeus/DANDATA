@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useAuthToken } from "../../hooks/useUser";
 import SousChargement from "../../components/SousChargement/SousChargement";
+import { useNavigate } from "react-router-dom";
+
 import "./ThemeSettingPage.css";
 
 export default function ThemePage({ theme }) {
   const { getToken } = useAuthToken();
 
   const [articles, setArticles] = useState([]);
-  const [themes, setThemes] = useState([]); // { id, name, iri }
+  const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [savingIds, setSavingIds] = useState(new Set());
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const [site, setSite] = useState(null);
   const [savingSite, setSavingSite] = useState(false);
@@ -203,6 +206,8 @@ export default function ThemePage({ theme }) {
       setError(err.message || "Erreur lors de la sauvegarde du site");
     } finally {
       setSavingSite(false);
+
+      window.location.reload();
     }
   };
 
@@ -227,7 +232,7 @@ export default function ThemePage({ theme }) {
           <div>Aucun site trouvé</div>
         ) : (
           <div
-            className={`choixTheme  ${theme}_light-background`}
+            className={`choixTheme ${theme}_light-background`}
             style={{ display: "flex", alignItems: "center", gap: 8 }}
           >
             <select

@@ -11,6 +11,7 @@ import AdministrationPage from "../pages/Dashboard/Administration";
 import ThemePage from "../pages/Dashboard/ThemeSettingPage";
 import ProfilePage from "../pages/Dashboard/ProfilePage";
 import SousChargement from "../components/SousChargement/SousChargement";
+import Categories from "./Dashboard/GestionCategorie";
 import { useNavigate } from "react-router-dom";
 
 import "./Dashboard.css";
@@ -60,6 +61,8 @@ export default function DashboardLayout({ theme }) {
         return <AdministrationPage theme={theme} />;
       case "Theme":
         return <ThemePage theme={theme} />;
+      case "categories":
+        return <Categories theme={theme} />;
       default:
         return <DashboardHome />;
     }

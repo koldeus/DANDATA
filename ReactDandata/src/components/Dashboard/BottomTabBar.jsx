@@ -11,6 +11,7 @@ const ICONS = {
   Administration: <SettingsIcon />,
   Theme: <SettingsIcon />,
   FichierData: <SettingsIcon />,
+  categories: <SettingsIcon />,
 };
 
 export default function BottomTabBar({ user, theme, setActiveTab, activeTab }) {
@@ -21,6 +22,7 @@ export default function BottomTabBar({ user, theme, setActiveTab, activeTab }) {
       roles: ["ROLE_ADMIN", "ROLE_EDITOR", "ROLE_AUTHOR", "ROLE_SUBSCRIBER"],
     },
     { id: "articles", label: "Articles", roles: ["ROLE_ADMIN", "ROLE_EDITOR"] },
+    { id: "categories", label: "Categories", roles: ["ROLE_ADMIN", "ROLE_EDITOR"] },
     { id: "FichierData", label: "FichierData", roles: ["ROLE_ADMIN"] },
     { id: "Administration", label: "Administration", roles: ["ROLE_ADMIN"] },
     { id: "Theme", label: "Theme", roles: ["ROLE_ADMIN"] },
