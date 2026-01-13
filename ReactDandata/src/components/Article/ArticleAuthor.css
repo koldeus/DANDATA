@@ -1,0 +1,84 @@
+/* =======================
+   ARTICLE AUTHOR
+   ======================= */
+
+.article-author-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+}
+
+.article-author-card {
+  padding: 2rem;
+  border-radius: 12px;
+  border-width: 1px;
+}
+
+.author-content {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.author-avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.DarkTheme_author-avatar-large {
+  background-color: rgba(173, 27, 59, 0.2);
+  color: #ad1b3b;
+}
+
+.NightTheme_author-avatar-large {
+  background-color: rgba(117, 119, 189, 0.2);
+  color: #7577bd;
+}
+
+.LightTheme_author-avatar-large {
+  background-color: rgba(173, 27, 59, 0.2);
+  color: #ad1b3b;
+}
+
+.CreamTheme_author-avatar-large {
+  background-color: rgba(173, 27, 59, 0.2);
+  color: #ad1b3b;
+}
+
+.author-info-large {
+  flex: 1;
+}
+
+.author-name-large {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.author-email {
+  margin-bottom: 1rem;
+}
+
+.author-bio {
+  line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .author-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .author-avatar-large {
+    margin-bottom: 1rem;
+  }
+}

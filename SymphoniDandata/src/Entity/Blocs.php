@@ -29,15 +29,15 @@ class Blocs
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
+    #[Groups(['article:read', 'article:write', 'article:blocs', 'bloc:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 20)]
-    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
+    #[Groups(['article:read', 'article:write', 'article:blocs', 'bloc:read'])]
     private ?string $type = null;
 
     #[ORM\Column]
-    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
+    #[Groups(['article:read', 'article:write', 'article:blocs', 'bloc:read'])]
     private ?int $ordre = null;
 
     #[ORM\ManyToOne(inversedBy: 'blocs')]
@@ -45,19 +45,19 @@ class Blocs
 
     #[ORM\ManyToMany(targetEntity: Image::class, inversedBy: 'blocs')]
     #[ORM\JoinTable(name: 'blocs_images')]
-    #[Groups(['article:read', 'article:blocs', 'bloc:read'])]
+    #[Groups(['article:read', 'article:write', 'article:blocs', 'bloc:read'])]
     private Collection $images;
 
-    #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'blocs')]
-    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
+    #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'blocs', cascade: ['remove'], orphanRemoval: true)]
+    #[Groups(['article:read', 'article:write', 'article:blocs', 'bloc:read'])]
     private Collection $graphiques;
 
-    #[ORM\OneToMany(targetEntity: Texte::class, mappedBy: 'blocs')]
-    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
+    #[ORM\OneToMany(targetEntity: Texte::class, mappedBy: 'blocs', cascade: ['remove'], orphanRemoval: true)]
+    #[Groups(['article:read', 'article:write', 'article:blocs', 'bloc:read'])]
     private Collection $textes;
 
-    #[ORM\OneToMany(targetEntity: Titre::class, mappedBy: 'blocs')]
-    #[Groups(['article:read', 'article:blocs', 'bloc:read'])] // ← Ajoutez article:read
+    #[ORM\OneToMany(targetEntity: Titre::class, mappedBy: 'blocs', cascade: ['remove'], orphanRemoval: true)]
+    #[Groups(['article:read', 'article:write', 'article:blocs', 'bloc:read'])]
     private Collection $titres;
     public function __construct()
     {

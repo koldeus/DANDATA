@@ -6,6 +6,7 @@ import PageLoader from "./components/chargement/PageLoader";
 import { Accueil } from "./pages/Accueil";
 import { Categories } from "./pages/Categories";
 import Log_SignIn from "./pages/Log_SignIn";
+import ArticlePage from "./pages/ArticleUnique";
 
 import DashboardLayout from "./pages/Dashboard";
 
@@ -27,7 +28,7 @@ function App() {
     }
   });
 
-  const [themeSlug, setThemeSlug] = useState(null);
+  const [themeSlug, setThemeSlug] = useState('DarkTheme');  
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
@@ -35,11 +36,17 @@ function App() {
     fetch("http://localhost:8000/api/sites")
       .then((res) => res.json())
       .then((data) => {
-        const first = data["member"][0];
-        setThemeSlug(first.Theme.Slug);
+        // Sécurisation au cas où "member" ou [0] n'existe pas
+        if (data.member && data.member.length > 0) {
+            const first = data["member"][0];
+            setThemeSlug(first.Theme.Slug);
+        }
       })
       .catch((err) => {
         console.error(err);
+      })
+      .finally(() => {
+        // Le loading doit s'arrêter même en cas d'erreur
         setLoading(false);
       });
   }, []);
@@ -56,24 +63,27 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Accueil theme={themeSlug} />} />
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/*" element={<Log_SignIn theme={themeSlug} />} />
+        <Route path="/categories" element={<Categories theme={themeSlug} />} />
+        
+        {/* CORRECTION: Utilisation de :slug et suppression de la prop slug={slug} qui n'existe pas ici */}
+        <Route path="/article/:slug" element={<ArticlePage theme={themeSlug} />} />
 
+        {/* DASHBOARD ROUTES */}
         <Route
           path="/dashboard"
           element={<DashboardLayout theme={themeSlug} />}
         >
           <Route index element={<ProfilePage />} />
-
           <Route path="articles" element={<ArticlesPage />} />
-
           <Route path="FichierData" element={<FichierData />} />
           <Route path="Administration" element={<Administration />} />
           <Route path="Theme" element={<ThemeSettingsPage />} />
-
           <Route path="users" element={<UserPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
+
+        {/* Le Wildcard doit être en dernier pour éviter de bloquer les autres routes */}
+        <Route path="/*" element={<Log_SignIn theme={themeSlug} />} />
       </Routes>
 
       <Footer />
@@ -82,23 +92,3 @@ function App() {
 }
 
 export default App;
-
-// import ImageUpload from './components/temps upload/ImageUpload';
-// import CSVUpload from './components/temps upload/CSVUpload';
-
-// export default function App() {
-//   const handleImageUpload = (images) => {
-//     console.log('Images uploadées:', images);
-//   };
-
-//   const handleCSVUpload = (dataset) => {
-//     console.log('Dataset avec variables:', dataset);
-//   };
-
-//   return (
-//     <>
-//       <ImageUpload onImageUploaded={handleImageUpload} maxFiles={1} />
-//       <CSVUpload onDatasetUploaded={handleCSVUpload} />
-//     </>
-//   );
-// }

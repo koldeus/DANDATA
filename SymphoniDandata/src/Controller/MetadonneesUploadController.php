@@ -25,60 +25,40 @@ class MetadonneesUploadController extends AbstractController
     public function upload(Request $request, EntityManagerInterface $em): JsonResponse
     {
         try {
-            // Debug logging
-            error_log("=== Upload Request Debug ===");
-            error_log("Content-Type: " . $request->headers->get('Content-Type'));
-            error_log("Files received: " . print_r(array_keys($request->files->all()), true));
-            error_log("Request params: " . print_r($request->request->all(), true));
-
             $uploadedFile = $request->files->get('file');
-
             if (!$uploadedFile) {
                 return $this->json(['error' => 'Aucun fichier envoyé'], 400);
             }
 
-            // Pour FormData, les données sont dans $request->request
             $variablesJson = $request->request->get('variables');
-
-            error_log("Variables JSON received: " . $variablesJson);
-
             if (!$variablesJson) {
                 return $this->json(['error' => 'Variables manquantes'], 400);
             }
 
             $variablesArray = json_decode($variablesJson, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                return $this->json([
-                    'error' => 'Erreur de parsing JSON',
-                    'details' => json_last_error_msg()
-                ], 400);
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($variablesArray)) {
+                return $this->json(['error' => 'JSON variables invalide'], 400);
             }
 
-            if (!is_array($variablesArray)) {
-                return $this->json(['error' => 'Format JSON des variables invalide'], 400);
-            }
+            $selectedIdentifierName = $request->request->get('identifier');
+            $identificationVariable = null;
 
-            // Validate file
             $allowedExtensions = ['csv', 'xlsx', 'xls', 'json'];
             $originalExtension = strtolower(pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_EXTENSION));
             if (!in_array($originalExtension, $allowedExtensions)) {
-                return $this->json([
-                    'error' => 'Format de fichier non supporté. Formats acceptés: ' . implode(', ', $allowedExtensions)
-                ], 400);
+                return $this->json(['error' => 'Format de fichier non supporté'], 400);
             }
 
-            $maxSize = 50 * 1024 * 1024; // 50MB
+            $maxSize = 50 * 1024 * 1024;
             if ($uploadedFile->getSize() > $maxSize) {
                 return $this->json(['error' => 'Fichier trop volumineux (max 50MB)'], 413);
             }
 
             $originalName = $uploadedFile->getClientOriginalName();
-
-            // Save file
             $uploadsDir = $this->getParameter('kernel.project_dir') . '/public/uploads/metadonnees';
+
             if (!is_dir($uploadsDir)) {
-                if (!mkdir($uploadsDir, 0755, true)) {
+                if (!mkdir($uploadsDir, 0777, true) && !is_dir($uploadsDir)) {
                     return $this->json(['error' => 'Impossible de créer le dossier d\'upload'], 500);
                 }
             }
@@ -88,11 +68,9 @@ class MetadonneesUploadController extends AbstractController
             try {
                 $uploadedFile->move($uploadsDir, $fileName);
             } catch (FileException $e) {
-                error_log("File move error: " . $e->getMessage());
                 return $this->json(['error' => 'Erreur lors de l\'upload du fichier: ' . $e->getMessage()], 500);
             }
 
-            // Create Metadonnees
             $metadonnees = new Metadonnees();
             $metadonnees->setNom($originalName);
             $metadonnees->setFileName($fileName);
@@ -101,21 +79,30 @@ class MetadonneesUploadController extends AbstractController
             $metadonnees->setExtensionRetour($originalExtension);
             $metadonnees->setUpdatedAt(new \DateTimeImmutable());
 
-            // Create Variables
+            // --- CORRECTED LOOP & ASSOCIATION ---
             foreach ($variablesArray as $varData) {
                 $variable = new Variable();
-                $variable->setNom($varData['name'] ?? 'Variable');
+                $currentVarName = $varData['name'] ?? 'Variable';
 
-                // Convertir le type string en boolean (false = categorical, true = numeric)
-                $isNumeric = ($varData['type'] ?? 'categorical') === 'numeric';
-                $variable->setNumString($isNumeric);
-
+                $variable->setNom($currentVarName);
+                $variable->setNumString(($varData['type'] ?? 'categorical') === 'numeric');
                 $variable->setColor($varData['color'] ?? '#000000');
                 $variable->setMeta($metadonnees);
 
                 $metadonnees->addVariable($variable);
                 $em->persist($variable);
+
+                // Check if this is the chosen identifier
+                if ($selectedIdentifierName === $currentVarName) {
+                    $identificationVariable = $variable;
+                }
             }
+
+            // Link the identified variable to the metadata object
+            if ($identificationVariable) {
+                $metadonnees->setVariableIdentification($identificationVariable);
+            }
+            // ---------------------------------------
 
             $em->persist($metadonnees);
             $em->flush();
@@ -125,6 +112,7 @@ class MetadonneesUploadController extends AbstractController
                 'nom' => $metadonnees->getNom(),
                 'fileName' => $metadonnees->getFileName(),
                 'url' => $metadonnees->getUrl(),
+                'identifier' => $identificationVariable ? $identificationVariable->getNom() : null,
                 'variables' => array_map(fn($v) => [
                     'name' => $v->getNom(),
                     'type' => $v->isNumString() ? 'numeric' : 'categorical',
@@ -133,9 +121,6 @@ class MetadonneesUploadController extends AbstractController
             ], 201);
 
         } catch (\Throwable $e) {
-            error_log("Exception in upload: " . $e->getMessage());
-            error_log("Trace: " . $e->getTraceAsString());
-
             return $this->json([
                 'error' => 'Erreur serveur',
                 'message' => $e->getMessage(),
@@ -147,52 +132,32 @@ class MetadonneesUploadController extends AbstractController
 
     #[Route('/api/metadonnees/{id}', name: 'metadonnees_delete', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits pour supprimer des métadonnées')]
-    public function delete(
-        int $id,
-        EntityManagerInterface $em
-    ): JsonResponse {
+    public function delete(int $id, EntityManagerInterface $em): JsonResponse
+    {
         try {
             $metadonnees = $em->getRepository(Metadonnees::class)->find($id);
-
             if (!$metadonnees) {
-                return $this->json(
-                    ['error' => 'Métadonnées introuvables'],
-                    Response::HTTP_NOT_FOUND
-                );
+                return $this->json(['error' => 'Métadonnées introuvables'], Response::HTTP_NOT_FOUND);
             }
 
-           
             $filesystem = new Filesystem();
-
-            $filePath = $this->getParameter('kernel.project_dir')
-                . '/public/uploads/metadonnees/'
-                . $metadonnees->getFileName();
+            $filePath = $this->getParameter('kernel.project_dir') . '/public/uploads/metadonnees/' . $metadonnees->getFileName();
 
             if ($filesystem->exists($filePath)) {
                 try {
                     $filesystem->remove($filePath);
                 } catch (\Throwable $e) {
-                    return $this->json([
-                        'error' => 'Impossible de supprimer le fichier sur le serveur',
-                        'details' => $e->getMessage()
-                    ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                    return $this->json(['error' => 'Impossible de supprimer le fichier', 'details' => $e->getMessage()], 500);
                 }
             }
 
-            
             $em->remove($metadonnees);
             $em->flush();
 
-            return $this->json(
-                null,
-                Response::HTTP_NO_CONTENT
-            );
+            return $this->json(null, Response::HTTP_NO_CONTENT);
 
         } catch (\Throwable $e) {
-            return $this->json([
-                'error' => 'Erreur serveur lors de la suppression',
-                'message' => $e->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
         }
     }
 }

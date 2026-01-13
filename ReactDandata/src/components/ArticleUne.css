@@ -1,0 +1,150 @@
+.article-une-wrapper {
+  width: 100%;
+  text-decoration: none;
+}
+
+.article-une {
+  display: flex;
+  flex-direction: row;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 5%;
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.article-une-image-container {
+  position: relative;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  flex-shrink: 0;
+}
+
+.article-une-image {
+  max-width: 70%;
+  max-height: 250px;
+  object-fit: contain;
+}
+
+.article-une-no-image-text {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.article-une-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.article-une-category-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+  backdrop-filter: blur(8px);
+}
+
+.article-une-rating-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+  font-weight: 600;
+  font-size: 14px;
+  backdrop-filter: blur(8px);
+}
+
+.article-une-star-icon {
+  width: 16px;
+  height: 16px;
+  fill: #fbbf24;
+  stroke: #fbbf24;
+}
+
+.article-une-content {
+  padding: 24px;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.article-une-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+}
+
+.article-une-separator {
+  height: 1px;
+  opacity: 0.2;
+  margin: 16px 0;
+}
+
+.article-une-resume {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.article-une-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.article-une-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.7;
+}
+
+.article-une-icon {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 768px) {
+  .article-une {
+    flex-direction: column;
+  }
+
+  .article-une-image-container {
+    width: 100%;
+    height: 200px;
+  }
+
+  .article-une-image {
+    max-width: 90%;
+    max-height: 180px;
+  }
+
+  .article-une-content {
+    width: 100%;
+    padding: 16px;
+  }
+
+  .article-une-title {
+    font-size: 20px;
+  }
+
+  .article-une-meta {
+    gap: 12px;
+  }
+}

@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { OutlineEffect } from "three/examples/jsm/effects/OutlineEffect.js";
-
+import { OutlineEffect } from "three/addons/effects/OutlineEffect.js";
 
 export default function ThreeCanvas() {
   const mountRef = useRef(null);
@@ -12,19 +11,34 @@ export default function ThreeCanvas() {
 
     // === SCENE & RENDERER ===
     const scene = new THREE.Scene();
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    let renderer;
+    
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (error) {
+      console.error("WebGL not supported:", error);
+      mount.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666; text-align: center; padding: 20px;">WebGL is not available in this environment. Please try opening in a different browser or enable hardware acceleration.</div>';
+      return;
+    }
+    
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.display = "inline-block";
 
     // === OUTLINE EFFECT ===
-    const effect = new OutlineEffect(renderer, {
-      defaultThickness: 0.005,
-      defaultColor: [0, 0, 0],
-      defaultAlpha: 1,
-      defaultKeepAlive: true,
-    });
+    let effect;
+    try {
+      effect = new OutlineEffect(renderer, {
+        defaultThickness: 0.005,
+        defaultColor: [0, 0, 0],
+        defaultAlpha: 1,
+        defaultKeepAlive: true,
+      });
+    } catch (error) {
+      console.error("OutlineEffect not available:", error);
+      effect = null;
+    }
 
     // === CAMERA ===
     const camera = new THREE.PerspectiveCamera(
@@ -145,7 +159,11 @@ export default function ThreeCanvas() {
         }
       }
 
-      effect.render(scene, camera);
+      if (effect) {
+        effect.render(scene, camera);
+      } else {
+        renderer.render(scene, camera);
+      }
     };
 
     animate();

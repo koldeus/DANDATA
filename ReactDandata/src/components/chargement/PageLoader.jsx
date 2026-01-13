@@ -8,7 +8,7 @@ export default function PageLoader({ onComplete }) {
 
   useEffect(() => {
     const startTime = Date.now();
-    const duration = 1500;   
+    const duration = 2000;   
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;

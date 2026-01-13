@@ -19,7 +19,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(),
         new Get(),
-        new Post(security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"),
         new Put(security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"),
         new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
@@ -29,19 +28,19 @@ class Image
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:blocs', 'article:read', 'article:list'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'article:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['article:blocs', 'article:read', 'article:list'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'article:list'])]
     private ?string $fileName = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:blocs', 'article:read', 'article:list'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'article:list'])]
     private ?string $alt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:blocs', 'article:read', 'article:list'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'article:list'])]
     private ?string $slug = null;
 
     #[ORM\ManyToMany(targetEntity: Blocs::class, mappedBy: 'images')]
@@ -50,7 +49,7 @@ class Image
     #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'imagePrincipale')]
     private Collection $articles;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()

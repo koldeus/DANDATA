@@ -262,9 +262,10 @@ table tbody tr:hover {
 /* ========================================================= */
 
 .upload-section {
+  width: 100%;
   display: flex;
   justify-content: center;
-  margin: 32px 0 18px;
+  margin: 3% 0 2%;
 }
 
 .upload-box {

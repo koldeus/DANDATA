@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use App\Repository\VariableRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
@@ -46,6 +48,35 @@ class Variable
     #[ORM\JoinColumn(nullable: false)]
     private ?Metadonnees $Meta = null;
 
+    #[ORM\ManyToMany(targetEntity: Graphique::class, mappedBy: 'variables')]
+    #[Groups(['article:read'])]
+    private Collection $graphiques;
+
+    public function __construct()
+    {
+        $this->graphiques = new ArrayCollection();
+    }
+    public function getGraphiques(): Collection
+    {
+        return $this->graphiques;
+    }
+
+    public function addGraphique(Graphique $graphique): self
+    {
+        if (!$this->graphiques->contains($graphique)) {
+            $this->graphiques->add($graphique);
+            $graphique->addVariable($this);
+        }
+        return $this;
+    }
+
+    public function removeGraphique(Graphique $graphique): self
+    {
+        if ($this->graphiques->removeElement($graphique)) {
+            $graphique->removeVariable($this);
+        }
+        return $this;
+    }
     public function getId(): ?int
     {
         return $this->id;

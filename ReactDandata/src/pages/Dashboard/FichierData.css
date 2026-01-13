@@ -3,6 +3,8 @@
   display: flex;
   justify-content: center;
   margin: 3% 0 2%;
+  padding: 1.5rem;
+
 }
 
 /* Upload box 100% fluide */

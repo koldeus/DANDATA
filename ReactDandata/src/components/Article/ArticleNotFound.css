@@ -1,0 +1,46 @@
+/* =======================
+   ARTICLE NOT FOUND
+   ======================= */
+
+.not-found-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.not-found-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.not-found-title {
+  font-size: 6rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.not-found-text {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.not-found-button {
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .not-found-title {
+    font-size: 4rem;
+  }
+
+  .not-found-text {
+    font-size: 1.25rem;
+  }
+}

@@ -27,11 +27,11 @@ class Texte
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?string $titre = null;
 
     #[ORM\ManyToOne(inversedBy: 'textes')]

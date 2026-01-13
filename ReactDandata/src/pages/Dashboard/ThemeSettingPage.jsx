@@ -138,7 +138,7 @@ export default function ThemePage({ theme }) {
         {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/merge-patch+json", 
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({ theme: newTheme }),
@@ -290,64 +290,50 @@ export default function ThemePage({ theme }) {
           </tr>
         </thead>
         <tbody className="tableauTheme">
-          {articles.map((article) => {
-            const currentTheme =
-              typeof article.theme === "string"
-                ? article.theme
-                : article.theme?.name || "";
+          {articles.map((article) => (
+            <tr
+              key={article.id}
+              style={{ borderTop: "1px solid rgba(204, 204, 204, 1)" }}
+            >
+              {/* Titre */}
+              <td className="rowTheme" style={{ padding: 8 }}>
+                {article.title || article.nom || `#${article.id}`}
+              </td>
 
-            return (
-              <tr key={article.id} style={{ borderTop: "1px solid #ccc" }}>
-                <td className="rowTheme" style={{ padding: 8 }}>
-                  {article.title || article.nom || `#${article.id}`}
-                </td>
-                <td
-                  className={`rowTheme ${theme}_light-background`}
-                  style={{ padding: 8 }}
+              {/* Thème actuel */}
+              <td
+                className={`rowTheme ${theme}_light-background`}
+                style={{ padding: 8 }}
+              >
+                <select
+                  className={`selectThemeArticle ${theme}_light-background ${theme}_border`}
+                  value={article.theme} // l'IRI actuel
+                  onChange={(e) =>
+                    handleChangeTheme(article.id, e.target.value)
+                  }
+                  disabled={savingIds.has(article.id) || themes.length === 0}
                 >
-                  {currentTheme || "—"}
-                </td>
-                <td
-                  className={`rowTheme ${theme}_light-background`}
-                  style={{ padding: 8 }}
-                >
-                  <select
-                    className={`selectThemeArticle ${theme}_light-background ${theme}_border`}
-                    value={currentTheme}
-                    onChange={(e) =>
-                      handleChangeTheme(article.id, e.target.value)
-                    }
-                    disabled={savingIds.has(article.id) || themes.length === 0}
-                  >
-                    <option
-                      className={`optionTheme ${theme}_subbtle-texte`}
-                      value=""
-                    >
-                      — Choisir —
+                  {themes.map((t) => (
+                    <option key={t.iri || t.id} value={t.iri}>
+                      {t.name}
                     </option>
-                    {themes.map((t) => (
-                      <option
-                        key={t.iri || t.id}
-                        value={t.name}
-                        className={`optionTheme ${theme}_subbtle-texte`}
-                      >
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
+                  ))}
+                </select>
+              </td>
 
-                  {savingIds.has(article.id) && (
-                    <Button
-                      className={`buttonSaveTheme ${theme}_Light-Btn-inverse `}
-                      style={{ marginLeft: 8 }}
-                    >
-                      Enregistrement…
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
+              {/* Indicateur de sauvegarde */}
+              <td className="rowTheme" style={{ padding: 8 }}>
+                {savingIds.has(article.id) && (
+                  <button
+                    className={`buttonSaveTheme ${theme}_Light-Btn-inverse`}
+                    style={{ marginLeft: 8 }}
+                  >
+                    Enregistrement…
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

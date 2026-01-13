@@ -24,6 +24,13 @@
   background: #fff;
 }
 
+.upload-sections{
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  margin: 32px 0 18px;
+}
+
 .upload-zone:hover {
   border-color: #4a90e2;
   background: #f0f7ff;

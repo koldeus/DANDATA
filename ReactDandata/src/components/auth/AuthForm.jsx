@@ -8,9 +8,12 @@ export default function AuthForm({ theme }) {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const login = async (email, password, remember) => {
       try {
@@ -39,6 +42,7 @@ export default function AuthForm({ theme }) {
     };
 
     await login(email, password, remember);
+    setLoading(false);
   };
 
   return (
@@ -144,8 +148,8 @@ export default function AuthForm({ theme }) {
           Se souvenir de moi
         </label>
 
-        <button className={`btn-primaraire-co ${theme}_Light-Btn-inverse`} type="submit">
-          Se connecter
+        <button className={`btn-primaire-co ${theme}_Light-Btn-inverse`} type="submit"  disabled={loading}>
+          {loading ? "Connexion en cours..." : "Se connecter"}
         </button>
 
         <div className="divider">

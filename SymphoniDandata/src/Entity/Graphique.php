@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\GraphiqueRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -11,7 +13,6 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: GraphiqueRepository::class)]
 #[ApiResource(
@@ -28,29 +29,35 @@ class Graphique
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?string $Titre = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?string $Type = null;
 
     #[ORM\ManyToOne(inversedBy: 'graphiques')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['article:blocs', 'bloc:read', 'article:read'])] 
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?Metadonnees $metadonnees = null;
-
-    #[ORM\ManyToMany(targetEntity: Variable::class, mappedBy: 'Meta', cascade: ['persist', 'remove'])]
-    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
-    private Collection $variables;
 
     #[ORM\ManyToOne(inversedBy: 'graphiques')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Blocs $blocs = null;
+
+    #[ORM\ManyToMany(targetEntity: Variable::class, inversedBy: 'graphiques')]
+    #[ORM\JoinTable(name: 'graphique_variable')]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
+    private Collection $variables;
+
+    public function __construct()
+    {
+        $this->variables = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -81,6 +88,22 @@ class Graphique
     public function setMetadonnees(?Metadonnees $metadonnees): self
     {
         $this->metadonnees = $metadonnees;
+        return $this;
+    }
+    public function getVariables(): Collection
+    {
+        return $this->variables;
+    }
+    public function addVariable(Variable $variable): self
+    {
+        if (!$this->variables->contains($variable)) {
+            $this->variables->add($variable);
+        }
+        return $this;
+    }
+    public function removeVariable(Variable $variable): self
+    {
+        $this->variables->removeElement($variable);
         return $this;
     }
     public function getBlocs(): ?Blocs

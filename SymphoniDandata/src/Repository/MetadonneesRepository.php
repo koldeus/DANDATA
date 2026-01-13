@@ -16,6 +16,15 @@ class MetadonneesRepository extends ServiceEntityRepository
         parent::__construct($registry, Metadonnees::class);
     }
 
+    public function findWithVariables(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.variables', 'v')
+            ->addSelect('v')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Metadonnees[] Returns an array of Metadonnees objects
     //     */

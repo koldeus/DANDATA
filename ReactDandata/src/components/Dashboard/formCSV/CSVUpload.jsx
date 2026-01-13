@@ -9,6 +9,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
   const [error, setError] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [step, setStep] = useState("upload");
+  const [selectedIdentifier, setSelectedIdentifier] = useState("");
 
   const colors = [
     "#FF6B6B",
@@ -311,10 +312,16 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("variables", JSON.stringify(variables));
+      
+      // Ajouter l'identifiant sélectionné s'il existe
+      if (selectedIdentifier) {
+        formData.append("identifier", selectedIdentifier);
+      }
 
       console.log("📤 Envoi des données:");
       console.log("  - Fichier:", file.name, file.size, "bytes");
       console.log("  - Variables:", variables);
+      console.log("  - Identifiant:", selectedIdentifier);
 
       const token = localStorage.getItem("jwt");
 
@@ -326,7 +333,6 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
 
       console.log("📥 Response status:", response.status);
 
-      // Lire la réponse comme texte d'abord pour voir ce qui arrive
       const responseText = await response.text();
       console.log("📥 Response body:", responseText);
 
@@ -348,6 +354,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
       setFile(null);
       setCsvData(null);
       setVariables([]);
+      setSelectedIdentifier("");
       setStep("upload");
     } catch (err) {
       console.error("❌ Erreur:", err);
@@ -499,6 +506,25 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
                 </p>
               )}
             </div>
+          </div>
+
+          <div className="identifier-selection" style={{ marginTop: '20px' }}>
+            <label className={`${theme}_subbtle-texte`}>
+              Variable d'identification (optionnel):
+            </label>
+            <select 
+              value={selectedIdentifier}
+              onChange={(e) => setSelectedIdentifier(e.target.value)}
+              className={`${theme}_light-background`}
+              style={{ width: '100%', padding: '8px', marginTop: '8px' }}
+            >
+              <option value="">-- Choisir une variable d'identification --</option>
+              {variables.map((variable) => (
+                <option key={variable.id} value={variable.name}>
+                  {variable.name} ({variable.type})
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="profile-actions">

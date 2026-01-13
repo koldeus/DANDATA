@@ -48,6 +48,7 @@ export default function GestionCategorie({ theme }) {
 
     if (!name.trim()) return;
     const token = getToken();
+    console.log(token)
     if (!token) return alert("Vous devez être connecté");
 
     try {
@@ -58,7 +59,7 @@ export default function GestionCategorie({ theme }) {
           Accept: "application/ld+json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ nom: name }),
+        body: JSON.stringify({ Nom: name }),
       });
 
       if (!res.ok) throw new Error();
@@ -94,7 +95,7 @@ export default function GestionCategorie({ theme }) {
 
   function startEdit(cat) {
     setEditingId(extractId(cat));
-    setEditName(cat.nom || "");
+    setEditName(cat.Nom || "");
   }
 
   async function handleEditSubmit(e, id) {
@@ -114,7 +115,7 @@ export default function GestionCategorie({ theme }) {
           Accept: "application/ld+json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ nom: editName }),
+        body: JSON.stringify({ Nom: editName }),
       });
 
       if (!res.ok) throw new Error();
@@ -175,7 +176,7 @@ export default function GestionCategorie({ theme }) {
           categories.map((cat) => {
             const id = extractId(cat);
             return (
-              <div key={id} className={`categorie-item ${theme}_Border ${theme}_light-background`}>
+              <div key={id} className={`categorie-item ${theme}_Border`}>
                 {editingId === id ? (
                   <form
                     onSubmit={(e) => handleEditSubmit(e, id)}
@@ -202,7 +203,7 @@ export default function GestionCategorie({ theme }) {
                   </form>
                 ) : (
                   <>
-                    <h3 className="categorie-item-titre">{cat.nom}</h3>
+                    <h3 className="categorie-item-titre">{cat.Nom}</h3>
                     <div className="categorie-actions">
                       <button
                         className={`btn-primaire-categorie ${theme}_Light-Btn-inverse`}

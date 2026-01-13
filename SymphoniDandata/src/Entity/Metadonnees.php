@@ -13,17 +13,26 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Controller\MetadonneesFileController;
 
 #[ORM\Entity(repositoryClass: MetadonneesRepository::class)]
+
 #[ApiResource(
     operations: [
         new GetCollection(),
         new Get(),
+        new Get(
+            uriTemplate: '/metadonnees/{id}/file',
+            controller: MetadonneesFileController::class,
+            name: 'metadonnees_file',
+        ),
         new Put(security: "is_granted('ROLE_DATA_PROVIDER') or is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
 )]
 class Metadonnees
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -50,6 +59,11 @@ class Metadonnees
     #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private Collection $variables;
 
+    #[ORM\ManyToOne(targetEntity: Variable::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    private ?Variable $variableIdentification = null;
+
     #[ORM\OneToMany(targetEntity: Graphique::class, mappedBy: 'metadonnees', cascade: ['persist', 'remove'])]
     private Collection $graphiques;
 
@@ -59,13 +73,24 @@ class Metadonnees
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
-
     public function __construct()
     {
         $this->variables = new ArrayCollection();
         $this->graphiques = new ArrayCollection();
     }
 
+    // ... constructeur et autres méthodes ...
+
+    public function getVariableIdentification(): ?Variable
+    {
+        return $this->variableIdentification;
+    }
+
+    public function setVariableIdentification(?Variable $variableIdentification): self
+    {
+        $this->variableIdentification = $variableIdentification;
+        return $this;
+    }
     public function getId(): ?int
     {
         return $this->id;

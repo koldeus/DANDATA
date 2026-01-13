@@ -41,19 +41,34 @@
 }
 
 .DarkTheme_Light-Btn:hover {
-  background-color: white;
+  background-color: #fce9ed;
   color: #0d0205;
 }
 
+.DarkTheme_image-form-Btn.active {
+  background-color: #fce9ed;
+  color: #0d0205;
+}
+
+.DarkTheme_image-form-Btn {
+  border: 2px solid #fce9ed;
+  background-color: transparent;
+  color: #fce9ed;
+}
+
+.DarkTheme_image-form-Btn:hover {
+  border-color: #7577bd;
+}
+
 .DarkTheme_Light-Btn-inverse {
-  border: 2px solid white;
-  background-color: white;
+  border: 2px solid #fce9ed;
+  background-color: #fce9ed;
   color: #0d0205;
 }
 
 .DarkTheme_Light-Btn-inverse:hover {
   background-color: transparent;
-  color: white;
+  color: #fce9ed;
 }
 
 .DarkTheme_header {
@@ -90,6 +105,21 @@
   color: #fce9ed;
 }
 
+.NightTheme_image-form-Btn.active {
+  background-color: #fce9ed;
+  color: #0d0205;
+}
+
+.NightTheme_image-form-Btn {
+  border: 2px solid #fce9ed;
+  background-color: transparent;
+  color: #fce9ed;
+}
+
+.NightTheme_image-form-Btn:hover {
+  border-color: #ad1b3b;
+}
+
 .NightTheme_Light-Btn {
   border: 2px solid #fce9ed;
   background-color: transparent;
@@ -97,19 +127,19 @@
 }
 
 .NightTheme_Light-Btn:hover {
-  background-color: white;
+  background-color: #fce9ed;
   color: #0d0205;
 }
 
 .NightTheme_Light-Btn-inverse {
-  border: 2px solid white;
-  background-color: white;
+  border: 2px solid #fce9ed;
+  background-color: #fce9ed;
   color: #0d0205;
 }
 
 .NightTheme_Light-Btn-inverse:hover {
   background-color: transparent;
-  color: white;
+  color: #fce9ed;
 }
 
 .NightTheme_header {
@@ -170,6 +200,21 @@
   text-decoration: underline;
 }
 
+.LightTheme_image-form-Btn.active {
+  background-color: #fce9ed;
+  color: #0d0205;
+}
+
+.LightTheme_image-form-Btn {
+  border: 2px solid #fce9ed;
+  background-color: transparent;
+  color: #fce9ed;
+}
+
+.LightTheme_image-form-Btn:hover {
+  border-color: #ad1b3b;
+}
+
 .LightTheme_Light-Btn {
   border: 2px solid #fce9ed;
   background-color: transparent;
@@ -177,20 +222,21 @@
 }
 
 .LightTheme_Light-Btn:hover {
-  background-color: white;
-  border: 2px solid white;
+  background-color: #fce9ed;
+  border: 2px solid #fce9ed;
   color: #0d0205;
 }
 
 .LightTheme_Light-Btn-inverse {
-  border: 2px solid white;
-  background-color: white;
+  border: 2px solid #fce9ed;
+  background-color: #fce9ed;
   color: #0d0205;
 }
 
 .LightTheme_Light-Btn-inverse:hover {
   background-color: transparent;
-  color: white;
+  color: #fce9ed;
+  border: 2px solid #fce9ed;
 }
 
 .LightTheme_header {
@@ -234,6 +280,20 @@
   color: #0d0205;
 }
 
+.CreamTheme_image-form-Btn.active {
+  background-color: #0d0205;
+  color: #fce9ed;
+}
+
+.CreamTheme_image-form-Btn {
+  border: 2px solid #0d0205;
+  background-color: transparent;
+  color: #0d0205;
+}
+.CreamTheme_image-form-Btn:hover {
+  border-color: #ad1b3b;
+}
+
 .CreamTheme_Light-Btn {
   border: 2px solid #0d0205;
   background-color: transparent;
@@ -242,13 +302,13 @@
 
 .CreamTheme_Light-Btn:hover {
   background-color: #0d0205;
-  color: white;
+  color: #fce9ed;
 }
 
 .CreamTheme_Light-Btn-inverse {
   border: 2px solid #0d0205;
   background-color: #0d0205;
-  color: white;
+  color: #fce9ed;
 }
 
 .CreamTheme_Light-Btn-inverse:hover {
@@ -263,4 +323,117 @@
 .CreamTheme_link:hover,
 .CreamTheme_link:focus {
   text-decoration: underline;
+}
+
+
+/* =======================
+   GRAPH – DARK THEME
+   ======================= */
+.DarkTheme_Graph {
+  background-color: #0d0205;
+  color: #fce9ed;
+}
+
+.DarkTheme_Graph text {
+  fill: #fce9ed;
+}
+
+.DarkTheme_Graph .graph-grid {
+  stroke: rgba(252, 233, 237, 0.2);
+}
+
+.DarkTheme_Graph .graph-axis {
+  stroke: #fce9ed;
+}
+
+.DarkTheme_Graph .graph-bar {
+  fill: #ad1b3b;
+}
+
+.DarkTheme_Graph .graph-line {
+  stroke: #ad1b3b;
+}
+
+/* =======================
+   GRAPH – NIGHT THEME
+   ======================= */
+.NightTheme_Graph {
+  background-color: #101123a6;
+  color: #fce9ed;
+}
+
+.NightTheme_Graph text {
+  fill: #fce9ed;
+}
+
+.NightTheme_Graph .graph-grid {
+  stroke: rgba(252, 233, 237, 0.25);
+}
+
+.NightTheme_Graph .graph-axis {
+  stroke: #fce9ed;
+}
+
+.NightTheme_Graph .graph-bar {
+  fill: #7577bd;
+}
+
+.NightTheme_Graph .graph-line {
+  stroke: #7577bd;
+}
+
+/* =======================
+   GRAPH – LIGHT THEME
+   ======================= */
+.LightTheme_Graph {
+  background-color: #212245;
+  color: #fce9ed;
+}
+
+.LightTheme_Graph text {
+  fill: #fce9ed;
+}
+
+.LightTheme_Graph .graph-grid {
+  stroke: rgba(252, 233, 237, 0.2);
+}
+
+.LightTheme_Graph .graph-axis {
+  stroke: #fce9ed;
+}
+
+.LightTheme_Graph .graph-bar {
+  fill: #ad1b3b;
+}
+
+.LightTheme_Graph .graph-line {
+  stroke: #ad1b3b;
+}
+
+/* =======================
+   GRAPH – CREAM THEME
+   ======================= */
+.CreamTheme_Graph {
+  background-color: #ffeed3;
+  color: #0d0205;
+}
+
+.CreamTheme_Graph text {
+  fill: #0d0205;
+}
+
+.CreamTheme_Graph .graph-grid {
+  stroke: rgba(13, 2, 5, 0.2);
+}
+
+.CreamTheme_Graph .graph-axis {
+  stroke: #0d0205;
+}
+
+.CreamTheme_Graph .graph-bar {
+  fill: #ad1b3b;
+}
+
+.CreamTheme_Graph .graph-line {
+  stroke: #ad1b3b;
 }

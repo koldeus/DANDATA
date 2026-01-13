@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\Patch;
 use App\Repository\ArticlesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,27 +20,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Link;
 
 #[ORM\Entity(repositoryClass: ArticlesRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['article:list']]
         ),
-        new Post(
-            security: "is_granted('ROLE_AUTHOR') or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')",
+        new Put(
+            uriTemplate: '/articles/{id}',
+            security: "object.getAuteur() == user or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')",
             denormalizationContext: ['groups' => ['article:write']]
         ),
-        new Get(
-            uriTemplate: '/articles/{slug}',
-            uriVariables: [
-                'slug' => new Link(fromClass: Articles::class, identifiers: ['slug'])
-            ],
-            normalizationContext: ['groups' => ['article:read']]
-        ),
-        new Put(
+        new Patch(
+            uriTemplate: '/articles/{id}',
             security: "object.getAuteur() == user or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')",
             denormalizationContext: ['groups' => ['article:write']]
         ),
         new Delete(
+            uriTemplate: '/articles/{id}',
             security: "object.getAuteur() == user or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"
         ),
     ]
@@ -50,11 +48,15 @@ class Articles
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:read', 'article:list'])] 
+    #[Groups(['article:read', 'article:list'])]
     private ?int $id = null;
 
+    #[ORM\Column(type: "datetime_immutable", nullable: true)]
+    #[Groups(['article:read', 'article:list'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
     #[ORM\Column(length: 255)]
-    #[Groups(['article:read', 'article:list', 'article:write'])] 
+    #[Groups(['article:read', 'article:list', 'article:write'])]
     private ?string $titre = null;
 
     #[ORM\Column(length: 255, unique: true)]
@@ -62,34 +64,39 @@ class Articles
     private ?string $slug = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['article:read', 'article:list', 'article:write'])] 
+    #[Groups(['article:read', 'article:list', 'article:write'])]
     private ?string $resume = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
     #[Groups(['article:read', 'article:list', 'article:write'])]
     private ?User $auteur = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
     #[Groups(['article:read', 'article:list', 'article:write'])]
     private ?Theme $theme = null;
 
     #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'articles')]
-    #[ORM\JoinTable(name: 'articles_categories')]
+    #[ORM\JoinTable(
+        name: 'articles_categories',
+        joinColumns: [new ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id', onDelete: 'CASCADE')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'categorie_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    )]
     #[Groups(['article:read', 'article:list', 'article:write'])]
     private Collection $categories;
 
-    #[ORM\OneToMany(targetEntity: Blocs::class, mappedBy: 'article')]
+    #[ORM\OneToMany(targetEntity: Blocs::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[Groups(['article:read'])]
     private Collection $blocs;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     #[Groups(['article:read', 'article:list', 'article:write'])]
     private ?Image $imagePrincipale = null;
 
-    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleNote::class, cascade: ['persist', 'remove'])]
-    #[Groups(['article:read'])] 
+    #[ORM\OneToMany(mappedBy: 'article', targetEntity: ArticleNote::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Groups(['article:read'])]
     private Collection $articleNotes;
 
     public function __construct()
@@ -97,38 +104,67 @@ class Articles
         $this->blocs = new ArrayCollection();
         $this->articleNotes = new ArrayCollection();
         $this->categories = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
+    #[ORM\PrePersist]
+    public function setCreatedAtValue(): void
+    {
+        if ($this->createdAt === null) {
+            $this->createdAt = new \DateTimeImmutable();
+        }
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
+
     public function getTitre(): ?string
     {
         return $this->titre;
     }
+
     public function setTitre(string $titre): self
     {
         $this->titre = $titre;
         return $this;
     }
+
     public function getSlug(): ?string
     {
         return $this->slug;
     }
+
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
         return $this;
     }
+
     public function getResume(): ?string
     {
         return $this->resume;
     }
+
     public function setResume(?string $resume): self
     {
         $this->resume = $resume;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        if ($createdAt instanceof \DateTime) {
+            $this->createdAt = \DateTimeImmutable::createFromMutable($createdAt);
+        } elseif ($createdAt instanceof \DateTimeImmutable) {
+            $this->createdAt = $createdAt;
+        }
         return $this;
     }
 
@@ -136,6 +172,7 @@ class Articles
     {
         return $this->auteur;
     }
+
     public function setAuteur(?User $auteur): self
     {
         $this->auteur = $auteur;
@@ -146,6 +183,7 @@ class Articles
     {
         return $this->theme;
     }
+
     public function setTheme(?Theme $theme): self
     {
         $this->theme = $theme;
@@ -175,6 +213,7 @@ class Articles
     {
         return $this->blocs;
     }
+
     public function addBloc(Blocs $bloc): self
     {
         if (!$this->blocs->contains($bloc)) {
@@ -183,11 +222,13 @@ class Articles
         }
         return $this;
     }
+
     public function removeBloc(Blocs $bloc): self
     {
         if ($this->blocs->removeElement($bloc)) {
-            if ($bloc->getArticle() === $this)
+            if ($bloc->getArticle() === $this) {
                 $bloc->setArticle(null);
+            }
         }
         return $this;
     }
@@ -196,6 +237,7 @@ class Articles
     {
         return $this->imagePrincipale;
     }
+
     public function setImagePrincipale(?Image $imagePrincipale): self
     {
         $this->imagePrincipale = $imagePrincipale;
@@ -206,6 +248,7 @@ class Articles
     {
         return $this->articleNotes;
     }
+
     public function addArticleNote(ArticleNote $note): self
     {
         if (!$this->articleNotes->contains($note)) {
@@ -214,15 +257,18 @@ class Articles
         }
         return $this;
     }
+
     public function removeArticleNote(ArticleNote $note): self
     {
         if ($this->articleNotes->removeElement($note)) {
-            if ($note->getArticle() === $this)
+            if ($note->getArticle() === $this) {
                 $note->setArticle(null);
+            }
         }
         return $this;
     }
-    #[Groups(['article:read', 'article:list'])] 
+
+    #[Groups(['article:read', 'article:list'])]
     public function getMoyenneNotes(): ?float
     {
         if ($this->articleNotes->isEmpty()) {
@@ -233,15 +279,14 @@ class Articles
         $count = 0;
 
         foreach ($this->articleNotes as $note) {
-            $total += $note->getNote(); 
+            $total += $note->getNote();
             $count++;
         }
 
         return $count > 0 ? round($total / $count, 2) : null;
     }
 
-
-    #[Groups(['article:read', 'article:list'])] 
+    #[Groups(['article:read', 'article:list'])]
     public function getNombreNotes(): int
     {
         return $this->articleNotes->count();
@@ -252,14 +297,12 @@ class Articles
         if (!$this->categories->contains($category)) {
             $this->categories->add($category);
         }
-
         return $this;
     }
 
     public function removeCategory(Categorie $category): static
     {
         $this->categories->removeElement($category);
-
         return $this;
     }
 }

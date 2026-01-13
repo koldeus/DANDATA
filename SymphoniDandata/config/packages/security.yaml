@@ -1,14 +1,14 @@
 security:
     enable_authenticator_manager: true
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-    
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
+
     providers:
         app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
-    
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -37,7 +37,7 @@ security:
             logout:
                 path: app_logout
             remember_me:
-                secret: '%kernel.secret%'
+                secret: "%kernel.secret%"
                 lifetime: 604800
                 path: /
                 always_remember_me: true
@@ -45,6 +45,12 @@ security:
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/images/upload, roles: IS_AUTHENTICATED_FULLY } # Routes protégées
+        - {
+              path: ^/api/articles,
+              roles: IS_AUTHENTICATED_FULLY,
+              methods: [POST, PUT, DELETE],
+          } # Uniquement CUD protégé
         - { path: ^/api }
 
 when@test:
