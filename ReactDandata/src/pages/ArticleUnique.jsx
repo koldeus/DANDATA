@@ -4,8 +4,9 @@ import HeroArticle from "../components/Article/HeroArticle";
 import ArticleContent from "../components/Article/ArticleBloc";
 import ArticleActions from "../components/Article/ArticleAction";
 import ArticleAuthor from "../components/Article/ArticleAuthor";
+import ArticleNotes from "../components/Article/ArticleNotes";
+import RatingsDisplay from "../components/Article/RatingsDisplay"; // 👈 Ajouter ceci
 import SousChargement from "../components/SousChargement/SousChargement";
-
 import ArticleNotFound from "../components/Article/ArticleNotFound";
 import "./ArticleUnique.css";
 
@@ -61,6 +62,10 @@ export default function ArticleUnique({ theme }) {
       <ArticleActions theme={currentTheme} />
 
       <ArticleAuthor auteur={article.auteur} theme={currentTheme} />
+      
+      <ArticleNotes article={article} theme={currentTheme} />
+      
+      <RatingsDisplay article={article} theme={currentTheme} />
     </article>
   );
 }

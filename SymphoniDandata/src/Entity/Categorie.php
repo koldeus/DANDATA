@@ -38,7 +38,7 @@ class Categorie
     #[Groups(['article:read', 'article:list'])]
     private ?string $Nom = null;
 
-    #[ORM\ManyToMany(targetEntity: Articles::class, mappedBy: 'categories')] // ← categories au pluriel
+    #[ORM\ManyToMany(targetEntity: Articles::class, mappedBy: 'categories')]
     private Collection $articles;
 
     public function __construct()
@@ -71,7 +71,7 @@ class Categorie
     {
         if (!$this->articles->contains($article)) {
             $this->articles->add($article);
-            $article->addCategorie($this); // ← Corrigé : juste addCategorie
+            $article->addCategorie($this); 
         }
         return $this;
     }
@@ -79,7 +79,7 @@ class Categorie
     public function removeArticle(Articles $article): self
     {
         if ($this->articles->removeElement($article)) {
-            $article->removeCategorie($this); // ← Corrigé : juste removeCategorie
+            $article->removeCategorie($this); 
         }
         return $this;
     }

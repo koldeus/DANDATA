@@ -32,13 +32,17 @@ class Graphique
     #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 500)]
     #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?string $Titre = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?string $Type = null;
+    
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
+    private ?int $NbLigne = null;
 
     #[ORM\ManyToOne(inversedBy: 'graphiques')]
     #[ORM\JoinColumn(nullable: false)]
@@ -70,6 +74,15 @@ class Graphique
     public function setTitre(string $Titre): self
     {
         $this->Titre = $Titre;
+        return $this;
+    }
+    public function getNbLigne(): ?int
+    {
+        return $this->NbLigne;
+    }
+    public function setNbLigne(int $NbLigne): self
+    {
+        $this->NbLigne = $NbLigne;
         return $this;
     }
     public function getType(): ?string

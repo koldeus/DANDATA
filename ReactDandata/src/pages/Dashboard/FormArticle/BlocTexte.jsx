@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import DOMPurify from "dompurify";
 
 const sanitizeHTML = (html) => {
@@ -9,6 +9,19 @@ const sanitizeHTML = (html) => {
 };
 
 export default function BlocTexte({ bloc, updateBloc, theme }) {
+  const isInitializedRef = useRef(false);
+
+  // Initialiser le contenu de l'éditeur au montage
+  useEffect(() => {
+    if (!isInitializedRef.current && bloc.texte) {
+      const editor = document.getElementById(`editor-${bloc.id}`);
+      if (editor) {
+        editor.innerHTML = bloc.texte;
+        isInitializedRef.current = true;
+      }
+    }
+  }, [bloc.id, bloc.texte]);
+
   const applyFormat = useCallback(
     (command) => {
       const editor = document.getElementById(`editor-${bloc.id}`);
@@ -75,9 +88,7 @@ export default function BlocTexte({ bloc, updateBloc, theme }) {
         suppressContentEditableWarning
         onInput={handleInput}
         role="textbox"
-      >
-        {!bloc.texte && <span className="editor-placeholder">Texte...</span>}
-      </div>
+      />
     </>
   );
 }

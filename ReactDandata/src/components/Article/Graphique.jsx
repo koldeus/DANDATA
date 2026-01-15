@@ -68,6 +68,7 @@ const detectCSVSeparator = (csvText) => {
   return mostCommon.count > 0 ? mostCommon.sep : ",";
 };
 
+// Fonction pour calculer les pourcentages des valeurs textuelles
 const calculatePercentages = (values) => {
   const counts = {};
   values.forEach((val) => {
@@ -86,19 +87,20 @@ const calculatePercentages = (values) => {
   return { counts, percentages, total };
 };
 
-export default function GraphPreview({
-  graphique,
-  metadonnees,
-  theme,
-  titre,
-  nbLigne = 10,
-}) {
+export default function Graphique({ graphique, metadonnees, theme }) {
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [variablesObj, setVariablesObj] = useState([]);
   const [identificationVariable, setIdentificationVariable] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const currentTheme = GRAPH_THEME[theme] || GRAPH_THEME.DarkTheme;
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getMetadataByIRI = (iri) => {
     return metadonnees.find(
@@ -106,17 +108,16 @@ export default function GraphPreview({
     );
   };
 
+  // Stabiliser les dépendances avec useMemo
   const variablesKey = useMemo(
-    () => (graphique.variables || []).join(","),
-    [graphique.variables]
+    () => (graphique?.variables || []).map(v => v.id).join(','),
+    [graphique?.variables]
   );
 
+  const metadataId = graphique?.metadonnees?.id;
+
   useEffect(() => {
-    if (
-      !graphique.metadonnees ||
-      !graphique.variables ||
-      graphique.variables.length === 0
-    ) {
+    if (!graphique?.metadonnees || !graphique?.variables || graphique.variables.length === 0) {
       setChartData([]);
       setVariablesObj([]);
       setIdentificationVariable(null);
@@ -128,11 +129,15 @@ export default function GraphPreview({
       setError(null);
 
       try {
-        const metadata = getMetadataByIRI(graphique.metadonnees);
+        const metadata = getMetadataByIRI(
+          `${API_BASE_URL}/api/metadonnees/${graphique.metadonnees.id}`
+        );
+        
         if (!metadata || !metadata.fileName) {
           throw new Error("Metadata ou fichier introuvable");
         }
 
+        // Récupérer la variable d'identification si elle existe
         let idVar = null;
         if (metadata.variableIdentification) {
           const idVarIri = metadata.variableIdentification;
@@ -143,18 +148,11 @@ export default function GraphPreview({
           }
         }
 
-        const selectedVariableIRIs = graphique.variables;
-        const fetchedVariables = await Promise.all(
-          selectedVariableIRIs.map(async (vIri) => {
-            const res = await fetch(`${API_BASE_URL}${vIri}`);
-            if (!res.ok)
-              throw new Error(`Erreur récupération variable ${vIri}`);
-            return res.json();
-          })
-        );
-        setVariablesObj(fetchedVariables);
+        // Les variables sont déjà des objets complets dans l'article
+        setVariablesObj(graphique.variables);
 
-        const metaId = graphique.metadonnees.split("/").pop();
+        // Fetch CSV
+        const metaId = graphique.metadonnees.id;
         const resFile = await fetch(
           `${API_BASE_URL}/api/metadonnees/${metaId}/file`
         );
@@ -165,6 +163,7 @@ export default function GraphPreview({
         const sep = detectCSVSeparator(csvText);
         const headers = lines[0].split(sep).map((h) => h.trim());
 
+        // Find ID variable index if exists
         let idVarIndex = null;
         if (idVar) {
           idVarIndex = headers.findIndex(
@@ -172,7 +171,8 @@ export default function GraphPreview({
           );
         }
 
-        const variableIndices = fetchedVariables
+        // Find indices for selected variables
+        const variableIndices = graphique.variables
           .map((v) => {
             const idx = headers.findIndex(
               (h) => h.trim().toLowerCase() === v.nom.trim().toLowerCase()
@@ -189,9 +189,11 @@ export default function GraphPreview({
           );
         }
 
-        const hasTextVariables = fetchedVariables.some((v) => !v.num_string);
+        // Check if we have text variables (num_string = false)
+        const hasTextVariables = graphique.variables.some((v) => !v.num_string);
 
         if (hasTextVariables) {
+          // Pour les variables textuelles, on calcule les pourcentages
           const textVariableData = {};
 
           variableIndices.forEach(({ idx, name, variable }) => {
@@ -206,6 +208,7 @@ export default function GraphPreview({
             }
           });
 
+          // Créer les données pour le graphique basé sur les pourcentages
           const data = [];
           Object.keys(textVariableData).forEach((varName) => {
             const { percentages } = textVariableData[varName];
@@ -220,9 +223,11 @@ export default function GraphPreview({
 
           setChartData(data);
         } else {
-          const maxLinesToShow = Math.min(nbLigne || 10, lines.length - 1);
-
-          const data = lines.slice(1, maxLinesToShow + 1).map((line, index) => {
+          // Pour les variables numériques, utiliser toutes les lignes (ou limiter si nécessaire)
+          console.log(graphique)
+          const maxLines = graphique.NbLigne; // Limiter à 100 lignes max
+          
+          const data = lines.slice(1, maxLines + 1).map((line, index) => {
             const values = line.split(sep).map((v) => v.trim());
 
             let dataPointName = `Ligne ${index + 1}`;
@@ -243,7 +248,7 @@ export default function GraphPreview({
           setChartData(data);
         }
       } catch (err) {
-        console.error("Erreur preview graphique:", err);
+        console.error("Erreur chargement graphique:", err);
         setError(err.message);
         setChartData([]);
       } finally {
@@ -252,15 +257,20 @@ export default function GraphPreview({
     };
 
     fetchData();
-  }, [graphique.metadonnees, variablesKey, nbLigne]);
+  }, [metadataId, variablesKey]);
 
-  if (loading)
-    return <div className="chart-preview-loading">Chargement...</div>;
-  if (error) return <div className="chart-preview-error">❌ {error}</div>;
+  if (loading) {
+    return <div className="chart-loading">Chargement du graphique...</div>;
+  }
+
+  if (error) {
+    return <div className="chart-error">❌ {error}</div>;
+  }
+
   if (chartData.length === 0) {
     return (
-      <div className="chart-preview-empty">
-        Sélectionnez un dataset et des variables
+      <div className="chart-empty">
+        Aucune donnée disponible pour ce graphique
       </div>
     );
   }
@@ -268,9 +278,8 @@ export default function GraphPreview({
   const hasTextVariables = variablesObj.some((v) => !v.num_string);
 
   return (
-    <div className={`chart-preview ${theme}_Graph ${theme}_Border`}>
-      <h4>{titre || "Aperçu du graphique"}</h4>
-      <ResponsiveContainer width="100%" height={300}>
+    <div className={`chart-final ${theme}_Graph ${theme}_Border`}>
+      <ResponsiveContainer width="100%" height={400}>
         {graphique.type === "bar" && (
           <BarChart data={chartData}>
             <CartesianGrid stroke={currentTheme.grid} strokeDasharray="3 3" />
@@ -315,6 +324,7 @@ export default function GraphPreview({
             ))}
           </BarChart>
         )}
+        
         {graphique.type === "line" && (
           <LineChart data={chartData}>
             <CartesianGrid stroke={currentTheme.grid} strokeDasharray="3 3" />
@@ -361,6 +371,7 @@ export default function GraphPreview({
             ))}
           </LineChart>
         )}
+        
         {graphique.type === "pie" && (
           <PieChart>
             <Pie
@@ -369,7 +380,7 @@ export default function GraphPreview({
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={100}
+              outerRadius={isMobile ? 80 : 120}
               label={(entry) =>
                 hasTextVariables
                   ? `${entry.name} (${entry[variablesObj[0]?.nom]}%)`
@@ -395,9 +406,9 @@ export default function GraphPreview({
           </PieChart>
         )}
       </ResponsiveContainer>
-      <small className="chart-preview-note">
-        * Preview limitée aux {nbLigne || 10} premières lignes •{" "}
-        {variablesObj.length} variable(s) sélectionnée(s)
+      
+      <small className={`chart-note ${theme}_subbtle-texte`}>
+        {variablesObj.length} variable(s) affichée(s)
         {identificationVariable && ` • ID: ${identificationVariable.nom}`}
         {hasTextVariables && ` • Affichage en pourcentages`}
       </small>

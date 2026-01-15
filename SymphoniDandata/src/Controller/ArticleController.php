@@ -7,6 +7,7 @@ use App\Entity\Blocs;
 use App\Entity\Titre;
 use App\Entity\Texte;
 use App\Entity\Graphique;
+use App\Entity\User;
 use App\Repository\ArticlesRepository;
 use App\Repository\ImageRepository;
 use App\Repository\UserRepository;
@@ -44,12 +45,11 @@ class ArticleController extends AbstractController
 
             if (!$article) {
                 return $this->json(
-                    ['error' => 'Article non trouvé'],
+                    ['error' => $slug . 'Article non trouvé'],
                     Response::HTTP_NOT_FOUND
                 );
             }
 
-            // Construire la réponse avec toutes les données nécessaires
             $response = [
                 'id' => $article->getId(),
                 'titre' => $article->getTitre(),
@@ -131,7 +131,6 @@ class ArticleController extends AbstractController
                 );
             }
 
-            // Validation basique
             if (empty($data['titre']) || strlen($data['titre']) < 5) {
                 return $this->json(
                     ['error' => 'Le titre doit contenir au moins 5 caractères'],
@@ -153,21 +152,17 @@ class ArticleController extends AbstractController
                 );
             }
 
-            // Créer l'article
             $article = new Articles();
             $article->setTitre($data['titre']);
             $article->setResume($data['resume']);
 
-            // Générer le slug
             $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['titre'])));
-            // Vérifier l'unicité du slug
             $existingArticle = $this->articleRepository->findOneBy(['slug' => $slug]);
             if ($existingArticle) {
                 $slug = $slug . '-' . time();
             }
             $article->setSlug($slug);
 
-            // Récupérer et assigner l'utilisateur
             $user = $this->getUser();
             if (!$user) {
                 return $this->json(
@@ -177,7 +172,6 @@ class ArticleController extends AbstractController
             }
             $article->setAuteur($user);
 
-            // Récupérer et assigner le thème
             $themeIri = $data['theme'];
             $themeId = $this->extractIdFromIri($themeIri);
             if (!$themeId) {
@@ -195,7 +189,6 @@ class ArticleController extends AbstractController
             }
             $article->setTheme($theme);
 
-            // Assigner l'image principale si elle existe
             if (!empty($data['imagePrincipale'])) {
                 $imageIri = $data['imagePrincipale'];
                 $imageId = $this->extractIdFromIri($imageIri);
@@ -207,11 +200,9 @@ class ArticleController extends AbstractController
                 }
             }
 
-            // Persister l'article AVANT les blocs
             $this->entityManager->persist($article);
             $this->entityManager->flush();
 
-            // Traiter les blocs
             if (!empty($data['blocs']) && is_array($data['blocs'])) {
                 foreach ($data['blocs'] as $blocData) {
                     error_log('Traitement bloc: ' . json_encode($blocData));
@@ -227,7 +218,6 @@ class ArticleController extends AbstractController
                 );
             }
 
-            // Traiter les catégories
             if (!empty($data['categories']) && is_array($data['categories'])) {
                 foreach ($data['categories'] as $categorieIri) {
                     $categorieId = $this->extractIdFromIri($categorieIri);
@@ -240,12 +230,10 @@ class ArticleController extends AbstractController
                 }
             }
 
-            // Flush final
             $this->entityManager->flush();
 
             error_log('Article créé avec succès: ' . $article->getId());
 
-            // Retourner l'article créé
             $response = [
                 'id' => $article->getId(),
                 'titre' => $article->getTitre(),
@@ -280,7 +268,6 @@ class ArticleController extends AbstractController
         $bloc->setOrdre($blocData['ordre'] ?? 1);
         $bloc->setArticle($article);
 
-        // Traiter selon le type
         switch ($blocData['type']) {
             case 'titre':
                 $titre = new Titre();
@@ -293,7 +280,7 @@ class ArticleController extends AbstractController
 
             case 'texte':
                 $texte = new Texte();
-                $texte->setTitre($blocData['texte'] ?? '');
+                $texte->setTexte($blocData['texte'] ?? '');
                 $texte->setBlocs($bloc);
                 $this->entityManager->persist($texte);
                 $this->entityManager->persist($bloc);
@@ -322,9 +309,8 @@ class ArticleController extends AbstractController
 
                 $graphique = new Graphique();
 
-                // Récupérer les métadonnées
                 if (empty($blocData['graphique']['metadonnees'])) {
-                    throw new \Exception('Métadonnées requises pour le graphique');
+                    throw new \Exception('Métad onnées requises pour le graphique');
                 }
 
                 $metaIri = $blocData['graphique']['metadonnees'];
@@ -338,24 +324,21 @@ class ArticleController extends AbstractController
 
                 $graphique->setMetadonnees($meta);
                 $graphique->setType($blocData['graphique']['type'] ?? 'bar');
-                $graphique->setTitre('Graphique ' . ($blocData['ordre'] ?? 1));
+                $graphique->setTitre($blocData['graphique']['titre'] ?? '');
+                $graphique->setNbLigne($blocData['graphique']['NbLigne'] ?? '');
                 $graphique->setBlocs($bloc);
 
-                // Persister le bloc et le graphique D'ABORD
                 $this->entityManager->persist($bloc);
                 $this->entityManager->persist($graphique);
 
-                // Flush pour générer les IDs
                 $this->entityManager->flush();
 
                 error_log("Graphique créé avec ID: {$graphique->getId()}");
 
-                // ENSUITE ajouter les variables
                 if (!empty($blocData['graphique']['variables']) && is_array($blocData['graphique']['variables'])) {
                     error_log('Variables à ajouter: ' . json_encode($blocData['graphique']['variables']));
 
                     foreach ($blocData['graphique']['variables'] as $variableIri) {
-                        // Extraire l'ID de l'IRI
                         $variableId = $this->extractIdFromIri($variableIri);
                         error_log("Traitement variable IRI: {$variableIri} -> ID: {$variableId}");
 
@@ -377,7 +360,6 @@ class ArticleController extends AbstractController
                         }
                     }
 
-                    // Flush final pour sauvegarder les relations
                     $this->entityManager->flush();
                     error_log("Relations variables-graphique sauvegardées");
                 } else {
@@ -403,7 +385,6 @@ class ArticleController extends AbstractController
 
         switch ($bloc->getType()) {
             case 'titre':
-                // Récupérer le premier titre associé au bloc
                 $titres = $bloc->getTitres();
                 if ($titres && $titres->count() > 0) {
                     $titre = $titres->first();
@@ -413,11 +394,10 @@ class ArticleController extends AbstractController
                 break;
 
             case 'texte':
-                // Récupérer le premier texte associé au bloc
                 $textes = $bloc->getTextes();
                 if ($textes && $textes->count() > 0) {
                     $texte = $textes->first();
-                    $data['texte'] = $texte->getTitre();
+                    $data['texte'] = $texte->getTexte();
                 }
                 break;
 
@@ -433,7 +413,6 @@ class ArticleController extends AbstractController
                 break;
 
             case 'graphique':
-                // Récupérer le premier graphique associé au bloc
                 $graphiques = $bloc->getGraphiques();
                 if ($graphiques && $graphiques->count() > 0) {
                     $graphique = $graphiques->first();
@@ -441,15 +420,20 @@ class ArticleController extends AbstractController
                         'id' => $graphique->getId(),
                         'type' => $graphique->getType(),
                         'titre' => $graphique->getTitre(),
+                        'NbLigne' => $graphique->getNbLigne(),
                         'metadonnees' => $graphique->getMetadonnees() ? [
                             'id' => $graphique->getMetadonnees()->getId(),
                             'nom' => $graphique->getMetadonnees()->getNom(),
+                            'NbLignesTotal' => $graphique->getMetadonnees()->getNbLignesTotal(),
                         ] : null,
                         'variables' => array_map(function ($variable) {
                             return [
                                 'id' => $variable->getId(),
                                 'nom' => $variable->getNom(),
-                                'code' => $variable->getCode(),
+                                'couleur' => $variable->getColor(),
+                                'num_string' => $variable->isNumString(),
+                                'meta' => $variable->getMeta(),
+
                             ];
                         }, $graphique->getVariables()->toArray()),
                     ];
@@ -462,9 +446,189 @@ class ArticleController extends AbstractController
 
     private function extractIdFromIri(string $iri): ?int
     {
-        // Extraire l'ID de l'IRI (ex: "/api/users/1" -> 1)
         $parts = explode('/', trim($iri, '/'));
         $id = end($parts);
         return is_numeric($id) ? (int) $id : null;
+    }
+
+
+    #[Route('/{slug}', methods: ['PATCH'])]
+    public function update(Request $request, string $slug): Response
+    {
+        /** @var \App\Entity\User|null $user */
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(
+                ['error' => 'Vous devez être connecté'],
+                Response::HTTP_UNAUTHORIZED
+            );
+        }
+
+        try {
+            $article = $this->articleRepository->findOneBy(['slug' => $slug]);
+
+            if (!$article) {
+                return $this->json(
+                    ['error' => 'Article non trouvé'],
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+            $userRoles = $user->getRoles();
+            $isAuthor = $article->getAuteur() && $article->getAuteur()->getId() === $user->getId();
+            $isAdmin = in_array('ROLE_ADMIN', $userRoles);
+
+            if (!$isAuthor && !$isAdmin) {
+                return $this->json(
+                    ['error' => 'Vous n\'avez pas la permission de modifier cet article'],
+                    Response::HTTP_FORBIDDEN
+                );
+            }
+
+            $data = json_decode($request->getContent(), true);
+
+            if (!is_array($data)) {
+                return $this->json(
+                    ['error' => 'Données invalides'],
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
+
+            if (isset($data['titre']) && !empty($data['titre'])) {
+                if (strlen($data['titre']) < 5) {
+                    return $this->json(
+                        ['error' => 'Le titre doit contenir au moins 5 caractères'],
+                        Response::HTTP_BAD_REQUEST
+                    );
+                }
+                $article->setTitre($data['titre']);
+
+                $newSlug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $data['titre'])));
+                $existingArticle = $this->articleRepository->findOneBy(['slug' => $newSlug]);
+                if ($existingArticle && $existingArticle->getId() !== $article->getId()) {
+                    $newSlug = $newSlug . '-' . time();
+                }
+                $article->setSlug($newSlug);
+            }
+
+            if (isset($data['resume'])) {
+                if (empty($data['resume'])) {
+                    return $this->json(
+                        ['error' => 'Le résumé est requis'],
+                        Response::HTTP_BAD_REQUEST
+                    );
+                }
+                $article->setResume($data['resume']);
+            }
+
+            if (isset($data['theme'])) {
+                $themeIri = $data['theme'];
+                $themeId = $this->extractIdFromIri($themeIri);
+                if (!$themeId) {
+                    return $this->json(
+                        ['error' => 'ID de thème invalide'],
+                        Response::HTTP_BAD_REQUEST
+                    );
+                }
+                $theme = $this->themeRepository->find($themeId);
+                if (!$theme) {
+                    return $this->json(
+                        ['error' => "Thème {$themeId} non trouvé"],
+                        Response::HTTP_NOT_FOUND
+                    );
+                }
+                $article->setTheme($theme);
+            }
+
+            if (isset($data['imagePrincipale'])) {
+                if ($data['imagePrincipale'] === null) {
+                    $article->setImagePrincipale(null);
+                } else {
+                    $imageIri = $data['imagePrincipale'];
+                    $imageId = $this->extractIdFromIri($imageIri);
+                    if ($imageId) {
+                        $image = $this->imageRepository->find($imageId);
+                        if ($image) {
+                            $article->setImagePrincipale($image);
+                        }
+                    }
+                }
+            }
+
+            if (isset($data['categories']) && is_array($data['categories'])) {
+                foreach ($article->getCategories() as $categorie) {
+                    $article->removeCategorie($categorie);
+                }
+
+                foreach ($data['categories'] as $categorieIri) {
+                    $categorieId = $this->extractIdFromIri($categorieIri);
+                    if ($categorieId) {
+                        $categorie = $this->entityManager->getRepository(\App\Entity\Categorie::class)->find($categorieId);
+                        if ($categorie) {
+                            $article->addCategorie($categorie);
+                        }
+                    }
+                }
+            }
+
+            if (isset($data['blocs']) && is_array($data['blocs'])) {
+                foreach ($article->getBlocs() as $bloc) {
+                    $this->entityManager->remove($bloc);
+                }
+                $this->entityManager->flush();
+
+                foreach ($data['blocs'] as $blocData) {
+                    error_log('Traitement bloc: ' . json_encode($blocData));
+                    $bloc = $this->createBloc($blocData, $article);
+                    if ($bloc) {
+                        $article->addBloc($bloc);
+                    }
+                }
+            }
+
+            $this->entityManager->flush();
+
+            error_log('Article mis à jour avec succès: ' . $article->getId());
+
+            $response = [
+                'id' => $article->getId(),
+                'titre' => $article->getTitre(),
+                'slug' => $article->getSlug(),
+                'resume' => $article->getResume(),
+                'createdAt' => $article->getCreatedAt()?->format('c'),
+                'auteur' => $article->getAuteur() ? [
+                    'id' => $article->getAuteur()->getId(),
+                    'pseudo' => $article->getAuteur()->getPseudo(),
+                ] : null,
+                'theme' => $article->getTheme() ? [
+                    'id' => $article->getTheme()->getId(),
+                    'nom' => $article->getTheme()->getNom(),
+                ] : null,
+                'imagePrincipale' => $article->getImagePrincipale() ? [
+                    'id' => $article->getImagePrincipale()->getId(),
+                    'url' => $article->getImagePrincipale()->getUrl(),
+                ] : null,
+                'categories' => array_map(function ($categorie) {
+                    return [
+                        'id' => $categorie->getId(),
+                        'Nom' => $categorie->getNom(),
+                    ];
+                }, $article->getCategories()->toArray()),
+                'blocs' => array_map(function ($bloc) {
+                    return $this->serializeBloc($bloc);
+                }, $article->getBlocs()->toArray()),
+                'message' => 'Article mis à jour avec succès',
+            ];
+
+            return $this->json($response, Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            error_log('Erreur mise à jour article: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
+            return $this->json([
+                'error' => 'Erreur lors de la mise à jour de l\'article',
+                'message' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -77,12 +77,12 @@ export default function HeroArticle({ theme, article }) {
             alt={article.imagePrincipale.alt || article.titre}
             className="principal-image"
           />
+          
           <div className="image-overlay" />
         </div>
       )}
 
       <div className="article-header-content">
-        <ArticleCategories categories={article.categories} theme={theme} />
 
         <h1 className={`article-title ${theme}_texte`}>{article.titre}</h1>
 
@@ -93,6 +93,7 @@ export default function HeroArticle({ theme, article }) {
         )}
 
         <ArticleMetadata article={article} theme={theme} />
+        <ArticleCategories categories={article.categories} theme={theme} />
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\MetadonneesFileController;
 
 #[ORM\Entity(repositoryClass: MetadonneesRepository::class)]
-
+#[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     operations: [
         new GetCollection(),
@@ -32,7 +32,6 @@ use App\Controller\MetadonneesFileController;
 )]
 class Metadonnees
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -55,12 +54,16 @@ class Metadonnees
     #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?string $extension_retour = null;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
+    private ?int $NbLignesTotal = null;
+
     #[ORM\OneToMany(targetEntity: Variable::class, mappedBy: 'Meta', cascade: ['persist', 'remove'])]
     #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private Collection $variables;
 
     #[ORM\ManyToOne(targetEntity: Variable::class)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     #[Groups(['article:blocs', 'bloc:read', 'article:read'])]
     private ?Variable $variableIdentification = null;
 
@@ -73,13 +76,23 @@ class Metadonnees
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
     public function __construct()
     {
         $this->variables = new ArrayCollection();
         $this->graphiques = new ArrayCollection();
     }
 
-    // ... constructeur et autres méthodes ...
+    /**
+     * FIX: Breaks the circular dependency before deletion occurs.
+     */
+    #[ORM\PreRemove]
+    public function removeVariableIdentificationDependency(): void
+    {
+        $this->variableIdentification = null;
+    }
+
+    // ... Getters and Setters ...
 
     public function getVariableIdentification(): ?Variable
     {
@@ -91,6 +104,7 @@ class Metadonnees
         $this->variableIdentification = $variableIdentification;
         return $this;
     }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -104,6 +118,17 @@ class Metadonnees
     public function setUrl(string $url): self
     {
         $this->url = $url;
+        return $this;
+    }
+
+    public function getNbLignesTotal(): ?int
+    {
+        return $this->NbLignesTotal;
+    }
+
+    public function setNbLignesTotal(int $NbLignesTotal): self
+    {
+        $this->NbLignesTotal = $NbLignesTotal;
         return $this;
     }
 

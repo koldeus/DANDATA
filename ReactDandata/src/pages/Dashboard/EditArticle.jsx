@@ -8,6 +8,7 @@ import MainImageSection from "./FormArticle/MainImageSection";
 import ContentSection from "./FormArticle/ContentSection";
 import BlocList from "./FormArticle/BlocList";
 import "./form-article.css";
+import { redirect } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -21,17 +22,17 @@ const sanitizeHTML = (html) => {
 const normalizeOrder = (blocs) =>
   blocs.map((bloc, index) => ({ ...bloc, ordre: index + 1 }));
 
-export default function FormeArticle({ theme }) {
+export default function EditArticle({ theme, slug, onSuccess }) {
   const { getToken } = useAuthToken();
   const { user, loading: userLoading } = useUser();
 
-  // États
   const [titre, setTitre] = useState("");
   const [resume, setResume] = useState("");
   const [imagePrincipale, setImagePrincipale] = useState(null);
   const [pageTheme, setPageTheme] = useState("");
   const [blocs, setBlocs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingArticle, setLoadingArticle] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [themes, setThemes] = useState([]);
@@ -45,7 +46,6 @@ export default function FormeArticle({ theme }) {
   const isMountedRef = useRef(true);
   const fetchedVariablesRef = useRef(new Set());
 
-  // 1. Chargement des données initiales
   useEffect(() => {
     isMountedRef.current = true;
 
@@ -97,10 +97,91 @@ export default function FormeArticle({ theme }) {
     };
   }, []);
 
-  // 2. Chargement des variables
   useEffect(() => {
-    if (!dataLoaded) return; // Ne charge pas les variables si les données ne sont pas prêtes
+    if (!slug || !dataLoaded) return;
 
+    const fetchArticle = async () => {
+      try {
+        setLoadingArticle(true);
+        const res = await fetch(`${API_BASE_URL}/api/articles/slug/${slug}`);
+
+        if (!res.ok) {
+          throw new Error("Impossible de charger l'article");
+        }
+
+        const article = await res.json();
+
+        setTitre(article.titre || "");
+        setResume(article.resume || "");
+        setPageTheme(article.theme?.id || "");
+
+        if (article.imagePrincipale) {
+          setImagePrincipale(article.imagePrincipale);
+          setMainImageMode("existing");
+        }
+
+        if (article.categories) {
+          setSelectedCategories(article.categories.map((cat) => cat.id));
+        }
+
+        if (article.blocs && Array.isArray(article.blocs)) {
+          const loadedBlocs = article.blocs.map((bloc, index) => {
+            const blocData = {
+              id: bloc.id || Date.now() + index,
+              type: bloc.type,
+              ordre: bloc.ordre || index + 1,
+              texte: bloc.texte || "",
+              niveau: bloc.niveau || 2,
+              images: [],
+              imageMode: "upload",
+              graphique: {
+                type: "bar",
+                titre: "",
+                NbLigne: 10,
+                metadonnees: null,
+                variables: [],
+              },
+            };
+
+            if (bloc.type === "image" && bloc.images) {
+              blocData.images = bloc.images;
+              blocData.imageMode = "existing";
+            }
+
+            if (bloc.type === "graphique" && bloc.graphique) {
+              blocData.graphique = {
+                type: bloc.graphique.type || "bar",
+                NbLigne: bloc.graphique.NbLigne || 0,
+                titre: bloc.graphique.titre || "",
+                metadonnees: bloc.graphique.metadonnees?.id
+                  ? `${API_BASE_URL}/api/metadonnees/${bloc.graphique.metadonnees.id}`
+                  : null,
+                variables:
+                  bloc.graphique.variables?.map(
+                    (v) => `/api/variables/${v.id}`
+                  ) || [],
+                update: true,
+              };
+            }
+
+            return blocData;
+          });
+
+          setBlocs(normalizeOrder(loadedBlocs));
+        }
+      } catch (err) {
+        console.error("Erreur chargement article:", err);
+        setError("Impossible de charger l'article");
+      } finally {
+        setLoadingArticle(false);
+      }
+    };
+
+    fetchArticle();
+  }, [slug, dataLoaded]);
+
+  useEffect(() => {
+    if (!dataLoaded) return;
     const fetchVariables = async () => {
       const missingIRIs = new Set();
 
@@ -151,7 +232,6 @@ export default function FormeArticle({ theme }) {
     fetchVariables();
   }, [blocs, metadonnees, dataLoaded]);
 
-  // Gestion des blocs
   const addBloc = (type) => {
     if (!dataLoaded) {
       setError("⏳ Veuillez attendre le chargement des données");
@@ -170,9 +250,10 @@ export default function FormeArticle({ theme }) {
           imageMode: "upload",
           graphique: {
             type: "bar",
-            metadonnees: null,
-            variables: [],
             titre: "",
+            NbLigne: 10,
+            metadonnees: "",
+            variables: [],
           },
         },
       ])
@@ -202,7 +283,6 @@ export default function FormeArticle({ theme }) {
     });
   };
 
-  // Validation
   const validateForm = () => {
     if (!titre.trim() || titre.trim().length < 5) {
       setError("❌ Le titre doit contenir au moins 5 caractères");
@@ -255,7 +335,6 @@ export default function FormeArticle({ theme }) {
     return true;
   };
 
-  // Soumission
   const handleSubmit = async () => {
     setError("");
     setSuccess("");
@@ -275,7 +354,6 @@ export default function FormeArticle({ theme }) {
         throw new Error("Impossible de récupérer le token d'authentification");
       }
 
-      // Upload des nouvelles images si nécessaire
       let uploadedBlocImages = {};
 
       for (const bloc of blocs) {
@@ -308,11 +386,9 @@ export default function FormeArticle({ theme }) {
         }
       }
 
-      // Construire le payload
       const payload = {
         titre: titre.trim(),
         resume: resume.trim(),
-        auteur: `${API_BASE_URL}/api/users/${user.id}`,
         theme: `${API_BASE_URL}/api/themes/${pageTheme}`,
         categories: selectedCategories.map(
           (id) => `${API_BASE_URL}/api/categories/${id}`
@@ -350,7 +426,7 @@ export default function FormeArticle({ theme }) {
                 metadonnees: bloc.graphique.metadonnees,
                 variables: bloc.graphique.variables,
                 titre: bloc.graphique.titre,
-                NbLigne:bloc.graphique.NbLigne
+                NbLigne: bloc.graphique.NbLigne,
               };
             }
 
@@ -373,8 +449,8 @@ export default function FormeArticle({ theme }) {
 
       console.log("Payload envoyé:", JSON.stringify(payload, null, 2));
 
-      const res = await fetch(`${API_BASE_URL}/api/articles`, {
-        method: "POST",
+      const res = await fetch(`${API_BASE_URL}/api/articles/${slug}`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -393,19 +469,16 @@ export default function FormeArticle({ theme }) {
       }
 
       const responseData = await res.json();
-      setSuccess("✅ Article créé avec succès !");
+      setSuccess("✅ Article mis à jour avec succès !");
 
       setTimeout(() => {
-        setTitre("");
-        setResume("");
-        setBlocs([]);
-        setImagePrincipale(null);
-        setPageTheme("");
-        setSelectedCategories([]);
-        setSuccess("");
-      }, 2000);
+        if (onSuccess) {
+          onSuccess(responseData);
+          window.location.reload();
+        }
+      }, 1500);
     } catch (err) {
-      console.error("Erreur création article:", err);
+      console.error("Erreur mise à jour article:", err);
       console.error("Stack trace:", err.stack);
       setError(`❌ ${err.message || "Erreur inconnue"}`);
     } finally {
@@ -413,8 +486,7 @@ export default function FormeArticle({ theme }) {
     }
   };
 
-  // Afficher le chargement tant que les données ne sont pas chargées
-  if (userLoading || !dataLoaded) {
+  if (userLoading || !dataLoaded || loadingArticle) {
     return <SousChargement />;
   }
 
@@ -423,7 +495,7 @@ export default function FormeArticle({ theme }) {
       {loading && <SousChargement />}
 
       <div className="forme-header">
-        <h1>✍️ Créer un article</h1>
+        <h1>✏️ Modifier l'article</h1>
       </div>
 
       {error && (
@@ -483,7 +555,7 @@ export default function FormeArticle({ theme }) {
           onClick={handleSubmit}
           disabled={loading}
         >
-          {loading ? "⏳ Publication..." : "🚀 Publier"}
+          {loading ? "⏳ Mise à jour..." : "💾 Sauvegarder"}
         </button>
       </div>
     </div>

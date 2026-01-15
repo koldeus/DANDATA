@@ -11,7 +11,7 @@ export default function ArticleActions({ theme }) {
       }).catch((error) => console.log('Erreur partage', error));
     } else {
       // Fallback: copier l'URL
-      navigator.clipboard.writeText(window.location.href);
+        navigator.clipboard.writeText(window.location.href);
       alert("Lien copié !");
     }
   };

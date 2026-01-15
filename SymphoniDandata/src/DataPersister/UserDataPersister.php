@@ -6,14 +6,13 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire; // <--- Import important
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class UserDataPersister implements ProcessorInterface
 {
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher,
         
-        // On indique ici quel service précis injecter
         #[Autowire(service: 'api_platform.doctrine.orm.state.persist_processor')]
         private ProcessorInterface $persistProcessor
     ) {}
@@ -27,7 +26,6 @@ class UserDataPersister implements ProcessorInterface
             );
 
             $data->setPassword($hashed);
-            // Il est recommandé d'effacer le mot de passe en clair après hachage
             $data->eraseCredentials(); 
         }
 

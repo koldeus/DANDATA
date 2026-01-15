@@ -1,4 +1,3 @@
-// src/components/auth/AuthForm.jsx
 import React, { useState } from "react";
 import "./AuthForm.css";
 import "../../pages/theme.css";
@@ -7,42 +6,54 @@ export default function AuthForm({ theme }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+  const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+
+    if (!email || !password) {
+      return setError(
+        "Mot de passe ou email invalide. Veuillez vérifier vos informations."
+      );
+    }
+
     setLoading(true);
 
-    const login = async (email, password, remember) => {
-      try {
-        const res = await fetch("http://localhost:8000/api/login_check", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
-        });
+    try {
+      const res = await fetch("http://localhost:8000/api/login_check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password, // Fixed: was 'cleanPassword'
+        }),
+      });
 
-        const data = await res.json();
-        if (data.token) {
-          localStorage.setItem("jwt", data.token);
-            window.history.back();
-          if (remember) {
-            localStorage.setItem("remember", true);
-          }
-        } else {
-          console.error("Erreur login", data);
-        }
-      } catch (err) {
-        console.error(err);
+      const data = await res.json();
+
+      if (!res.ok) {
+        return setError("Email ou mot de passe incorrect.");
       }
-    };
 
-    await login(email, password, remember);
-    setLoading(false);
+      if (data.token) {
+        localStorage.setItem("jwt", data.token);
+
+        if (remember) {
+          localStorage.setItem("remember", "true");
+        }
+
+        window.history.back();
+      } else {
+        setError("Erreur lors de la connexion.");
+      }
+    } catch (err) {
+      setError("Erreur serveur. Réessayez plus tard.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,6 +63,8 @@ export default function AuthForm({ theme }) {
         Connectez-vous pour accéder à votre espace
       </p>
       <form className="auth-form" onSubmit={handleSubmit}>
+        {error && <div className="auth-error">{error}</div>}
+        
         <label className="field">
           <span>Email</span>
           <input
@@ -136,7 +149,9 @@ export default function AuthForm({ theme }) {
             )}
           </button>
 
-          <div className={`forgot ${theme}_subbtle-texte`}>Mot de passe oublié ?</div>
+          <div className={`forgot ${theme}_subbtle-texte`}>
+            Mot de passe oublié ?
+          </div>
         </label>
 
         <label className={`remember ${theme}_subbtle-texte`}>
@@ -148,7 +163,11 @@ export default function AuthForm({ theme }) {
           Se souvenir de moi
         </label>
 
-        <button className={`btn-primaire-co ${theme}_Light-Btn-inverse`} type="submit"  disabled={loading}>
+        <button
+          className={`btn-primaire-co ${theme}_Light-Btn-inverse`}
+          type="submit"
+          disabled={loading}
+        >
           {loading ? "Connexion en cours..." : "Se connecter"}
         </button>
 

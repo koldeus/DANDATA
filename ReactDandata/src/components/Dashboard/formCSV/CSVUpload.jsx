@@ -7,6 +7,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
   const [variables, setVariables] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [step, setStep] = useState("upload");
   const [selectedIdentifier, setSelectedIdentifier] = useState("");
@@ -263,6 +264,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
 
   const processFile = (selectedFile) => {
     setError(null);
+    setSuccess(null); // ✅ Réinitialiser le message de succès
 
     try {
       validateCSV(selectedFile);
@@ -272,6 +274,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
       reader.onload = (e) => {
         try {
           const csvText = e.target.result;
+
           const parsed = parseCSV(csvText);
           setCsvData(parsed);
           setVariables(parsed.variables);
@@ -307,13 +310,14 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
 
     setUploading(true);
     setError(null);
+    setSuccess(null); // ✅ Réinitialiser le message de succès
 
     try {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("variables", JSON.stringify(variables));
-      
-      // Ajouter l'identifiant sélectionné s'il existe
+      formData.append("NbLignesTotal", csvData.rows.length);
+
       if (selectedIdentifier) {
         formData.append("identifier", selectedIdentifier);
       }
@@ -321,6 +325,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
       console.log("📤 Envoi des données:");
       console.log("  - Fichier:", file.name, file.size, "bytes");
       console.log("  - Variables:", variables);
+      console.log("  - NbLignesTotal:", csvData.rows.length);
       console.log("  - Identifiant:", selectedIdentifier);
 
       const token = localStorage.getItem("jwt");
@@ -349,13 +354,24 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
       }
 
       const data = JSON.parse(responseText);
+
+      // ✅ Afficher le message de succès
+      setSuccess(
+        `✅ Fichier "${file.name}" importé avec succès ! ${csvData.rows.length} lignes enregistrées.`
+      );
+
+      // ✅ Notifier le parent si nécessaire
       if (onDatasetUploaded) onDatasetUploaded(data);
 
-      setFile(null);
-      setCsvData(null);
-      setVariables([]);
-      setSelectedIdentifier("");
-      setStep("upload");
+      // ✅ Réinitialiser le formulaire après 2.5 secondes
+      setTimeout(() => {
+        setFile(null);
+        setCsvData(null);
+        setVariables([]);
+        setSelectedIdentifier("");
+        setStep("upload");
+        setSuccess(null);
+      }, 2500);
     } catch (err) {
       console.error("❌ Erreur:", err);
       setError(err.message);
@@ -376,7 +392,23 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
         </p>
       </div>
 
+      {/* ✅ Message d'erreur */}
       {error && <div className="error-message">{error}</div>}
+
+      {/* ✅ Message de succès */}
+      {success && (
+        <div className="success-message" style={{
+          padding: "15px",
+          marginBottom: "20px",
+          backgroundColor: "#d4edda",
+          color: "#155724",
+          border: "1px solid #c3e6cb",
+          borderRadius: "8px",
+          fontWeight: "500"
+        }}>
+          {success}
+        </div>
+      )}
 
       {step === "upload" ? (
         <div
@@ -508,17 +540,19 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
             </div>
           </div>
 
-          <div className="identifier-selection" style={{ marginTop: '20px' }}>
+          <div className="identifier-selection" style={{ marginTop: "20px" }}>
             <label className={`${theme}_subbtle-texte`}>
               Variable d'identification (optionnel):
             </label>
-            <select 
+            <select
               value={selectedIdentifier}
               onChange={(e) => setSelectedIdentifier(e.target.value)}
               className={`${theme}_light-background`}
-              style={{ width: '100%', padding: '8px', marginTop: '8px' }}
+              style={{ width: "100%", padding: "8px", marginTop: "8px" }}
             >
-              <option value="">-- Choisir une variable d'identification --</option>
+              <option value="">
+                -- Choisir une variable d'identification --
+              </option>
               {variables.map((variable) => (
                 <option key={variable.id} value={variable.name}>
                   {variable.name} ({variable.type})

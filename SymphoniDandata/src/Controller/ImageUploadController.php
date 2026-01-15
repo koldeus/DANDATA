@@ -17,7 +17,6 @@ class ImageUploadController extends AbstractController
     public function upload(Request $request, EntityManagerInterface $em): Response
     {
 
-        // Vérifier que l'utilisateur est authentifié et a le bon rôle
         $user = $this->getUser();
         if (!$user) {
             error_log('ArticleController: No authenticated user');
@@ -39,14 +38,12 @@ class ImageUploadController extends AbstractController
             );
         }
         try {
-            // Vérifier que GD est disponible
             if (!extension_loaded('gd')) {
                 return new Response(json_encode([
                     'error' => 'GD extension is not loaded. Please install php-gd: sudo apt-get install php-gd'
                 ]), 500, ['Content-Type' => 'application/json']);
             }
 
-            // Check roles
             if (
                 !$this->isGranted('ROLE_ADMIN') &&
                 !$this->isGranted('ROLE_DESIGNER') &&
@@ -66,7 +63,6 @@ class ImageUploadController extends AbstractController
                 ]);
             }
 
-            // Validate file
             $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             if (!in_array($file->getMimeType(), $allowedMimes)) {
                 return new Response(json_encode(['error' => 'Invalid file type']), 400, [
@@ -74,14 +70,13 @@ class ImageUploadController extends AbstractController
                 ]);
             }
 
-            $maxSize = 5 * 1024 * 1024; // 5MB
+            $maxSize = 5 * 1024 * 1024;
             if ($file->getSize() > $maxSize) {
                 return new Response(json_encode(['error' => 'File too large']), 413, [
                     'Content-Type' => 'application/json'
                 ]);
             }
 
-            // Create uploads directory if not exists
             $uploadDir = $this->getParameter('kernel.project_dir') . '/public/uploads/images';
             if (!is_dir($uploadDir)) {
                 if (!mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
@@ -89,12 +84,10 @@ class ImageUploadController extends AbstractController
                 }
             }
 
-            // Vérifier les permissions d'écriture
             if (!is_writable($uploadDir)) {
                 throw new \Exception('Upload directory is not writable: ' . $uploadDir);
             }
 
-            // Get original image info
             $originalInfo = \getimagesize($file->getPathname());
             if (!$originalInfo) {
                 return new Response(json_encode(['error' => 'Invalid image file']), 400, [
@@ -105,14 +98,11 @@ class ImageUploadController extends AbstractController
             $originalHeight = $originalInfo[1];
             $originalSize = $file->getSize();
 
-            // Generate secure filename
             $fileName = \bin2hex(\random_bytes(8)) . '.webp';
             $filePath = $uploadDir . '/' . $fileName;
 
-            // Convert and optimize image using GD
             $optimizationData = $this->optimizeImage($file->getPathname(), $filePath);
 
-            // Save entity
             $imageEntity = new Image();
             $imageEntity->setFileName($fileName);
             $imageEntity->setAlt($request->get('alt', '') ?: '');
@@ -149,7 +139,6 @@ class ImageUploadController extends AbstractController
             ]), 201, ['Content-Type' => 'application/json']);
 
         } catch (\Exception $e) {
-            // Log l'erreur complète
             \error_log('Image upload error: ' . $e->getMessage());
             \error_log('Stack trace: ' . $e->getTraceAsString());
 
@@ -164,12 +153,10 @@ class ImageUploadController extends AbstractController
      */
     private function optimizeImage(string $sourcePath, string $destPath): array
     {
-        // Vérifier que les fonctions GD existent
         if (!function_exists('imagecreatefromstring')) {
             throw new \Exception('GD function imagecreatefromstring not available');
         }
 
-        // Load original image
         $imageContent = @\file_get_contents($sourcePath);
         if ($imageContent === false) {
             throw new \Exception('Failed to read source image file');
@@ -184,7 +171,6 @@ class ImageUploadController extends AbstractController
         $height = \imagesy($image);
         $resized = false;
 
-        // Resize if too large
         if ($width > 2000 || $height > 2000) {
             $ratio = \min(2000 / $width, 2000 / $height);
             $newWidth = (int) ($width * $ratio);
@@ -196,7 +182,7 @@ class ImageUploadController extends AbstractController
                 throw new \Exception('Failed to create resized image canvas');
             }
 
-            // Préserver la transparence pour PNG et GIF
+            
             \imagealphablending($resizedImage, false);
             \imagesavealpha($resizedImage, true);
 
@@ -213,7 +199,7 @@ class ImageUploadController extends AbstractController
             $resized = true;
         }
 
-        // Save as WebP with compression
+        
         if (!\imagewebp($image, $destPath, 80)) {
             \imagedestroy($image);
             throw new \Exception('Failed to save WebP image. Check if directory is writable.');

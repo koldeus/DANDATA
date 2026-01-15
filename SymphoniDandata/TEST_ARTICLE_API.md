@@ -1,9 +1,7 @@
-// Test curl pour créer un article
 // URL: http://localhost:8000/api/articles
 // Method: POST
 // Headers: Content-Type: application/json, Authorization: Bearer {token}
 
-// Exemple de payload:
 {
   "titre": "Mon premier article",
   "resume": "Ceci est le résumé de mon article",

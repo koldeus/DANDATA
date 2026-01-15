@@ -30,9 +30,9 @@ class Texte
     #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 4096)]
     #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
-    private ?string $titre = null;
+    private ?string $texte = null;
 
     #[ORM\ManyToOne(inversedBy: 'textes')]
     #[ORM\JoinColumn(nullable: false)]
@@ -42,13 +42,13 @@ class Texte
     {
         return $this->id;
     }
-    public function getTitre(): ?string
+    public function gettexte(): ?string
     {
-        return $this->titre;
+        return $this->texte;
     }
-    public function setTitre(string $titre): self
+    public function settexte(string $texte): self
     {
-        $this->titre = $titre;
+        $this->texte = $texte;
         return $this;
     }
     public function getBlocs(): ?Blocs

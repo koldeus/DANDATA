@@ -40,6 +40,11 @@ class MetadonneesUploadController extends AbstractController
                 return $this->json(['error' => 'JSON variables invalide'], 400);
             }
 
+            $nbLignesTotal = $request->request->get('NbLignesTotal');
+            if ($nbLignesTotal === null) {
+                return $this->json(['error' => 'NbLignesTotal manquant'], 400);
+            }
+
             $selectedIdentifierName = $request->request->get('identifier');
             $identificationVariable = null;
 
@@ -77,9 +82,9 @@ class MetadonneesUploadController extends AbstractController
             $metadonnees->setUrl('/uploads/metadonnees/' . $fileName);
             $metadonnees->setApiFichier(false);
             $metadonnees->setExtensionRetour($originalExtension);
+            $metadonnees->setNbLignesTotal((int)$nbLignesTotal);
             $metadonnees->setUpdatedAt(new \DateTimeImmutable());
 
-            // --- CORRECTED LOOP & ASSOCIATION ---
             foreach ($variablesArray as $varData) {
                 $variable = new Variable();
                 $currentVarName = $varData['name'] ?? 'Variable';
@@ -92,17 +97,14 @@ class MetadonneesUploadController extends AbstractController
                 $metadonnees->addVariable($variable);
                 $em->persist($variable);
 
-                // Check if this is the chosen identifier
                 if ($selectedIdentifierName === $currentVarName) {
                     $identificationVariable = $variable;
                 }
             }
 
-            // Link the identified variable to the metadata object
             if ($identificationVariable) {
                 $metadonnees->setVariableIdentification($identificationVariable);
             }
-            // ---------------------------------------
 
             $em->persist($metadonnees);
             $em->flush();
@@ -112,6 +114,7 @@ class MetadonneesUploadController extends AbstractController
                 'nom' => $metadonnees->getNom(),
                 'fileName' => $metadonnees->getFileName(),
                 'url' => $metadonnees->getUrl(),
+                'nbLignesTotal' => $metadonnees->getNbLignesTotal(),
                 'identifier' => $identificationVariable ? $identificationVariable->getNom() : null,
                 'variables' => array_map(fn($v) => [
                     'name' => $v->getNom(),

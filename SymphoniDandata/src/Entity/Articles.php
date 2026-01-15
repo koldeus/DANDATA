@@ -31,11 +31,13 @@ use ApiPlatform\Metadata\Link;
             security: "object.getAuteur() == user or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')",
             denormalizationContext: ['groups' => ['article:write']]
         ),
+        
         new Patch(
-            uriTemplate: '/articles/{id}',
-            security: "object.getAuteur() == user or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')",
+            uriTemplate: '/themes/articles/{id}',
+            security: "is_granted('DESIGNER') or is_granted('ROLE_ADMIN')",
             denormalizationContext: ['groups' => ['article:write']]
         ),
+
         new Delete(
             uriTemplate: '/articles/{id}',
             security: "object.getAuteur() == user or is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"

@@ -44,11 +44,9 @@ class Theme
     private ?string $Slug = null;
 
     #[ORM\OneToMany(targetEntity: Site::class, mappedBy: 'Theme')]
-    // Pas de Groups
     private Collection $sites;
 
     #[ORM\OneToMany(targetEntity: Articles::class, mappedBy: 'theme')]
-    // Pas de Groups (référence circulaire)
     private Collection $articles;
 
     public function __construct()

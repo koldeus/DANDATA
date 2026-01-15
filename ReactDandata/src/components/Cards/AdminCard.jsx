@@ -1,25 +1,35 @@
 import ArticleCard from "./ArticleCard";
 import { Pencil, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useAuthToken, useUser } from "../../hooks/useUser";
+import React from "react";
+import { useAuthToken } from "../../hooks/useUser";
 
 export function ArticleCardAdmin({
   article,
   theme,
   onArticleDeleted,
-  setArticle,
+  onArticleEdit,
+  setArticles,
 }) {
   const { getToken } = useAuthToken();
 
   function onEdit() {
-    console.log("Edit article", article.id);
-    // TODO: Ajouter la logique d'édition
+    console.log("Edit article", article.slug);
+    // Appeler la fonction passée en props pour activer le mode édition
+    if (onArticleEdit) {
+      onArticleEdit(article.slug);
+    }
   }
 
   async function onDelete(id) {
-    if (!window.confirm("Supprimer cette catégorie ?")) return;
-    const token = getToken();
-    if (!token) return;
+    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cet article ?")) {
+      return;
+    }
+
+    const token = await getToken();
+    if (!token) {
+      console.error("Token d'authentification manquant");
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -31,20 +41,22 @@ export function ArticleCardAdmin({
       );
 
       if (!res.ok) {
-        // Si le serveur renvoie 500, on entre ici
-        const errorData = await res.json();
-        console.log("Détails erreur backend:", errorData);
+        const errorData = await res.json().catch(() => ({}));
+        console.error("Détails erreur backend:", errorData);
+        alert(
+          `Erreur lors de la suppression: ${
+            errorData.error || errorData.message || "Erreur inconnue"
+          }`
+        );
         return;
       }
-      // Dans AdminCard.jsx
-      if (res.ok) {
-        // On appelle la fonction passée en props pour retirer l'article de la liste affichée
-        onArticleDeleted(article.id);
-      }
-      // Succès
+
+      // Succès - retirer l'article de la liste
+      onArticleDeleted(article.id);
+      console.log("Article supprimé avec succès");
     } catch (error) {
-      // ICI : Tu as peut-être écrit console.log(res) au lieu de console.log(error)
       console.error("Erreur de connexion:", error);
+      alert("Erreur de connexion au serveur");
     }
   }
 
@@ -56,6 +68,7 @@ export function ArticleCardAdmin({
           onClick={onEdit}
           className={`${theme}_Light-Btn-inverse`}
           aria-label="Modifier"
+          title="Modifier l'article"
         >
           <Pencil size={18} />
         </button>
@@ -64,6 +77,7 @@ export function ArticleCardAdmin({
           onClick={() => onDelete(article.id)}
           className={`${theme}_Light-Btn`}
           aria-label="Supprimer"
+          title="Supprimer l'article"
         >
           <Trash2 size={18} />
         </button>

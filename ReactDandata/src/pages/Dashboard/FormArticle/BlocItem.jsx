@@ -8,6 +8,7 @@ export default function BlocItem({
   bloc,
   index,
   theme,
+  update,
   updateBloc,
   removeBloc,
   moveBloc,

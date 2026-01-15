@@ -31,7 +31,7 @@ class Titre
     #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 500)]
     #[Groups(['article:blocs', 'article:read', 'article:write', 'bloc:read'])]
     private ?string $Titre = null;
 

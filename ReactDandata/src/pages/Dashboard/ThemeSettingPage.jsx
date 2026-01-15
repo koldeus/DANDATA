@@ -134,7 +134,7 @@ export default function ThemePage({ theme }) {
     try {
       const token = getToken();
       const res = await fetch(
-        `http://localhost:8000/api/articles/${articleId}`,
+        `http://localhost:8000/api/themes/articles/${articleId}`,
         {
           method: "PATCH",
           headers: {

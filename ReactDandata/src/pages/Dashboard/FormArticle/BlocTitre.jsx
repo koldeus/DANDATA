@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import DOMPurify from "dompurify";
 
 const sanitizeHTML = (html) => {
@@ -9,6 +9,17 @@ const sanitizeHTML = (html) => {
 };
 
 export default function BlocTitre({ bloc, updateBloc, theme }) {
+  const isInitializedRef = useRef(false);
+  useEffect(() => {
+    if (!isInitializedRef.current && bloc.texte) {
+      const editor = document.getElementById(`editor-${bloc.id}`);
+      if (editor) {
+        editor.innerHTML = bloc.texte;
+        isInitializedRef.current = true;
+      }
+    }
+  }, [bloc.id, bloc.texte]);
+
   const handleInput = useCallback(() => {
     const editor = document.getElementById(`editor-${bloc.id}`);
     if (!editor) return;
@@ -49,9 +60,7 @@ export default function BlocTitre({ bloc, updateBloc, theme }) {
         suppressContentEditableWarning
         onInput={handleInput}
         role="textbox"
-      >
-        {!bloc.texte && <span className="editor-placeholder">Titre...</span>}
-      </div>
+      />
     </>
   );
 }

@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../../hooks/useUser";
 import FormeArticle from "./forme-article";
+import EditArticle from "./EditArticle";
 import SousChargement from "../../components/SousChargement/SousChargement";
 import { ArticleCardAdmin } from "../../components/Cards/AdminCard";
 import "./ArticlesPage.css";
 
 export default function ArticlesPage({ theme }) {
   const { user, loading } = useUser();
-  const [mode, setMode] = useState("list");
+  const [mode, setMode] = useState("list"); // "list", "create", "edit"
   const [articles, setArticles] = useState([]);
   const [loadingArticles, setLoadingArticles] = useState(true);
+  const [slug, setslug] = useState(null);
 
   const allowedRoles = ["ROLE_ADMIN", "ROLE_EDITOR"];
 
@@ -31,6 +33,22 @@ export default function ArticlesPage({ theme }) {
     fetchArticles();
   }, []);
 
+  const handleEdit = (slug) => {
+    setslug(slug);
+    setMode("edit");
+  };
+
+  const handleEditSuccess = (updatedArticle) => {
+    // Mettre à jour la liste des articles
+    setArticles((prev) =>
+      prev.map((a) => (a.id === updatedArticle.id ? updatedArticle : a))
+    );
+
+    // Retourner à la liste
+    setMode("list");
+    setslug(null);
+  };
+
   if (loading) return <SousChargement />;
 
   if (!user || !user.roles.some((r) => allowedRoles.includes(r))) {
@@ -47,11 +65,17 @@ export default function ArticlesPage({ theme }) {
             ➕ Ajouter un article
           </button>
         )}
-        {mode === "create" && (
-          <button onClick={() => setMode("list")}>← Retour à la liste</button>
+        {(mode === "create" || mode === "edit") && (
+          <button
+            onClick={() => {
+              setMode("list");
+              setslug(null);
+            }}
+          >
+            ← Retour à la liste
+          </button>
         )}
       </div>
-
       {/* CONTENU */}
       {mode === "list" && (
         <div className="articles-list">
@@ -66,14 +90,17 @@ export default function ArticlesPage({ theme }) {
                 onArticleDeleted={(deletedId) =>
                   setArticles(articles.filter((a) => a.id !== deletedId))
                 }
+                onArticleEdit={handleEdit}
                 setArticles={setArticles}
               />
             ))
           )}
         </div>
       )}
-
       {mode === "create" && <FormeArticle theme={theme} />}
+      {mode === "edit" && slug && (
+        <EditArticle theme={theme} slug={slug} onSuccess={handleEditSuccess} />
+      )}
     </div>
   );
 }

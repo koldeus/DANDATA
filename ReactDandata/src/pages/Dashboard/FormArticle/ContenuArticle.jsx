@@ -1,7 +1,13 @@
 import React from "react";
 import Bloc from "./Bloc";
 
-export default function ContenuArticle({ blocs, setBlocs, metadonnees, imagesServeur,theme }) {
+export default function ContenuArticle({
+  blocs,
+  setBlocs,
+  metadonnees,
+  imagesServeur,
+  theme,
+}) {
   const addBloc = (type) => {
     setBlocs((prev) => [
       ...prev,
