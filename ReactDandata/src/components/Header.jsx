@@ -34,17 +34,17 @@ export function Header({ theme }) {
         </h2>
       </div>
 
-      {/* Navbar desktop */}
+
       <div className="navbar-desktop">
         <Navbar theme={theme} />
       </div>
 
-      {/* Bouton desktop */}
+
       <div className="btn-connect-desktop">
         <Boutton theme={theme} />
       </div>
 
-      {/* Menu burger mobile */}
+
       <div className="navbar-mobile">
         <IconButton
           edge="start"

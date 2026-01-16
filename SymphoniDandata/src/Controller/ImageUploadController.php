@@ -28,7 +28,7 @@ class ImageUploadController extends AbstractController
 
         $userRoles = $user->getRoles();
         error_log('ArticleController: User roles: ' . json_encode($userRoles));
-        $hasPermission = in_array('ROLE_AUTHOR', $userRoles) || in_array('ROLE_ADMIN', $userRoles);
+        $hasPermission = in_array('ROLE_AUTHOR', $userRoles) || in_array('ROLE_ADMIN', $userRoles)|| in_array('ROLE_EDITOR', $userRoles);
 
         if (!$hasPermission) {
             error_log('ArticleController: User does not have permission');
@@ -46,8 +46,8 @@ class ImageUploadController extends AbstractController
 
             if (
                 !$this->isGranted('ROLE_ADMIN') &&
-                !$this->isGranted('ROLE_DESIGNER') &&
-                !$this->isGranted('ROLE_EDITOR')
+                !$this->isGranted('ROLE_EDITOR') &&
+                !$this->isGranted('ROLE_AUTHOR')
             ) {
                 return new Response(json_encode(['error' => 'Access denied']), 403, [
                     'Content-Type' => 'application/json'

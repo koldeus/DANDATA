@@ -1,17 +1,14 @@
-/* --- MOBILE FIRST --- */
-
 .accueil {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  overflow: hidden;
+  min-height: 100%;
+  overflow-x: hidden;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   padding: 2rem 1rem;
   box-sizing: border-box;
-  /*top: ;*/
 }
 
 .accueil h1 {
@@ -23,7 +20,6 @@
 
 }
 
-/* Sur mobile, tout est en colonne */
 .accueil-content {
   display: flex;
   flex-direction: column;
@@ -34,7 +30,6 @@
   z-index: 1;
 }
 
-/* Textes sur mobile : prennent la largeur */
 .accueil-content p:first-of-type,
 .accueil-content p:last-of-type {
   flex: 0 0 30%;

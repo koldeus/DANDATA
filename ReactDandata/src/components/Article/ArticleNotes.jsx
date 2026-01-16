@@ -34,7 +34,6 @@ export default function ArticleNotes({ article, theme }) {
 
         // Vérifier d'abord que le backend est accessible
         const backendUrl = "http://localhost:8000/api/article_notes";
-        console.log(`Tentative de chargement: ${backendUrl}?article=${article.id}&user=${user.id}`);
 
         const res = await fetch(
           `${backendUrl}?article=${article.id}&user=${user.id}`,
@@ -55,8 +54,6 @@ export default function ArticleNotes({ article, theme }) {
           setUserNote(existingNote.note);
           setNoteId(existingNote.id);
 
-        } else {
-          console.log("Aucune note existante pour cet article");
         }
       } catch (err) {
         console.error("Erreur chargement note:", err);
@@ -99,15 +96,11 @@ export default function ArticleNotes({ article, theme }) {
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      console.log("🔍 Debug - User ID:", user.id);
-      console.log("🔍 Debug - Note ID:", noteId);
-      console.log("🔍 Debug - Token:", token ? "présent" : "absent");
 
       let res;
       
       // Si une note existe déjà, on la met à jour (PATCH)
       if (noteId) {
-        console.log("📝 Tentative PATCH sur note ID:", noteId);
         res = await fetch(`http://localhost:8000/api/article_notes/${noteId}`, {
           method: "PATCH",
           headers: {
@@ -121,7 +114,6 @@ export default function ArticleNotes({ article, theme }) {
         });
       } else {
         // Sinon on crée une nouvelle note (POST)
-        console.log("✨ Tentative POST nouvelle note");
         res = await fetch(`http://localhost:8000/api/article_notes`, {
           method: "POST",
           headers: headers,
@@ -159,7 +151,6 @@ export default function ArticleNotes({ article, theme }) {
         if (responseData.id) {
           setNoteId(responseData.id);
         }
-        console.log("Note enregistrée avec succès");
       }
     } catch (err) {
       setUserNote(previousNote);

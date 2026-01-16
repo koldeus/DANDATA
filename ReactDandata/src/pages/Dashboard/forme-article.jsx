@@ -72,7 +72,6 @@ export default function FormeArticle({ theme }) {
               Array.isArray(metaData.member) ? metaData.member : []
             );
           }
-          console.log("Métadonnées chargées");
 
           if (imagesRes.ok) {
             const imagesData = await imagesRes.json();
@@ -99,7 +98,7 @@ export default function FormeArticle({ theme }) {
 
   // 2. Chargement des variables
   useEffect(() => {
-    if (!dataLoaded) return; // Ne charge pas les variables si les données ne sont pas prêtes
+    if (!dataLoaded) return; 
 
     const fetchVariables = async () => {
       const missingIRIs = new Set();
@@ -371,7 +370,6 @@ export default function FormeArticle({ theme }) {
           }),
       };
 
-      console.log("Payload envoyé:", JSON.stringify(payload, null, 2));
 
       const res = await fetch(`${API_BASE_URL}/api/articles`, {
         method: "POST",
@@ -479,7 +477,7 @@ export default function FormeArticle({ theme }) {
       <div className="form-actions">
         <button
           type="button"
-          className="submit-btn"
+          className={`submit-btn ${theme}_Light-Btn`}
           onClick={handleSubmit}
           disabled={loading}
         >

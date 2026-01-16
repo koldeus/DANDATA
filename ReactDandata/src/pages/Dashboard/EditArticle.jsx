@@ -72,7 +72,6 @@ export default function EditArticle({ theme, slug, onSuccess }) {
               Array.isArray(metaData.member) ? metaData.member : []
             );
           }
-          console.log("Métadonnées chargées");
 
           if (imagesRes.ok) {
             const imagesData = await imagesRes.json();
@@ -447,7 +446,6 @@ export default function EditArticle({ theme, slug, onSuccess }) {
           }),
       };
 
-      console.log("Payload envoyé:", JSON.stringify(payload, null, 2));
 
       const res = await fetch(`${API_BASE_URL}/api/articles/${slug}`, {
         method: "PATCH",

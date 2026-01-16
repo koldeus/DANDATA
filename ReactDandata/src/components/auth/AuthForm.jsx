@@ -28,7 +28,7 @@ export default function AuthForm({ theme }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          password, // Fixed: was 'cleanPassword'
+          password, 
         }),
       });
 

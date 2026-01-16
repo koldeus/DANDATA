@@ -34,7 +34,7 @@ use ApiPlatform\Metadata\Link;
         
         new Patch(
             uriTemplate: '/themes/articles/{id}',
-            security: "is_granted('DESIGNER') or is_granted('ROLE_ADMIN')",
+            security: "is_granted('ROLE_DESIGNER') or is_granted('ROLE_ADMIN')",
             denormalizationContext: ['groups' => ['article:write']]
         ),
 

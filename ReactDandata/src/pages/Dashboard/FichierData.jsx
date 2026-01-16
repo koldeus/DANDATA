@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./FichierData.css";
+import "../../components/Dashboard/formCSV/CSVUpload.css";
 import CSVUpload from "../../components/Dashboard/formCSV/CSVUpload";
 import { useAuthToken, useUser } from "../../hooks/useUser";
 import SousChargement from "../../components/SousChargement/SousChargement";
@@ -164,7 +164,7 @@ const FichierData = ({ theme }) => {
 
                     <button
                       className="btn-delete"
-                      disabled={!user?.roles?.includes("ROLE_ADMIN")}
+                      disabled={!user?.roles?.includes("ROLE_ADMIN")&&!user?.roles?.includes("ROLE_DATA_PROVIDER")}
                       onClick={() => handleDelete(csv)}
                     >
                       Supprimer

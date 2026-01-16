@@ -1,24 +1,22 @@
 .category-nav {
   padding: 15px 0;
   width: 100%;
-  overflow-x: scroll; /* Permet le défilement horizontal sur mobile */
+  overflow-x: scroll;
   white-space: nowrap;
-  /*scrollbar-width: none; /* Cache la scrollbar sur Firefox */
 }
 
 .category-nav::-webkit-scrollbar {
-  display: none; /* Cache la scrollbar sur Chrome/Safari */
+  display: none; 
 }
 
 .category-nav-container {
   display: flex;
-  justify-content: center; /* Centre les badges */
+  justify-content: center; 
   gap: 12px;
   padding: 0 20px;
 }
 
 .category-nav-item {
-  /* On reprend exactement le look de tes badges */
   background-color: transparent;
   color: #ffffff;
   border: 2px solid white;
@@ -36,7 +34,6 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* État quand la catégorie est sélectionnée */
 .category-nav-item.active {
   color: #0d0d0d;
   background-color: white;
@@ -51,7 +48,6 @@
   border-radius: 20px;
 }
 
-/* Sur mobile, on aligne à gauche pour le scroll */
 @media (max-width: 768px) {
   .category-nav-container {
     justify-content: flex-start;

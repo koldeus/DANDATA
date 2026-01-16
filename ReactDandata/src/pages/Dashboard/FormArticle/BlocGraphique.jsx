@@ -23,6 +23,7 @@ export default function BlocGraphique({
     ? getMetadataByIRI(bloc.graphique.metadonnees)
     : null;
 
+  
   const maxLines = metadata?.NbLignesTotal || metadata?.nbLignesTotal || 1000;
 
   useEffect(() => {

@@ -25,12 +25,9 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
     "#52B788",
   ];
 
-  // Détecte le délimiteur du CSV
   const detectDelimiter = (csvText) => {
     const lines = csvText.trim().split("\n").slice(0, 5);
     const possibleDelimiters = [",", ";", "\t", "|"];
-
-    console.log("🔍 Détection du délimiteur...");
 
     const delimiterScores = possibleDelimiters.map((delimiter) => {
       const columnCounts = lines.map((line) => {
@@ -44,12 +41,6 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
         columnCounts.reduce((a, b) => a + b, 0) / columnCounts.length;
       const isConsistent = minColumns === maxColumns;
 
-      console.log(
-        `   ${delimiter === "\t" ? "\\t" : delimiter}: ${avgColumns.toFixed(
-          1
-        )} colonnes (min: ${minColumns}, max: ${maxColumns}, consistent: ${isConsistent})`
-      );
-
       return {
         delimiter,
         score: isConsistent && minColumns > 1 ? avgColumns : 0,
@@ -61,11 +52,6 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
     delimiterScores.sort((a, b) => b.score - a.score);
 
     const bestDelimiter = delimiterScores[0];
-    console.log(
-      `✅ Délimiteur détecté: "${
-        bestDelimiter.delimiter === "\t" ? "\\t" : bestDelimiter.delimiter
-      }" (${bestDelimiter.avgColumns} colonnes)`
-    );
 
     return bestDelimiter.score > 0 ? bestDelimiter.delimiter : ",";
   };
@@ -94,7 +80,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
     ).length;
 
     if (nonNumericInFirstLine === firstLine.length) {
-      console.log("✅ Détection: Format COLUMNS (première ligne = headers)");
+      
       return "columns";
     }
 
@@ -106,18 +92,14 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
         ).length;
 
         if (numericInSecondLine >= secondLine.length * 0.5) {
-          console.log(
-            "✅ Détection: Format COLUMNS (1ère ligne texte + 2ème ligne nombres)"
-          );
+          
           return "columns";
         }
       }
     }
 
     if (numRows > numColumns * 1.5) {
-      console.log(
-        "✅ Détection: Format COLUMNS (beaucoup plus de lignes que de colonnes)"
-      );
+      
       return "columns";
     }
 
@@ -129,11 +111,9 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
       nonNumericInFirstColumn === firstColumn.slice(1).length &&
       numColumns > numRows
     ) {
-      console.log("✅ Détection: Format ROWS (première colonne = labels)");
       return "rows";
     }
 
-    console.log("✅ Détection: Format COLUMNS (par défaut)");
     return "columns";
   };
 
@@ -159,34 +139,26 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
       );
     }
 
-    console.log("📄 Première ligne brute:", lines[0]);
-    console.log("📄 Deuxième ligne brute:", lines[1]);
-    console.log("📊 Nombre de lignes:", lines.length);
+
 
     const orientation = detectOrientation(lines, delimiter);
 
-    console.log("🎯 Orientation détectée:", orientation);
 
     if (orientation === "columns") {
       const headers = lines[0].split(delimiter).map((h) => h.trim());
 
-      console.log("📋 Headers détectés:", headers);
-      console.log("📊 Nombre de colonnes:", headers.length);
 
       const rows = lines
         .slice(1)
         .map((line) => line.split(delimiter).map((cell) => cell.trim()));
 
-      console.log("📊 Première ligne de données:", rows[0]);
 
       const detectedVariables = headers.map((header, index) => {
         const columnValues = rows.map((row) => row[index] || "");
         const type = detectVariableType(header, columnValues);
         const colorIndex = index % colors.length;
 
-        console.log(
-          `✅ Variable créée: ${header} (${type}) - ${columnValues.length} valeurs`
-        );
+     
 
         return {
           id: Math.random(),
@@ -197,7 +169,6 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
         };
       });
 
-      console.log("🎉 Total variables créées:", detectedVariables.length);
 
       return { headers, rows, variables: detectedVariables };
     } else {
@@ -264,7 +235,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
 
   const processFile = (selectedFile) => {
     setError(null);
-    setSuccess(null); // ✅ Réinitialiser le message de succès
+    setSuccess(null);
 
     try {
       validateCSV(selectedFile);
@@ -310,7 +281,7 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
 
     setUploading(true);
     setError(null);
-    setSuccess(null); // ✅ Réinitialiser le message de succès
+    setSuccess(null);
 
     try {
       const formData = new FormData();
@@ -322,11 +293,6 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
         formData.append("identifier", selectedIdentifier);
       }
 
-      console.log("📤 Envoi des données:");
-      console.log("  - Fichier:", file.name, file.size, "bytes");
-      console.log("  - Variables:", variables);
-      console.log("  - NbLignesTotal:", csvData.rows.length);
-      console.log("  - Identifiant:", selectedIdentifier);
 
       const token = localStorage.getItem("jwt");
 
@@ -336,10 +302,8 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
         body: formData,
       });
 
-      console.log("📥 Response status:", response.status);
 
       const responseText = await response.text();
-      console.log("📥 Response body:", responseText);
 
       if (!response.ok) {
         let errorData;
@@ -355,15 +319,12 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
 
       const data = JSON.parse(responseText);
 
-      // ✅ Afficher le message de succès
       setSuccess(
         `✅ Fichier "${file.name}" importé avec succès ! ${csvData.rows.length} lignes enregistrées.`
       );
 
-      // ✅ Notifier le parent si nécessaire
       if (onDatasetUploaded) onDatasetUploaded(data);
 
-      // ✅ Réinitialiser le formulaire après 2.5 secondes
       setTimeout(() => {
         setFile(null);
         setCsvData(null);
@@ -392,20 +353,21 @@ export default function CSVUpload({ onDatasetUploaded, theme }) {
         </p>
       </div>
 
-      {/* ✅ Message d'erreur */}
       {error && <div className="error-message">{error}</div>}
 
-      {/* ✅ Message de succès */}
       {success && (
-        <div className="success-message" style={{
-          padding: "15px",
-          marginBottom: "20px",
-          backgroundColor: "#d4edda",
-          color: "#155724",
-          border: "1px solid #c3e6cb",
-          borderRadius: "8px",
-          fontWeight: "500"
-        }}>
+        <div
+          className="success-message"
+          style={{
+            padding: "15px",
+            marginBottom: "20px",
+            backgroundColor: "#d4edda",
+            color: "#155724",
+            border: "1px solid #c3e6cb",
+            borderRadius: "8px",
+            fontWeight: "500",
+          }}
+        >
           {success}
         </div>
       )}

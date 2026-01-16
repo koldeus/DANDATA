@@ -64,7 +64,7 @@ export default function HeroArticle({ theme, article }) {
       <nav className="nav-article">
         <button
           onClick={() => navigate(-1)}
-          className={`article-go-back ${theme}_Light-Btn`}
+          className={`article-go-back ${theme}_Light-Btn-inverse`}
         >
           <ArrowLeft size={24} />
         </button>

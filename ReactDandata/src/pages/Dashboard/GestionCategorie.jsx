@@ -48,7 +48,6 @@ export default function GestionCategorie({ theme }) {
 
     if (!name.trim()) return;
     const token = getToken();
-    console.log(token)
     if (!token) return alert("Vous devez être connecté");
 
     try {
@@ -207,14 +206,14 @@ export default function GestionCategorie({ theme }) {
                     <div className="categorie-actions">
                       <button
                         className={`btn-primaire-categorie ${theme}_Light-Btn-inverse`}
-                        disabled={!user?.roles?.includes("ROLE_ADMIN")}
+                        disabled={!user?.roles?.includes("ROLE_ADMIN") && !user?.roles?.includes("ROLE_EDITOR")}
                         onClick={() => startEdit(cat)}
                       >
                         Modifier
                       </button>
                       <button
                         className="btn-supp"
-                        disabled={!user?.roles?.includes("ROLE_ADMIN")}
+                        disabled={!user?.roles?.includes("ROLE_ADMIN") && !user?.roles?.includes("ROLE_EDITOR")}
                         onClick={() => handleDelete(id)}
                       >
                         Supprimer

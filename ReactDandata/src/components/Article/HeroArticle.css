@@ -1,13 +1,8 @@
-/* =======================
-   HERO ARTICLE COMPONENT
-   ======================= */
-
 .hero-article {
   position: relative;
   margin-bottom: 3rem;
 }
 
-/* Navigation */
 .nav-article {
   position: absolute;
   top: 2rem;
@@ -16,6 +11,7 @@
 }
 
 .article-go-back {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,13 +22,12 @@
   transition: all 0.3s ease;
 }
 
-/* Image principale */
 .div-image-principal {
   position: relative;
   width: 100%;
   height: 500px;
   overflow: hidden;
-  border-radius: 0 0 12px  12px ;
+  border-radius: 0 0 12px 12px;
   margin-bottom: 2rem;
 }
 
@@ -53,14 +48,12 @@
   );
 }
 
-/* Header content */
 .article-header-content {
   max-width: 800px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
 
-/* Categories */
 .article-categories {
   display: flex;
   gap: 0.75rem;
@@ -96,7 +89,6 @@
   color: #ad1b3b;
 }
 
-/* Titre */
 .article-title {
   font-size: 3rem;
   font-weight: bold;
@@ -104,7 +96,6 @@
   line-height: 1.2;
 }
 
-/* Résumé */
 .article-resume {
   font-size: 1.25rem;
   margin-bottom: 2rem;
@@ -112,7 +103,6 @@
   line-height: 1.6;
 }
 
-/* Métadonnées */
 .article-metadata {
   display: flex;
   flex-wrap: wrap;
@@ -125,7 +115,6 @@
   border-bottom-width: 1px;
 }
 
-/* Auteur */
 .author-info {
   display: flex;
   align-items: center;
@@ -176,7 +165,6 @@
   margin: 0;
 }
 
-/* Thème */
 .theme-info {
   display: flex;
   align-items: center;
@@ -189,7 +177,6 @@
   font-size: 0.875rem;
 }
 
-/* Rating */
 .rating-info {
   display: flex;
   align-items: center;
@@ -229,5 +216,9 @@
   .nav-article {
     top: 1rem;
     left: 1rem;
+  }
+
+  .article-go-back {
+    top: 100px;
   }
 }

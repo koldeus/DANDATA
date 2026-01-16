@@ -48,15 +48,14 @@ function ArticleCard({ article, theme }) {
                 </div>
               )}
               <div className="article-card-badges">
-                {article.categories.map(
-                  (cat) => (
-                    (
-                      <span className="article-card-category-badge">
-                        {cat.Nom ? cat.Nom : "Catégorie inconnue"}
-                      </span>
-                    )
-                  )
-                )}
+                {article.categories.map((cat, index) => (
+                  <span
+                    key={cat.id || index}
+                    className="article-card-category-badge"
+                  >
+                    {cat.Nom ? cat.Nom : "Catégorie inconnue"}
+                  </span>
+                ))}
               </div>
               {article.moyenneNotes && (
                 <div className="article-card-rating-badge">

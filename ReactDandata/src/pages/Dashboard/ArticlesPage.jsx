@@ -13,7 +13,7 @@ export default function ArticlesPage({ theme }) {
   const [loadingArticles, setLoadingArticles] = useState(true);
   const [slug, setslug] = useState(null);
 
-  const allowedRoles = ["ROLE_ADMIN", "ROLE_EDITOR"];
+  const allowedRoles = ["ROLE_ADMIN", "ROLE_EDITOR", "ROLE_AUTHOR"];
 
   useEffect(() => {
     async function fetchArticles() {
@@ -39,12 +39,10 @@ export default function ArticlesPage({ theme }) {
   };
 
   const handleEditSuccess = (updatedArticle) => {
-    // Mettre à jour la liste des articles
     setArticles((prev) =>
       prev.map((a) => (a.id === updatedArticle.id ? updatedArticle : a))
     );
 
-    // Retourner à la liste
     setMode("list");
     setslug(null);
   };
@@ -55,14 +53,25 @@ export default function ArticlesPage({ theme }) {
     return <div>Accès refusé</div>;
   }
 
+  // Déterminer les droits de l'utilisateur
+  const SuperDroit = ["ROLE_ADMIN", "ROLE_EDITOR"];
+  const FullDroit = user.roles.some((r) => SuperDroit.includes(r));
+
+  // Filtrer les articles pour les auteurs (ROLE_AUTHOR)
+  const filteredArticles = FullDroit
+    ? articles
+    : articles.filter((article) => article.auteur?.id === user.id);
+
   return (
     <div className="articles-page">
-      {/* HEADER */}
       <div className="articles-header">
         <h2>Articles</h2>
         {mode === "list" && (
-          <button onClick={() => setMode("create")}>
-            ➕ Ajouter un article
+          <button
+            onClick={() => setMode("create")}
+            className={`button-Article-Add ${theme}_Light-Btn`}
+          >
+            + Ajouter un article
           </button>
         )}
         {(mode === "create" || mode === "edit") && (
@@ -71,18 +80,19 @@ export default function ArticlesPage({ theme }) {
               setMode("list");
               setslug(null);
             }}
+            className={`${theme}_Light-Btn button-Article-Add`}
           >
             ← Retour à la liste
           </button>
         )}
       </div>
-      {/* CONTENU */}
+
       {mode === "list" && (
         <div className="articles-list">
           {loadingArticles ? (
             <SousChargement />
-          ) : (
-            articles.map((element) => (
+          ) : filteredArticles.length > 0 ? (
+            filteredArticles.map((element) => (
               <ArticleCardAdmin
                 key={element.id || Math.random()}
                 article={element}
@@ -94,9 +104,12 @@ export default function ArticlesPage({ theme }) {
                 setArticles={setArticles}
               />
             ))
+          ) : (
+            <p>Aucun article trouvé</p>
           )}
         </div>
       )}
+
       {mode === "create" && <FormeArticle theme={theme} />}
       {mode === "edit" && slug && (
         <EditArticle theme={theme} slug={slug} onSuccess={handleEditSuccess} />

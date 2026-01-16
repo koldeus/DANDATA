@@ -82,7 +82,6 @@ export default function ArticleContent({ article, theme }) {
         );
 
       case "graphique":
-      console.log(bloc.graphique.titre);
         return (
           <div
             key={bloc.id}

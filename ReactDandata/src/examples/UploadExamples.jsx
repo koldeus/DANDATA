@@ -5,9 +5,6 @@ import BlockRating from './components/BlockRating';
 import { useUser } from './hooks/useUser';
 import { useUpload, useRating } from './hooks/useUpload';
 
-/**
- * Exemple 1 : Composant de formulaire d'article complet
- */
 export function ArticleFormExample() {
   const { token, user } = useUser();
   const { uploadImage } = useUpload();
@@ -82,7 +79,6 @@ export function ArticleFormExample() {
       <h1>Créer un Nouvel Article</h1>
 
       <form onSubmit={handleSubmit}>
-        {/* Champs de base */}
         <div className="form-group">
           <label htmlFor="titre">Titre</label>
           <input
@@ -118,7 +114,6 @@ export function ArticleFormExample() {
           />
         </div>
 
-        {/* Upload image principale */}
         <div className="form-group">
           <label>Image Principale</label>
           {formData.imagePrincipale ? (
@@ -141,7 +136,6 @@ export function ArticleFormExample() {
           )}
         </div>
 
-        {/* Upload CSV/Données */}
         <div className="form-group">
           <label>Données Associées</label>
           <CSVUpload
@@ -168,9 +162,6 @@ export function ArticleFormExample() {
   );
 }
 
-/**
- * Exemple 2 : Composant d'affichage d'article avec notation
- */
 export function ArticleViewExample({ articleSlug }) {
   const { token, user } = useUser();
   const [article, setArticle] = useState(null);
@@ -178,7 +169,6 @@ export function ArticleViewExample({ articleSlug }) {
   const { fetchArticleRatings, calculateAverage, ratings } = useRating();
   const [averageRating, setAverageRating] = useState(0);
 
-  // Charger l'article
   React.useEffect(() => {
     const loadArticle = async () => {
       try {
@@ -188,7 +178,6 @@ export function ArticleViewExample({ articleSlug }) {
         const data = await response.json();
         setArticle(data);
 
-        // Charger les notes
         const allRatings = await fetchArticleRatings(data.id);
         setAverageRating(calculateAverage(allRatings));
       } catch (error) {
@@ -206,7 +195,6 @@ export function ArticleViewExample({ articleSlug }) {
 
   return (
     <article className="article-view">
-      {/* Header */}
       <header className="article-header">
         {article.imagePrincipale && (
           <img
@@ -223,21 +211,17 @@ export function ArticleViewExample({ articleSlug }) {
         <p className="resume">{article.resume}</p>
       </header>
 
-      {/* Contenu avec blocs */}
       <div className="article-content">
         {article.blocs && article.blocs.map((bloc, index) => (
           <section key={bloc.id} className={`bloc bloc-type-${bloc.type}`}>
-            {/* Titres */}
             {bloc.titres && bloc.titres.map((titre) => (
               <Heading key={titre.id} niveau={titre.Niveau} texte={titre.Titre} />
             ))}
 
-            {/* Textes */}
             {bloc.textes && bloc.textes.map((texte) => (
               <p key={texte.id} className="bloc-texte">{texte.titre}</p>
             ))}
 
-            {/* Images */}
             {bloc.images && bloc.images.map((image) => (
               <figure key={image.id} className="bloc-image">
                 <img src={image.url} alt={image.alt} />
@@ -245,16 +229,13 @@ export function ArticleViewExample({ articleSlug }) {
               </figure>
             ))}
 
-            {/* Graphiques */}
             {bloc.graphiques && bloc.graphiques.map((graphique) => (
               <div key={graphique.id} className="bloc-graphique">
                 <h4>{graphique.Titre}</h4>
                 <p>Type: {graphique.Type}</p>
-                {/* Votre composant de graphique ici */}
               </div>
             ))}
 
-            {/* Note du bloc */}
             {bloc.type === 'texte' && (
               <BlockRating
                 blockId={bloc.id}
@@ -266,7 +247,6 @@ export function ArticleViewExample({ articleSlug }) {
         ))}
       </div>
 
-      {/* Rating global */}
       <aside className="article-sidebar">
         <div className="rating-widget">
           <h3>Votre Avis</h3>
@@ -281,13 +261,11 @@ export function ArticleViewExample({ articleSlug }) {
               token={token}
               currentRating={0}
               onRatingSubmit={(rating) => {
-                console.log('Article noté:', rating);
               }}
             />
           )}
         </div>
 
-        {/* Catégories */}
         {article.categories && article.categories.length > 0 && (
           <div className="categories">
             <h4>Catégories</h4>
@@ -305,17 +283,12 @@ export function ArticleViewExample({ articleSlug }) {
   );
 }
 
-/**
- * Composant auxiliaire: Heading
- */
+
 function Heading({ niveau, texte }) {
   const Tag = `h${Math.min(6, Math.max(1, niveau + 1))}`;
   return <Tag>{texte}</Tag>;
 }
 
-/**
- * Exemple 3 : Composant de gestion des uploads (Data Provider)
- */
 export function DataProviderExample() {
   const { token } = useUser();
   const { uploadCSV, parseCSV, isLoading, error } = useUpload();
@@ -354,9 +327,7 @@ export function DataProviderExample() {
   );
 }
 
-/**
- * Composant auxiliaire: DatasetCard
- */
+
 function DatasetCard({ dataset }) {
   return (
     <div className="dataset-card">
@@ -389,9 +360,7 @@ function DatasetCard({ dataset }) {
   );
 }
 
-/**
- * Exemple 4 : Composant de gestion des images
- */
+
 export function ImageManagerExample() {
   const { token } = useUser();
   const [images, setImages] = useState([]);
@@ -428,9 +397,6 @@ export function ImageManagerExample() {
   );
 }
 
-/**
- * Styles CSS pour les exemples
- */
 const styles = `
   .article-form-container {
     max-width: 800px;

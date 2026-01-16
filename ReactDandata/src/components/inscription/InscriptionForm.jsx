@@ -103,7 +103,6 @@ export default function InscriptionForm({ theme }) {
       try {
         data = await res.json();
       } catch (err) {
-        /* ignore */
       }
 
       if (!res.ok) {

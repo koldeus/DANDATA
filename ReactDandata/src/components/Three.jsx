@@ -75,7 +75,7 @@ export default function ThreeCanvas() {
 
     // === LOAD MODEL ===
     new GLTFLoader().load(
-      "dandatabeforbake.glb",
+      "/DanData.glb",
       (gltf) => {
         model = gltf.scene;
         model.scale.set(0.35, 0.35, 0.35);

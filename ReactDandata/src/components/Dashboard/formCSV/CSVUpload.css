@@ -1,5 +1,5 @@
 /* ========================================================= */
-/*                      BASE UPLOAD CSV                      */
+/*                    CSV UPLOAD CONTAINER                   */
 /* ========================================================= */
 
 .csv-upload-container {
@@ -11,7 +11,6 @@
   border: 1px solid #e0e0e0;
 }
 
-/* TITRES */
 .csv-upload-container h4 {
   margin: 0 0 15px 0;
   font-size: 16px;
@@ -23,7 +22,10 @@
   font-weight: 600;
 }
 
-/* ZONE UPLOAD */
+/* ========================================================= */
+/*                      UPLOAD ZONE                          */
+/* ========================================================= */
+
 .upload-zone {
   border: 2px dashed #ccc;
   border-radius: 8px;
@@ -67,7 +69,10 @@
   margin-top: 8px;
 }
 
-/* ERREUR */
+/* ========================================================= */
+/*                      ERROR/SUCCESS                        */
+/* ========================================================= */
+
 .error-message {
   background: #fee;
   border: 1px solid #fcc;
@@ -77,7 +82,10 @@
   font-size: 14px;
 }
 
-/* CONFIGURATION */
+/* ========================================================= */
+/*                    CSV CONFIGURATION                      */
+/* ========================================================= */
+
 .csv-config {
   display: flex;
   flex-direction: column;
@@ -172,7 +180,10 @@
   max-width: 120px;
 }
 
-/* APERÇU TABLEAU */
+/* ========================================================= */
+/*                      CSV PREVIEW                          */
+/* ========================================================= */
+
 .csv-preview {
   display: flex;
   flex-direction: column;
@@ -211,7 +222,7 @@ table td {
 }
 
 table tbody tr:hover {
-  background: #f9f9f9;
+  background: #f9f9f936;
 }
 
 .row-count {
@@ -220,7 +231,10 @@ table tbody tr:hover {
   font-style: italic;
 }
 
-/* ACTIONS */
+/* ========================================================= */
+/*                      BUTTONS/ACTIONS                      */
+/* ========================================================= */
+
 .profile-actions,
 .actions {
   display: flex;
@@ -248,17 +262,65 @@ table tbody tr:hover {
   background: #e0e0e0;
 }
 
-/* INPUT NOM DE FICHIER */
-.file-name-input {
-  width: 93%;
-  padding: 12px;
-  border-radius: 8px;
-  margin: 10px 1%;
-  font-size: 15px;
+.btn-delete {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-top: 0px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 /* ========================================================= */
-/*                 UPLOAD SECTION & CARDS                     */
+/*                    FICHIER DATA PAGE                      */
+/* ========================================================= */
+
+.fichier-data {
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 50px;
+  border-radius: 20px;
+}
+
+.titre-data {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.p-data {
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ========================================================= */
+/*                          TABS                             */
+/* ========================================================= */
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.tab.active {
+  background: #4f46e5;
+  color: white;
+}
+
+/* ========================================================= */
+/*                      UPLOAD SECTION                       */
 /* ========================================================= */
 
 .upload-section {
@@ -266,20 +328,21 @@ table tbody tr:hover {
   display: flex;
   justify-content: center;
   margin: 3% 0 2%;
+  padding: 1.5rem;
 }
 
 .upload-box {
-  width: 640px;
-  max-width: 90%;
+  width: 100%;
+  max-width: 640px;
   min-height: 200px;
   border-radius: 10px;
   border: 1px solid var(--border);
+  padding: 4%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 14px;
-  padding: 28px;
 }
 
 .upload-box .upload-icon {
@@ -299,7 +362,7 @@ table tbody tr:hover {
 
 .upload-box .upload-desc {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 1rem;
   text-align: center;
 }
 
@@ -319,29 +382,45 @@ table tbody tr:hover {
   color: #fff;
 }
 
+/* ========================================================= */
+/*                      FILE NAME INPUT                      */
+/* ========================================================= */
+
+.file-name-input {
+  width: 93%;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 10px 1%;
+  font-size: 15px;
+}
+
 .file-name-section {
-  margin: 18px auto;
-  width: 84%;
+  width: 90%;
   max-width: 980px;
+  margin: 2% auto;
 }
 
 .file-name-section label {
   display: block;
   color: var(--muted);
   margin-bottom: 8px;
-  font-size: 14px;
+  font-size: 0.9rem;
 }
+
+/* ========================================================= */
+/*                      SAVE BUTTON                          */
+/* ========================================================= */
 
 .save-btn {
   display: block;
-  margin: 8px auto 26px;
+  margin: 1% auto 3%;
+  padding: 1.2% 4%;
+  min-width: 160px;
+  font-weight: 600;
   color: #fff;
-  padding: 10px 28px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  font-weight: 600;
-  min-width: 160px;
   transition: all 0.2s ease;
 }
 
@@ -349,8 +428,23 @@ table tbody tr:hover {
   transform: translateY(-2px);
 }
 
+/* ========================================================= */
+/*                      CARDS SECTION                        */
+/* ========================================================= */
+
+.cards-section {
+  width: 85%;
+  max-width: 980px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: auto;
+  gap: 2%;
+  justify-content: space-evenly;
+}
+
 .card {
-  flex: 1 1 0;
+  flex: 1 1 48%;
+  min-width: 260px;
   min-height: 96px;
   border-radius: 10px;
   padding: 16px;
@@ -371,20 +465,65 @@ table tbody tr:hover {
 
 .card-title {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 1rem;
 }
+
 .card-desc {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 0.85rem;
 }
 
 /* ========================================================= */
-/*                    RESPONSIVE 1024px                       */
+/*                      CSV MANAGEMENT                       */
+/* ========================================================= */
+
+.csv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.csv-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* ========================================================= */
+/*                    TABLETTE (≤ 1024px)                    */
 /* ========================================================= */
 
 @media (max-width: 1024px) {
   .csv-upload-container {
     padding: 16px;
+  }
+
+  .fichier-data {
+    max-width: 90%;
+    padding: 35px;
+  }
+
+  .upload-section {
+    padding: 1rem;
+  }
+
+  .titre-data {
+    font-size: 1.5rem;
+  }
+
+  .p-data {
+    font-size: 0.95rem;
+  }
+
+  .tabs {
+    gap: 8px;
+  }
+
+  .tab {
+    padding: 8px 14px;
+    font-size: 0.9rem;
   }
 
   .file-name-input {
@@ -408,6 +547,19 @@ table tbody tr:hover {
     padding: 10px;
   }
 
+  .card {
+    flex: 1 1 45%;
+    min-height: 90px;
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .card-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+  }
+
   table th,
   table td {
     padding: 6px 8px;
@@ -423,74 +575,382 @@ table tbody tr:hover {
     padding: 10px 18px;
     font-size: 14px;
   }
+}
 
-  /* ========================================================= */
-  /*                    RESPONSIVE 768px                        */
-  /* ========================================================= */
+/* ========================================================= */
+/*                    TABLETTE (≤ 880px)                     */
+/* ========================================================= */
 
-  @media (max-width: 768px) {
-    .csv-upload-container {
-      padding: 14px;
-      width: 80vw;
-    }
+@media (max-width: 880px) {
+  .fichier-data {
+    max-width: 90%;
+    padding: 25px;
+    border-radius: 15px;
+  }
 
-    .file-name-input {
-      width: 90%;
-      padding: 10px;
-      font-size: 14px;
-    }
+  .titre-data {
+    font-size: 1.3rem;
+    text-align: center;
+  }
 
-    .upload-zone {
-      padding: 24px 12px;
-    }
+  .p-data {
+    font-size: 0.9rem;
+    text-align: center;
+  }
 
-    .upload-prompt p:first-child {
-      font-size: 15px;
-    }
+  .cards-section {
+    flex-direction: column;
+    gap: 15px;
+    width: 90%;
+  }
+  
+  .card {
+    width: 100%;
+    min-width: auto;
+    flex: 1 1 100%;
+  }
 
-    .upload-prompt p {
-      font-size: 14px;
-    }
+  .upload-box {
+    width: 100%;
+    max-width: 95%;
+  }
 
-    .variable-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
+  .csv-management h2 {
+    font-size: 1.3rem;
+  }
 
-    .variable-name {
-      width: 90%;
-    }
+  .csv-item {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
 
-    .csv-preview {
-      padding: 10px;
-    }
+  .btn-delete {
+    width: 100%;
+  }
+}
 
-    table th,
-    table td {
-      padding: 5px 6px;
-      font-size: 10px;
-    }
+/* ========================================================= */
+/*                    MOBILE LARGE (≤ 768px)                 */
+/* ========================================================= */
 
-    .profile-actions {
-      flex-direction: column;
-    }
+@media (max-width: 768px) {
+  .csv-upload-container {
+    padding: 14px;
+    width: 80vw;
+  }
 
-    .btn-primary,
-    .btn-secondary {
-      width: 100%;
-      padding: 12px;
-    }
+  .fichier-data {
+    padding: 10px;
+    padding-right: 30px;
+    border-radius: 12px;
+  }
 
-    /* UPLOAD BOX */
-    .upload-box {
-      padding: 18px;
-      width: 92%;
-    }
+  .upload-section {
+    margin: 4% 0 3%;
+    padding: 0.5rem;
+  }
 
-    /* FILE NAME */ 
-    .file-name-section {
-      width: 94%;
-    }
+  .titre-data {
+    font-size: 1.2rem;
+  }
+
+  .p-data {
+    font-size: 0.85rem;
+    padding: 0 10px;
+  }
+
+  .tabs {
+    flex-direction: row;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .tab {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    flex: 1;
+    text-align: center;
+  }
+
+  .file-name-input {
+    width: 90%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .upload-zone {
+    padding: 24px 12px;
+  }
+
+  .upload-prompt p:first-child {
+    font-size: 15px;
+  }
+
+  .upload-prompt p {
+    font-size: 14px;
+  }
+
+  .upload-box {
+    min-height: 180px;
+    padding: 6%;
+    width: 92%;
+  }
+
+  .upload-box .upload-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .upload-box .upload-icon img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .upload-desc {
+    font-size: 0.9rem;
+  }
+
+  .variable-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .variable-name {
+    width: 90%;
+  }
+
+  .csv-preview {
+    padding: 10px;
+  }
+
+  .cards-section {
+    width: 95%;
+    gap: 12px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .file-name-section {
+    width: 94%;
+  }
+
+  .save-btn {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+
+  table th,
+  table td {
+    padding: 5px 6px;
+    font-size: 10px;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+/* ========================================================= */
+/*                    MOBILE MEDIUM (≤ 480px)                */
+/* ========================================================= */
+
+@media (max-width: 480px) {
+  .fichier-data {
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .titre-data {
+    font-size: 1.1rem;
+  }
+
+  .p-data {
+    font-size: 0.8rem;
+  }
+
+  .tabs {
+    gap: 5px;
+  }
+
+  .tab {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .upload-box {
+    min-height: 160px;
+    padding: 7%;
+  }
+
+  .upload-box .upload-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .upload-box .upload-icon img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .choose-file {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .file-name-section {
+    width: 95%;
+  }
+
+  .card {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .card-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 15px;
+  }
+
+  .csv-name {
+    font-size: 0.85rem;
+  }
+
+  .btn-delete {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ========================================================= */
+/*                    MOBILE SMALL (≤ 420px)                 */
+/* ========================================================= */
+
+@media (max-width: 420px) {
+  .fichier-data {
+    padding: 12px;
+  }
+
+  .titre-data {
+    font-size: 1rem;
+  }
+
+  .p-data {
+    font-size: 0.75rem;
+  }
+
+  .upload-box {
+    padding: 5%;
+    min-height: 150px;
+  }
+
+  .upload-box .upload-icon {
+    width: 45px;
+    height: 45px;
+  }
+
+  .upload-box .upload-icon img {
+    width: 26px;
+    height: 26px;
+  }
+
+  .upload-desc {
+    font-size: 0.85rem;
+  }
+
+  .file-name-section {
+    width: 94%;
+  }
+
+  .file-name-section label {
+    font-size: 0.8rem;
+  }
+
+  .save-btn {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    min-width: 140px;
+  }
+
+  .card {
+    flex-direction: row;
+    padding: 8px;
+  }
+
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .card-title {
+    font-size: 0.9rem;
+  }
+
+  .card-desc {
+    font-size: 0.75rem;
+  }
+
+  .csv-management h2 {
+    font-size: 1.1rem;
+  }
+}
+
+/* ========================================================= */
+/*                    MOBILE EXTRA SMALL (≤ 360px)           */
+/* ========================================================= */
+
+@media (max-width: 360px) {
+  .fichier-data {
+    padding: 10px;
+  }
+
+  .titre-data {
+    font-size: 0.95rem;
+  }
+
+  .p-data {
+    font-size: 0.7rem;
+  }
+
+  .tabs {
+    gap: 4px;
+  }
+
+  .tab {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+
+  .upload-box {
+    padding: 4%;
+  }
+
+  .card {
+    padding: 6px;
+  }
+
+  .card-title {
+    font-size: 0.85rem;
+  }
+
+  .card-desc {
+    font-size: 0.7rem;
   }
 }

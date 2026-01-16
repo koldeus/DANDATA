@@ -1,4 +1,4 @@
-import { use } from "react";
+import { use, useState } from "react";
 import LightRays from "../components/LightRays";
 import ModelViewer from "../components/Three";
 import "./Accueil.css";
@@ -11,6 +11,7 @@ export function Accueil({ theme }) {
     NightTheme: "#7577bd",
     CreamTheme: "#ecd5a3",
   };
+
   return (
     <div className="accueil">
       <LightRays

@@ -18,7 +18,6 @@ export function Categories({ theme }) {
     fetch("http://localhost:8000/api/categories")
       .then((res) => res.json())
       .then((data) => {
-        console.log("Categories API response:", data);
         const categoriesData = data["member"] || data.member || data;
 
         setCategories(categoriesData);
@@ -32,7 +31,6 @@ export function Categories({ theme }) {
       try {
         const res = await fetch("http://localhost:8000/api/articles");
         const data = await res.json();
-        console.log("API response:", data);
 
         const articlesData = data["member"] || data.member || data;
         setArticles(articlesData);
@@ -49,8 +47,6 @@ export function Categories({ theme }) {
   const toggleShowAll = () => {
     setShowAll(!showAll);
   };
-
-  // Articles à afficher : 6 par défaut, tous si showAll est true
 
   const hasMoreArticles = articles.length > 6;
 
@@ -92,3 +88,5 @@ export function Categories({ theme }) {
     </div>
   );
 }
+
+

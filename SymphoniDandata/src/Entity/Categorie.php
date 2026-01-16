@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(),
         new Put(security: "is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"),
         new Patch(security: "is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN')"),
-        new Delete(security: "is_granted('ROLE_ADMIN')")
+        new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_EDITOR')")
     ]
 )]
 class Categorie

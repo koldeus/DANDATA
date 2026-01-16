@@ -37,21 +37,18 @@
   font-size: 0.875rem;
 }
 
-/* Conteneur des catégories (Haut Droite) */
 .article-card-badges {
-  position: absolute; /* Place le conteneur SUR l'image */
+  position: absolute;
   top: 12px;
   right: 12px;
   display: flex;
-  flex-direction: column; /* Empile les catégories si plusieurs */
+  flex-direction: column; 
   gap: 6px;
   align-items: flex-end;
-  z-index: 10; /* S'assure qu'il est au-dessus de l'image */
+  z-index: 10; 
 }
 
-/* Le style de la pastille elle-même */
 .article-card-category-badge {
-  /* Pas de position absolute ici, sinon elles se superposent toutes ! */
   background-color: white;
   color: #111827;
   padding: 4px 12px;

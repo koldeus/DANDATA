@@ -1,16 +1,10 @@
-/* =======================
-   ARTICLE UNIQUE PAGE
-   ======================= */
-
 .article-unique {
-  min-height: 100vh;
+  min-height: 100rem;
   padding-bottom: 2rem;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .article-unique {
-    padding-top: 1rem;
     padding-bottom: 1rem;
   }
 }

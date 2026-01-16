@@ -21,11 +21,11 @@ export default function BottomTabBar({ user, theme, setActiveTab, activeTab }) {
       label: "Dashboard",
       roles: ["ROLE_ADMIN", "ROLE_EDITOR", "ROLE_AUTHOR", "ROLE_SUBSCRIBER"],
     },
-    { id: "articles", label: "Articles", roles: ["ROLE_ADMIN", "ROLE_EDITOR"] },
+    { id: "articles", label: "Articles", roles: ["ROLE_ADMIN", "ROLE_EDITOR","ROLE_AUTHOR"] },
     { id: "categories", label: "Categories", roles: ["ROLE_ADMIN", "ROLE_EDITOR"] },
-    { id: "FichierData", label: "FichierData", roles: ["ROLE_ADMIN"] },
+    { id: "FichierData", label: "FichierData", roles: ["ROLE_ADMIN","ROLE_DATA_PROVIDER"] },
     { id: "Administration", label: "Administration", roles: ["ROLE_ADMIN"] },
-    { id: "Theme", label: "Theme", roles: ["ROLE_ADMIN"] },
+    { id: "Theme", label: "Theme", roles: ["ROLE_ADMIN","ROLE_DESIGNER"] },
   ];
 
   const filteredItems = NAV_ITEMS.filter((item) =>

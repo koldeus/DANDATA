@@ -27,7 +27,6 @@ use App\Controller\MetadonneesFileController;
             name: 'metadonnees_file',
         ),
         new Put(security: "is_granted('ROLE_DATA_PROVIDER') or is_granted('ROLE_ADMIN')"),
-        new Delete(security: "is_granted('ROLE_ADMIN')")
     ]
 )]
 class Metadonnees

@@ -134,7 +134,10 @@ class MetadonneesUploadController extends AbstractController
     }
 
     #[Route('/api/metadonnees/{id}', name: 'metadonnees_delete', methods: ['DELETE'])]
-    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits pour supprimer des métadonnées')]
+    #[IsGranted(
+        new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_DATA_PROVIDER")'),
+        message: 'Vous n\'avez pas les droits pour uploader des métadonnées'
+    )]
     public function delete(int $id, EntityManagerInterface $em): JsonResponse
     {
         try {

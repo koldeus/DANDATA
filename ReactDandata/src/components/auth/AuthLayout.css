@@ -5,7 +5,7 @@
   min-height: 100vh;
   width: 100%;
   background-color: #220e16;
-  flex-direction: row; /* par défaut */
+  flex-direction: row;
 }
 
 .auth-left {
@@ -32,11 +32,11 @@
 
   .auth-left {
     flex: 1 1 100%;
-    min-height: 100%; /* occupe tout l'écran verticalement */
+    min-height: 100%;
     padding: 2rem;
   }
 
   .auth-right {
-    display: none; /* optionnel : cacher la partie droite */
+    display: none;
   }
 }

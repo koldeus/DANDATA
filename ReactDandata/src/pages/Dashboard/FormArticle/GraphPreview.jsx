@@ -99,6 +99,7 @@ export default function GraphPreview({
   const [variablesObj, setVariablesObj] = useState([]);
   const [identificationVariable, setIdentificationVariable] = useState(null);
   const currentTheme = GRAPH_THEME[theme] || GRAPH_THEME.DarkTheme;
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const getMetadataByIRI = (iri) => {
     return metadonnees.find(

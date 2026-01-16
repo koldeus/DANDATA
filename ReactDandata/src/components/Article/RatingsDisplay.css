@@ -1,12 +1,10 @@
-/* RatingsDisplay.css */
-
 .ratings-container {
-  width: 100%;
-  max-width: 1000px;
+  max-width: 85%;
+  border-radius: 20px;
   margin: 40px auto;
-  padding: 0 20px;
-  color: #fff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
 }
 
 .ratings-loading {
@@ -53,7 +51,6 @@
   margin: 0;
   font-size: 18px;
   font-weight: 400;
-  color: #e5e5e5;
 }
 
 .ratings-content {
@@ -62,7 +59,6 @@
   gap: 32px;
 }
 
-/* Section Score Moyen */
 .average-section {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -79,7 +75,6 @@
   font-weight: 300;
   line-height: 1;
   margin-bottom: 16px;
-  color: #fff;
 }
 
 .stars-display {
@@ -90,7 +85,7 @@
 
 .stars-display .star {
   font-size: 32px;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(121, 115, 115, 0.8);
   transition: color 0.2s ease;
 }
 
@@ -101,10 +96,8 @@
 
 .total-reviews {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
 }
 
-/* Section Distribution */
 .distribution-section {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -139,7 +132,8 @@
 .bar-container {
   flex: 1;
   height: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(136, 136, 136, 0.5);
+  mix-blend-mode: difference;
   border-radius: 4px;
   overflow: hidden;
   position: relative;
@@ -158,7 +152,6 @@
   text-align: right;
   font-size: 16px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
 }
 
 /* Responsive */
@@ -168,6 +161,10 @@
     gap: 20px;
   }
 
+  .ratings-container {
+    max-width: 85%;
+    margin: 10px;
+  }
   .average-section {
     padding: 32px 24px;
   }
@@ -195,7 +192,6 @@
   }
 }
 
-/* Animation d'entrée */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -216,8 +212,18 @@
   animation-fill-mode: both;
 }
 
-.rating-row:nth-child(1) { animation-delay: 0.1s; }
-.rating-row:nth-child(2) { animation-delay: 0.2s; }
-.rating-row:nth-child(3) { animation-delay: 0.3s; }
-.rating-row:nth-child(4) { animation-delay: 0.4s; }
-.rating-row:nth-child(5) { animation-delay: 0.5s; }
+.rating-row:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.rating-row:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.rating-row:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.rating-row:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.rating-row:nth-child(5) {
+  animation-delay: 0.5s;
+}

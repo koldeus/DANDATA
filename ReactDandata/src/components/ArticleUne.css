@@ -123,10 +123,11 @@
 @media (max-width: 768px) {
   .article-une {
     flex-direction: column;
+    width: 100vw;
   }
 
   .article-une-image-container {
-    width: 100%;
+    width: 90%;
     height: 200px;
   }
 
@@ -136,7 +137,8 @@
   }
 
   .article-une-content {
-    width: 100%;
+    width: 90%;
+
     padding: 16px;
   }
 

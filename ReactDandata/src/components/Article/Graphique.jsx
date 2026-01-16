@@ -68,7 +68,6 @@ const detectCSVSeparator = (csvText) => {
   return mostCommon.count > 0 ? mostCommon.sep : ",";
 };
 
-// Fonction pour calculer les pourcentages des valeurs textuelles
 const calculatePercentages = (values) => {
   const counts = {};
   values.forEach((val) => {
@@ -108,7 +107,6 @@ export default function Graphique({ graphique, metadonnees, theme }) {
     );
   };
 
-  // Stabiliser les dépendances avec useMemo
   const variablesKey = useMemo(
     () => (graphique?.variables || []).map(v => v.id).join(','),
     [graphique?.variables]
@@ -137,7 +135,6 @@ export default function Graphique({ graphique, metadonnees, theme }) {
           throw new Error("Metadata ou fichier introuvable");
         }
 
-        // Récupérer la variable d'identification si elle existe
         let idVar = null;
         if (metadata.variableIdentification) {
           const idVarIri = metadata.variableIdentification;
@@ -148,10 +145,8 @@ export default function Graphique({ graphique, metadonnees, theme }) {
           }
         }
 
-        // Les variables sont déjà des objets complets dans l'article
         setVariablesObj(graphique.variables);
 
-        // Fetch CSV
         const metaId = graphique.metadonnees.id;
         const resFile = await fetch(
           `${API_BASE_URL}/api/metadonnees/${metaId}/file`
@@ -163,7 +158,6 @@ export default function Graphique({ graphique, metadonnees, theme }) {
         const sep = detectCSVSeparator(csvText);
         const headers = lines[0].split(sep).map((h) => h.trim());
 
-        // Find ID variable index if exists
         let idVarIndex = null;
         if (idVar) {
           idVarIndex = headers.findIndex(
@@ -171,7 +165,6 @@ export default function Graphique({ graphique, metadonnees, theme }) {
           );
         }
 
-        // Find indices for selected variables
         const variableIndices = graphique.variables
           .map((v) => {
             const idx = headers.findIndex(
@@ -189,11 +182,9 @@ export default function Graphique({ graphique, metadonnees, theme }) {
           );
         }
 
-        // Check if we have text variables (num_string = false)
         const hasTextVariables = graphique.variables.some((v) => !v.num_string);
 
         if (hasTextVariables) {
-          // Pour les variables textuelles, on calcule les pourcentages
           const textVariableData = {};
 
           variableIndices.forEach(({ idx, name, variable }) => {
@@ -208,7 +199,6 @@ export default function Graphique({ graphique, metadonnees, theme }) {
             }
           });
 
-          // Créer les données pour le graphique basé sur les pourcentages
           const data = [];
           Object.keys(textVariableData).forEach((varName) => {
             const { percentages } = textVariableData[varName];
@@ -223,9 +213,7 @@ export default function Graphique({ graphique, metadonnees, theme }) {
 
           setChartData(data);
         } else {
-          // Pour les variables numériques, utiliser toutes les lignes (ou limiter si nécessaire)
-          console.log(graphique)
-          const maxLines = graphique.NbLigne; // Limiter à 100 lignes max
+          const maxLines = graphique.NbLigne;
           
           const data = lines.slice(1, maxLines + 1).map((line, index) => {
             const values = line.split(sep).map((v) => v.trim());

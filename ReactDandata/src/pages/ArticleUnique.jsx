@@ -2,35 +2,40 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import HeroArticle from "../components/Article/HeroArticle";
 import ArticleContent from "../components/Article/ArticleBloc";
-import ArticleActions from "../components/Article/ArticleAction";
 import ArticleAuthor from "../components/Article/ArticleAuthor";
 import ArticleNotes from "../components/Article/ArticleNotes";
-import RatingsDisplay from "../components/Article/RatingsDisplay"; // 👈 Ajouter ceci
+import RatingsDisplay from "../components/Article/RatingsDisplay";
 import SousChargement from "../components/SousChargement/SousChargement";
 import ArticleNotFound from "../components/Article/ArticleNotFound";
 import "./ArticleUnique.css";
 
-export default function ArticleUnique({ theme }) {
+export default function ArticlePage({ theme, setThemeSlug }) {
   const { slug } = useParams();
   const navigate = useNavigate();
+  
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentTheme, setCurrentTheme] = useState(theme);
 
   useEffect(() => {
+    setLoading(true);
+    setArticle(null);
+
     async function fetchArticle() {
       try {
         const res = await fetch(
           `http://localhost:8000/api/articles/slug/${slug}`
         );
-        if (!res.ok) {
-          throw new Error("Article non trouvé");
-        }
-        const data = await res.json();
-        setArticle(data);
-
-        if (data.theme.slug) {
-          setCurrentTheme(data.theme.slug);
+        
+        if (res.ok) {
+          const data = await res.json();
+          
+          if (data.theme && data.theme.slug) {
+            setThemeSlug(data.theme.slug);
+          }
+          
+          setArticle(data);
+        } else {
+          setArticle(null);
         }
       } catch (err) {
         console.error("Erreur chargement article", err);
@@ -41,31 +46,29 @@ export default function ArticleUnique({ theme }) {
     }
 
     fetchArticle();
-  }, [slug]);
+    
+    
+  }, [slug, setThemeSlug]);
 
   if (loading) {
-    return <SousChargement theme={currentTheme} />;
-  }
-
-  if (!article) {
     return (
-      <ArticleNotFound theme={currentTheme} onGoHome={() => navigate("/")} />
+      <article className={`article-unique ${theme}_body`}>
+        <SousChargement />
+      </article>
     );
   }
 
+  if (!article) {
+    return <ArticleNotFound theme={theme} onGoHome={() => navigate("/")} />;
+  }
+
   return (
-    <article className={`article-unique ${currentTheme}_body`}>
-      <HeroArticle theme={currentTheme} article={article} />
-
-      <ArticleContent article={article} theme={currentTheme} />
-
-      <ArticleActions theme={currentTheme} />
-
-      <ArticleAuthor auteur={article.auteur} theme={currentTheme} />
-      
-      <ArticleNotes article={article} theme={currentTheme} />
-      
-      <RatingsDisplay article={article} theme={currentTheme} />
+    <article className={`article-unique ${theme}_body`}>
+      <HeroArticle theme={theme} article={article} />
+      <ArticleContent article={article} theme={theme} />
+      <ArticleAuthor auteur={article.auteur} theme={theme} />
+      <ArticleNotes article={article} theme={theme} />
+      <RatingsDisplay article={article} theme={theme} />
     </article>
   );
 }

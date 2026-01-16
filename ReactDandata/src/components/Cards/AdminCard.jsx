@@ -13,7 +13,6 @@ export function ArticleCardAdmin({
   const { getToken } = useAuthToken();
 
   function onEdit() {
-    console.log("Edit article", article.slug);
     // Appeler la fonction passée en props pour activer le mode édition
     if (onArticleEdit) {
       onArticleEdit(article.slug);
@@ -53,7 +52,6 @@ export function ArticleCardAdmin({
 
       // Succès - retirer l'article de la liste
       onArticleDeleted(article.id);
-      console.log("Article supprimé avec succès");
     } catch (error) {
       console.error("Erreur de connexion:", error);
       alert("Erreur de connexion au serveur");
@@ -75,7 +73,7 @@ export function ArticleCardAdmin({
 
         <button
           onClick={() => onDelete(article.id)}
-          className={`${theme}_Light-Btn`}
+          className={`${theme}_Light-Btn-inverse`}
           aria-label="Supprimer"
           title="Supprimer l'article"
         >

@@ -8,14 +8,12 @@
   justify-items: center;
 }
 
-/* Responsive : 2 colonnes sur tablette */
 @media (max-width: 1024px) {
   .articles-list {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Responsive : 1 colonne sur mobile */
 @media (max-width: 640px) {
   .articles-list {
     grid-template-columns: 1fr;

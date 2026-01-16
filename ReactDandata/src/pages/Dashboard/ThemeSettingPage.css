@@ -20,16 +20,14 @@
 }
 
 /* ===== FORM ===== */
-  .selectTheme,
-  .buttonSaveTheme {
+.selectTheme,
+.buttonSaveTheme {
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid;
   font-size: 0.95rem;
   cursor: pointer;
 }
-
-
 
 /* ===== TABLE ===== */
 
@@ -66,7 +64,6 @@
 .optionTheme {
   text-transform: capitalize;
 }
-
 
 .selectThemeSite,
 .selectThemeArticle {
@@ -110,29 +107,4 @@
 .buttonSaveTheme:disabled {
   font-size: 0.85rem;
   opacity: 0.6;
-}
-
-/* ===== MOBILE ===== */
-
-@media (max-width: 720px) {
-  .tableauTheme {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .trTheme {
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid;
-  }
-
-  .rowTheme {
-    padding: 4px 0;
-  }
-
-  .selectTheme,
-  .buttonSaveTheme {
-    width: 100%;
-  }
 }

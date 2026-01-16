@@ -2,7 +2,6 @@ import React from 'react';
 import './CategoriesNav.css';
 
 const CategoryNav = ({ categories, theme, activeCategory, onCategoryChange }) => {
-    console.log("Rendering CategoryNav with categories:", categories);
   return (
     <nav className={`category-nav ${theme}_subbtle-background`}>
       <div className="category-nav-container">

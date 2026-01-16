@@ -2,12 +2,10 @@ import { useState, useRef } from 'react';
 import SousChargement from '../SousChargement/SousChargement';
 import './ImageUpload.css';
 
-// Fonction réutilisable pour uploader une image
 export async function uploadImageFile(file, token, apiBaseUrl = 'http://localhost:8000') {
   const validateImage = (file) => {
     const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-
+    const maxSize = 5 * 1024 * 1024;
     if (!allowedMimes.includes(file.type)) {
       throw new Error('Format non autorisé (JPEG, PNG, GIF, WebP)');
     }
@@ -60,15 +58,12 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
   const [error, setError] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   
-  // Utiliser useRef pour générer des IDs uniques par instance
   const instanceId = useRef(`upload-${Date.now()}-${Math.random()}`);
   const fileCounterRef = useRef(0);
 
-  // Validate image file
   const validateImage = (file) => {
     const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
-
+    const maxSize = 5 * 1024 * 1024;
     if (!allowedMimes.includes(file.type)) {
       throw new Error('Format non autorisé (JPEG, PNG, GIF, WebP)');
     }
@@ -78,13 +73,11 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
     return true;
   };
 
-  // Handle file selection
   const handleFileSelect = (e) => {
     const selectedFiles = Array.from(e.target.files);
     processFiles(selectedFiles);
   };
 
-  // Handle drag & drop
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -100,7 +93,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
     processFiles(droppedFiles);
   };
 
-  // Process files for preview and validation
   const processFiles = (selectedFiles) => {
     setError(null);
     const newFiles = [];
@@ -113,7 +105,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
         validateImage(file);
         newFiles.push(file);
 
-        // Générer un ID unique pour chaque fichier avec l'instance ID
         fileCounterRef.current += 1;
         const fileId = `${instanceId.current}-${fileCounterRef.current}`;
 
@@ -127,7 +118,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
           });
           if (newPreviews.length === newFiles.length) {
             setPreviews((prev) => [...prev, ...newPreviews]);
-            // Auto-upload immédiatement après que les previews soient prêtes
             autoUploadFiles(newFiles);
           }
         };
@@ -140,7 +130,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
     setFiles((prev) => [...prev, ...newFiles]);
   };
 
-  // Auto-upload files immediately after selection
   const autoUploadFiles = async (filesToUpload) => {
     if (filesToUpload.length === 0) return;
 
@@ -167,7 +156,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
     }
   };
 
-  // Remove a file from selection
   const removeFile = (id) => {
     const index = previews.findIndex((p) => p.id === id);
     if (index > -1) {
@@ -176,7 +164,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
     }
   };
 
-  // Auto-login if no token or if token is expired
   const getToken = async () => {
     let token = localStorage.getItem('jwt');
     if (!token) {
@@ -191,7 +178,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
     window.location.href = '/login';
   };
 
-  // Upload files
   const handleUpload = async () => {
     if (files.length === 0) {
       setError('Veuillez sélectionner au moins une image');
@@ -228,7 +214,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
         
         {error && <div className="error-message">{error}</div>}
 
-        {/* Drag & drop zone */}
         <div
           className={`upload-zone ${dragActive ? 'active' : ''} ${theme}_subbtle-background ${theme}_Border`}
           onDragEnter={handleDrag}
@@ -254,7 +239,6 @@ export default function ImageUpload({ onImageUploaded, maxFiles = 1, theme = '' 
           </label>
         </div>
 
-        {/* Upload status info */}
         {uploading && (
           <div className="upload-status">
             <p>⏳ Upload en cours...</p>

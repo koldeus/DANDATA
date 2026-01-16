@@ -477,8 +477,9 @@ class ArticleController extends AbstractController
             $userRoles = $user->getRoles();
             $isAuthor = $article->getAuteur() && $article->getAuteur()->getId() === $user->getId();
             $isAdmin = in_array('ROLE_ADMIN', $userRoles);
+            $isEditor = in_array('ROLE_EDITOR', $userRoles);
 
-            if (!$isAuthor && !$isAdmin) {
+            if (!$isAuthor && !$isAdmin && !$isEditor) {
                 return $this->json(
                     ['error' => 'Vous n\'avez pas la permission de modifier cet article'],
                     Response::HTTP_FORBIDDEN
