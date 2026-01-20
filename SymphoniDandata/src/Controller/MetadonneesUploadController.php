@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Metadonnees;
 use App\Entity\Variable;
 use Doctrine\ORM\EntityManagerInterface;
+use Proxies\__CG__\App\Entity\Image;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,7 +83,7 @@ class MetadonneesUploadController extends AbstractController
             $metadonnees->setUrl('/uploads/metadonnees/' . $fileName);
             $metadonnees->setApiFichier(false);
             $metadonnees->setExtensionRetour($originalExtension);
-            $metadonnees->setNbLignesTotal((int)$nbLignesTotal);
+            $metadonnees->setNbLignesTotal((int) $nbLignesTotal);
             $metadonnees->setUpdatedAt(new \DateTimeImmutable());
 
             foreach ($variablesArray as $varData) {
@@ -132,38 +133,52 @@ class MetadonneesUploadController extends AbstractController
             ], 500);
         }
     }
-
-    #[Route('/api/metadonnees/{id}', name: 'metadonnees_delete', methods: ['DELETE'])]
-    #[IsGranted(
-        new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_DATA_PROVIDER")'),
-        message: 'Vous n\'avez pas les droits pour uploader des métadonnées'
-    )]
+    #[Route('/api/images/{id}', name: 'image_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(int $id, EntityManagerInterface $em): JsonResponse
     {
         try {
-            $metadonnees = $em->getRepository(Metadonnees::class)->find($id);
-            if (!$metadonnees) {
-                return $this->json(['error' => 'Métadonnées introuvables'], Response::HTTP_NOT_FOUND);
+            $image = $em->getRepository(Image::class)->find($id);
+
+            if (!$image) {
+                return $this->json(['error' => 'Image introuvable'], Response::HTTP_NOT_FOUND);
             }
 
-            $filesystem = new Filesystem();
-            $filePath = $this->getParameter('kernel.project_dir') . '/public/uploads/metadonnees/' . $metadonnees->getFileName();
+            $fileName = $image->getFileName();
 
-            if ($filesystem->exists($filePath)) {
-                try {
-                    $filesystem->remove($filePath);
-                } catch (\Throwable $e) {
-                    return $this->json(['error' => 'Impossible de supprimer le fichier', 'details' => $e->getMessage()], 500);
+            if ($fileName) {
+                $filePath = $this->getParameter('kernel.project_dir') . '/public/uploads/images/' . $fileName;
+
+                if (file_exists($filePath)) {
+                    try {
+                        if (!unlink($filePath)) {
+                            $filesystem = new Filesystem();
+                            $filesystem->remove($filePath);
+                        }
+                    } catch (\Throwable $e) {
+                        error_log('Erreur lors de la suppression du fichier ' . $filePath . ': ' . $e->getMessage());
+                    }
+                } else {
+                    error_log('Fichier introuvable lors de la suppression: ' . $filePath);
                 }
             }
 
-            $em->remove($metadonnees);
+            $em->remove($image);
             $em->flush();
 
-            return $this->json(null, Response::HTTP_NO_CONTENT);
+            return $this->json([
+                'success' => true,
+                'message' => 'Image supprimée avec succès'
+            ], Response::HTTP_OK);
 
         } catch (\Throwable $e) {
-            return $this->json(['error' => 'Erreur serveur', 'message' => $e->getMessage()], 500);
+            error_log('Erreur lors de la suppression: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
+
+            return $this->json([
+                'error' => 'Erreur serveur',
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -62,7 +62,7 @@ const detectCSVSeparator = (csvText) => {
   }));
 
   const mostCommon = counts.reduce((max, curr) =>
-    curr.count > max.count ? curr : max
+    curr.count > max.count ? curr : max,
   );
 
   return mostCommon.count > 0 ? mostCommon.sep : ",";
@@ -103,19 +103,23 @@ export default function Graphique({ graphique, metadonnees, theme }) {
 
   const getMetadataByIRI = (iri) => {
     return metadonnees.find(
-      (m) => `${API_BASE_URL}/api/metadonnees/${m.id}` === iri
+      (m) => `${API_BASE_URL}/api/metadonnees/${m.id}` === iri,
     );
   };
 
   const variablesKey = useMemo(
-    () => (graphique?.variables || []).map(v => v.id).join(','),
-    [graphique?.variables]
+    () => (graphique?.variables || []).map((v) => v.id).join(","),
+    [graphique?.variables],
   );
 
   const metadataId = graphique?.metadonnees?.id;
 
   useEffect(() => {
-    if (!graphique?.metadonnees || !graphique?.variables || graphique.variables.length === 0) {
+    if (
+      !graphique?.metadonnees ||
+      !graphique?.variables ||
+      graphique.variables.length === 0
+    ) {
       setChartData([]);
       setVariablesObj([]);
       setIdentificationVariable(null);
@@ -128,9 +132,9 @@ export default function Graphique({ graphique, metadonnees, theme }) {
 
       try {
         const metadata = getMetadataByIRI(
-          `${API_BASE_URL}/api/metadonnees/${graphique.metadonnees.id}`
+          `${API_BASE_URL}/api/metadonnees/${graphique.metadonnees.id}`,
         );
-        
+
         if (!metadata || !metadata.fileName) {
           throw new Error("Metadata ou fichier introuvable");
         }
@@ -149,7 +153,7 @@ export default function Graphique({ graphique, metadonnees, theme }) {
 
         const metaId = graphique.metadonnees.id;
         const resFile = await fetch(
-          `${API_BASE_URL}/api/metadonnees/${metaId}/file`
+          `${API_BASE_URL}/api/metadonnees/${metaId}/file`,
         );
         if (!resFile.ok) throw new Error(`Erreur HTTP: ${resFile.status}`);
 
@@ -161,14 +165,14 @@ export default function Graphique({ graphique, metadonnees, theme }) {
         let idVarIndex = null;
         if (idVar) {
           idVarIndex = headers.findIndex(
-            (h) => h.trim().toLowerCase() === idVar.nom.trim().toLowerCase()
+            (h) => h.trim().toLowerCase() === idVar.nom.trim().toLowerCase(),
           );
         }
 
         const variableIndices = graphique.variables
           .map((v) => {
             const idx = headers.findIndex(
-              (h) => h.trim().toLowerCase() === v.nom.trim().toLowerCase()
+              (h) => h.trim().toLowerCase() === v.nom.trim().toLowerCase(),
             );
             return idx !== -1 ? { idx, name: v.nom, variable: v } : null;
           })
@@ -177,8 +181,8 @@ export default function Graphique({ graphique, metadonnees, theme }) {
         if (variableIndices.length === 0) {
           throw new Error(
             `Variables sélectionnées non trouvées dans le CSV. Headers: [${headers.join(
-              ", "
-            )}]`
+              ", ",
+            )}]`,
           );
         }
 
@@ -214,7 +218,7 @@ export default function Graphique({ graphique, metadonnees, theme }) {
           setChartData(data);
         } else {
           const maxLines = graphique.NbLigne;
-          
+
           const data = lines.slice(1, maxLines + 1).map((line, index) => {
             const values = line.split(sep).map((v) => v.trim());
 
@@ -312,7 +316,7 @@ export default function Graphique({ graphique, metadonnees, theme }) {
             ))}
           </BarChart>
         )}
-        
+
         {graphique.type === "line" && (
           <LineChart data={chartData}>
             <CartesianGrid stroke={currentTheme.grid} strokeDasharray="3 3" />
@@ -359,7 +363,7 @@ export default function Graphique({ graphique, metadonnees, theme }) {
             ))}
           </LineChart>
         )}
-        
+
         {graphique.type === "pie" && (
           <PieChart>
             <Pie
@@ -369,11 +373,14 @@ export default function Graphique({ graphique, metadonnees, theme }) {
               cx="50%"
               cy="50%"
               outerRadius={isMobile ? 80 : 120}
-              label={(entry) =>
-                hasTextVariables
-                  ? `${entry.name} (${entry[variablesObj[0]?.nom]}%)`
-                  : entry.name
-              }
+              labelLine={false}
+              label={({ name, percent, payload }) => {
+                if (percent < 0.05) return null; // < 5% → pas de label
+
+                return hasTextVariables
+                  ? `${name} (${payload[variablesObj[0]?.nom]}%)`
+                  : name;
+              }}
             >
               {chartData.map((entry, i) => (
                 <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -394,7 +401,7 @@ export default function Graphique({ graphique, metadonnees, theme }) {
           </PieChart>
         )}
       </ResponsiveContainer>
-      
+
       <small className={`chart-note ${theme}_subbtle-texte`}>
         {variablesObj.length} variable(s) affichée(s)
         {identificationVariable && ` • ID: ${identificationVariable.nom}`}

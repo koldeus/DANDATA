@@ -1,0 +1,43 @@
+Installation
+Backend Symfony
+
+#Ici Pour toute commande mentionant 'chemin-Exact-Du-Dossier' remplacer cette partie par le chemin de la ou vous stocké DanData
+
+# penser a avoir un service utilisant le service mysql et phpmyadmin ( comme Xampp ou Wampp )
+# Et les lancés
+# Ensuite dans un invité de commande 
+
+# Installer les dépendances PHP en étant dans le dossier du backend
+
+# Accéder au dossier du backend
+
+cd chemin-Exact-Du-Dossier/Dandata/ReactDandata
+
+
+composer install
+
+# Créer la base de données
+php bin/console doctrine:database:create
+
+# Créer les migrations
+php bin/console make:migration
+
+# Exécuter les migrations
+php bin/console doctrine:migrations:migrate
+
+# Charger les fixtures
+php bin/console doctrine:fixtures:load
+
+# Lancer le serveur
+symfony server:start
+
+
+Frontend React
+# Aller dans le dossier du front
+cd chemin-Exact-Du-Dossier/Dandata/ReactDandata
+
+# Installer les dépendances
+npm install
+
+# Lancer le serveur de développement
+npm start

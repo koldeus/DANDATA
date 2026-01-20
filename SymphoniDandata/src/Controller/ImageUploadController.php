@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Image;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,7 +18,6 @@ class ImageUploadController extends AbstractController
     #[Route('/api/images/upload', name: 'upload_image', methods: ['POST'])]
     public function upload(Request $request, EntityManagerInterface $em): Response
     {
-
         $user = $this->getUser();
         if (!$user) {
             error_log('ArticleController: No authenticated user');
@@ -28,7 +29,7 @@ class ImageUploadController extends AbstractController
 
         $userRoles = $user->getRoles();
         error_log('ArticleController: User roles: ' . json_encode($userRoles));
-        $hasPermission = in_array('ROLE_AUTHOR', $userRoles) || in_array('ROLE_ADMIN', $userRoles)|| in_array('ROLE_EDITOR', $userRoles);
+        $hasPermission = in_array('ROLE_AUTHOR', $userRoles) || in_array('ROLE_ADMIN', $userRoles) || in_array('ROLE_EDITOR', $userRoles);
 
         if (!$hasPermission) {
             error_log('ArticleController: User does not have permission');
@@ -37,6 +38,7 @@ class ImageUploadController extends AbstractController
                 Response::HTTP_FORBIDDEN
             );
         }
+        
         try {
             if (!extension_loaded('gd')) {
                 return new Response(json_encode([
@@ -182,7 +184,6 @@ class ImageUploadController extends AbstractController
                 throw new \Exception('Failed to create resized image canvas');
             }
 
-            
             \imagealphablending($resizedImage, false);
             \imagesavealpha($resizedImage, true);
 
@@ -199,13 +200,18 @@ class ImageUploadController extends AbstractController
             $resized = true;
         }
 
-        
         if (!\imagewebp($image, $destPath, 80)) {
             \imagedestroy($image);
             throw new \Exception('Failed to save WebP image. Check if directory is writable.');
         }
 
         \imagedestroy($image);
+
+        // FIX CRITIQUE: imagewebp() crée des fichiers avec permissions 0600
+        // On doit les mettre à 0666 pour permettre la suppression
+        if (!\chmod($destPath, 0666)) {
+            \error_log('Warning: Failed to chmod file: ' . $destPath);
+        }
 
         $fileSize = @\filesize($destPath);
         if ($fileSize === false) {
@@ -218,5 +224,47 @@ class ImageUploadController extends AbstractController
             'size' => $fileSize,
             'resized' => $resized,
         ];
+    }
+
+    #[Route('/api/images/{id}', name: 'image_delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function delete(int $id, EntityManagerInterface $em): JsonResponse
+    {
+        $image = $em->getRepository(Image::class)->find($id);
+
+        if (!$image) {
+            return $this->json(['error' => 'Image introuvable'], Response::HTTP_NOT_FOUND);
+        }
+
+        $fileName = $image->getFileName();
+
+        error_log('Attempting to delete file: ' . $fileName);
+
+        if ($fileName) {
+            $filePath = $this->getParameter('kernel.project_dir') . '/public/uploads/images/' . $fileName;
+
+            if (file_exists($filePath)) {
+                try {
+                    if (!unlink($filePath)) {
+                        $filesystem = new Filesystem();
+                        $filesystem->remove($filePath);
+                    }
+                } catch (\Throwable $e) {
+                    error_log('Erreur lors de la suppression du fichier ' . $fileName . ': ' . $e->getMessage());
+                }
+            } else {
+                error_log('Fichier introuvable lors de la suppression: ' . $fileName);
+            }
+        } else {
+            error_log('File does not exist: ' . $fileName);
+        }
+
+        $em->remove($image);
+        $em->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Image supprimée avec succès'
+        ]);
     }
 }

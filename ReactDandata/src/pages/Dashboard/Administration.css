@@ -177,8 +177,7 @@
 }
 
 .btn-primaire-user,
-.btn-secondaire-user
-{
+.btn-secondaire-user {
   padding: 0.75rem 1.5rem;
   border-radius: 100px;
   margin-top: 25px;
@@ -201,7 +200,7 @@
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 100px;
-  margin-top:25px;
+  margin-top: 25px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -221,10 +220,37 @@
   transform: none;
 }
 
-
 .btn-primaire-user,
 .btn-danger {
   min-width: 120px;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-tabs button.active {
+  font-weight: bold;
+  border-bottom: 2px solid red;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.image-card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.image-card img {
+  max-width: 100%;
+  height: auto;
 }
 
 @media (max-width: 768px) {

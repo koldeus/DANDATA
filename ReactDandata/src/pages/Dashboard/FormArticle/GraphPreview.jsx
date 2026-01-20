@@ -62,7 +62,7 @@ const detectCSVSeparator = (csvText) => {
   }));
 
   const mostCommon = counts.reduce((max, curr) =>
-    curr.count > max.count ? curr : max
+    curr.count > max.count ? curr : max,
   );
 
   return mostCommon.count > 0 ? mostCommon.sep : ",";
@@ -103,13 +103,13 @@ export default function GraphPreview({
 
   const getMetadataByIRI = (iri) => {
     return metadonnees.find(
-      (m) => `${API_BASE_URL}/api/metadonnees/${m.id}` === iri
+      (m) => `${API_BASE_URL}/api/metadonnees/${m.id}` === iri,
     );
   };
 
   const variablesKey = useMemo(
     () => (graphique.variables || []).join(","),
-    [graphique.variables]
+    [graphique.variables],
   );
 
   useEffect(() => {
@@ -151,13 +151,13 @@ export default function GraphPreview({
             if (!res.ok)
               throw new Error(`Erreur récupération variable ${vIri}`);
             return res.json();
-          })
+          }),
         );
         setVariablesObj(fetchedVariables);
 
         const metaId = graphique.metadonnees.split("/").pop();
         const resFile = await fetch(
-          `${API_BASE_URL}/api/metadonnees/${metaId}/file`
+          `${API_BASE_URL}/api/metadonnees/${metaId}/file`,
         );
         if (!resFile.ok) throw new Error(`Erreur HTTP: ${resFile.status}`);
 
@@ -169,14 +169,14 @@ export default function GraphPreview({
         let idVarIndex = null;
         if (idVar) {
           idVarIndex = headers.findIndex(
-            (h) => h.trim().toLowerCase() === idVar.nom.trim().toLowerCase()
+            (h) => h.trim().toLowerCase() === idVar.nom.trim().toLowerCase(),
           );
         }
 
         const variableIndices = fetchedVariables
           .map((v) => {
             const idx = headers.findIndex(
-              (h) => h.trim().toLowerCase() === v.nom.trim().toLowerCase()
+              (h) => h.trim().toLowerCase() === v.nom.trim().toLowerCase(),
             );
             return idx !== -1 ? { idx, name: v.nom, variable: v } : null;
           })
@@ -185,8 +185,8 @@ export default function GraphPreview({
         if (variableIndices.length === 0) {
           throw new Error(
             `Variables sélectionnées non trouvées dans le CSV. Headers: [${headers.join(
-              ", "
-            )}]`
+              ", ",
+            )}]`,
           );
         }
 
@@ -370,12 +370,15 @@ export default function GraphPreview({
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={100}
-              label={(entry) =>
-                hasTextVariables
-                  ? `${entry.name} (${entry[variablesObj[0]?.nom]}%)`
-                  : entry.name
-              }
+              outerRadius={isMobile ? 80 : 120}
+              labelLine={false}
+              label={({ name, percent, payload }) => {
+                if (percent < 0.05) return null;
+
+                return hasTextVariables
+                  ? `${name} (${payload[variablesObj[0]?.nom]}%)`
+                  : name;
+              }}
             >
               {chartData.map((entry, i) => (
                 <Cell key={i} fill={COLORS[i % COLORS.length]} />

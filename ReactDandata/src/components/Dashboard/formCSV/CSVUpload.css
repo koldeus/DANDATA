@@ -9,6 +9,7 @@
   padding: 20px;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
+  width: 100%;
 }
 
 .csv-upload-container h4 {
@@ -497,6 +498,8 @@ table tbody tr:hover {
 
 @media (max-width: 1024px) {
   .csv-upload-container {
+    width: 80vw;
+
     padding: 16px;
   }
 
@@ -603,7 +606,7 @@ table tbody tr:hover {
     gap: 15px;
     width: 90%;
   }
-  
+
   .card {
     width: 100%;
     min-width: auto;

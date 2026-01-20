@@ -1,14 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { useUser } from "../../hooks/useUser";
 import { Navigate } from "react-router-dom";
 import SousChargement from "../../components/SousChargement/SousChargement";
 import "./Administration.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
 export default function Administration({ theme }) {
   const { user, loading } = useUser();
 
-  // --- State ---
+  // --- State onglets ---
   const [activeTab, setActiveTab] = useState("utilisateurs");
+
+  // --- State utilisateurs ---
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [error, setError] = useState("");
@@ -30,6 +34,15 @@ export default function Administration({ theme }) {
     "ROLE_ADMIN",
   ];
 
+  // --- State images ---
+  const [images, setImages] = useState([]);
+  const [loadingImages, setLoadingImages] = useState(false);
+
+  const buildImageUrl = useCallback((img) => {
+    let url = img.contentUrl || img.url || img.fichier;
+    return url && !url.startsWith("http") ? `${API_BASE_URL}/${url}` : url;
+  }, []);
+
   // --- Fetch utilisateurs ---
   useEffect(() => {
     if (activeTab !== "utilisateurs") return;
@@ -40,17 +53,16 @@ export default function Administration({ theme }) {
       try {
         const token = localStorage.getItem("jwt");
         const res = await fetch("http://localhost:8000/api/users", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
-
         if (res.ok) {
           const data = await res.json();
-          setUtilisateurs(data["member"] || []);
+          setUtilisateurs(data.member || []);
         } else {
           const data = await res.json();
-          setError(data.message || "Erreur lors du chargement des utilisateurs");
+          setError(
+            data.message || "Erreur lors du chargement des utilisateurs",
+          );
         }
       } catch (err) {
         setError("Erreur réseau");
@@ -63,6 +75,31 @@ export default function Administration({ theme }) {
     fetchUtilisateurs();
   }, [activeTab]);
 
+  // --- Fetch images ---
+  useEffect(() => {
+    if (activeTab !== "images") return;
+
+    const fetchImages = async () => {
+      setLoadingImages(true);
+      setError("");
+      try {
+        const token = localStorage.getItem("jwt");
+        const res = await fetch("http://localhost:8000/api/images", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setImages(data.member || []);
+      } catch {
+        setError("Erreur lors du chargement des images");
+      } finally {
+        setLoadingImages(false);
+      }
+    };
+
+    fetchImages();
+  }, [activeTab]);
+
+  // --- Gestion utilisateurs ---
   const handleEditUser = (u) => {
     setEditingUser(u);
     setUserFormData({
@@ -97,7 +134,6 @@ export default function Administration({ theme }) {
     e.preventDefault();
     setError("");
     setSuccess("");
-
     try {
       const token = localStorage.getItem("jwt");
       const res = await fetch(
@@ -113,15 +149,14 @@ export default function Administration({ theme }) {
             pseudo: userFormData.pseudo,
             roles: userFormData.roles,
           }),
-        }
+        },
       );
-
       if (res.ok) {
         setSuccess("Utilisateur modifié avec succès");
         setEditingUser(null);
         const data = await res.json();
         setUtilisateurs((prev) =>
-          prev.map((u) => (u.id === editingUser.id ? data : u))
+          prev.map((u) => (u.id === editingUser.id ? data : u)),
         );
       } else {
         const data = await res.json();
@@ -138,26 +173,20 @@ export default function Administration({ theme }) {
       setError("Vous ne pouvez pas supprimer votre propre compte");
       return;
     }
-
     if (
       !window.confirm(
-        "Êtes-vous sûr de vouloir supprimer cet utilisateur définitivement ?"
+        "Êtes-vous sûr de vouloir supprimer cet utilisateur définitivement ?",
       )
     )
       return;
-
     setError("");
     setSuccess("");
-
     try {
       const token = localStorage.getItem("jwt");
       const res = await fetch(`http://localhost:8000/api/users/${userId}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (res.ok) {
         setSuccess("Utilisateur supprimé avec succès");
         setUtilisateurs((prev) => prev.filter((u) => u.id !== userId));
@@ -170,6 +199,26 @@ export default function Administration({ theme }) {
     }
   };
 
+  // --- Gestion images ---
+  const handleDeleteImage = async (id) => {
+    if (!window.confirm("Supprimer cette image ?")) return;
+    try {
+      const token = localStorage.getItem("jwt");
+      const res = await fetch(`http://localhost:8000/api/images/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        setImages((prev) => prev.filter((img) => img.id !== id));
+        setSuccess("Image supprimée");
+      } else {
+        setError("Erreur lors de la suppression");
+      }
+    } catch {
+      setError("Erreur réseau");
+    }
+  };
+
   if (loading) return <SousChargement />;
   if (!user || !user.roles.includes("ROLE_ADMIN")) return <Navigate to="/" />;
 
@@ -178,130 +227,186 @@ export default function Administration({ theme }) {
       <div className="admin-header">
         <h1>Administration</h1>
         <p className={`${theme}_subbtle-texte`}>
-          Gérez les utilisateurs de la plateforme
+          Gérez les utilisateurs et les images
         </p>
       </div>
 
       {error && <div className="error-message">{error}</div>}
       {success && <div className="success-message">{success}</div>}
 
-      <div>
-        <h2>Utilisateurs ({utilisateurs.length})</h2>
+      {/* Onglets */}
+      <div className="admin-tabs">
+        <button
+          className={activeTab === "utilisateurs" ? "active" : ""}
+          onClick={() => setActiveTab("utilisateurs")}
+        >
+          Utilisateurs
+        </button>
+        <button
+          className={activeTab === "images" ? "active" : ""}
+          onClick={() => setActiveTab("images")}
+        >
+          Images
+        </button>
+      </div>
 
-        {loadingData ? (
-          <SousChargement />
-        ) : utilisateurs.length === 0 ? (
-          <p className={`${theme}_subbtle-texte`}>Aucun utilisateur trouvé</p>
-        ) : (
-          <div className="users-list">
-            {utilisateurs.map((u) => (
-              <div
-                key={u.id}
-                className={`user-item ${theme}_user-card ${
-                  u.id === user.id ? "current-user" : ""
-                }`}
-              >
-                {editingUser?.id === u.id ? (
-                  <form onSubmit={handleSaveUser} className= {`edit-form ${theme}_subbtle-background`}>
-                    <div className="form-group">
-                      <label>Email:</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={userFormData.email}
-                        onChange={handleUserChange}
-                        className={`form-input ${theme}_light-background`}
-                        required
-                      />
-                    </div>
+      {/* Bloc utilisateurs */}
+      {activeTab === "utilisateurs" && (
+        <div>
+          <h2>Utilisateurs ({utilisateurs.length})</h2>
 
-                    <div className="form-group">
-                      <label>Pseudo:</label>
-                      <input
-                        type="text"
-                        name="pseudo"
-                        value={userFormData.pseudo}
-                        onChange={handleUserChange}
-                        className={`form-input ${theme}_light-background`}
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Rôles:</label>
-                      <div className="roles-checkboxes">
-                        {rolesList.map((role) => (
-                          <label key={role} className="checkbox-label">
-                            <input
-                              type="checkbox"
-                              checked={userFormData.roles.includes(role)}
-                              onChange={() => handleRoleChange(role)}
-                            />
-                            {role}
-                          </label>
-                        ))}
+          {loadingData ? (
+            <SousChargement />
+          ) : utilisateurs.length === 0 ? (
+            <p className={`${theme}_subbtle-texte`}>Aucun utilisateur trouvé</p>
+          ) : (
+            <div className="users-list">
+              {utilisateurs.map((u) => (
+                <div
+                  key={u.id}
+                  className={`user-item ${theme}_user-card ${
+                    u.id === user.id ? "current-user" : ""
+                  }`}
+                >
+                  {editingUser?.id === u.id ? (
+                    <form
+                      onSubmit={handleSaveUser}
+                      className={`edit-form ${theme}_subbtle-background`}
+                    >
+                      <div className="form-group">
+                        <label>Email:</label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={userFormData.email}
+                          onChange={handleUserChange}
+                          className={`form-input ${theme}_light-background`}
+                          required
+                        />
                       </div>
-                    </div>
 
-                    <div className="form-actions">
-                      <button type="submit" className={`btn-primaire-user ${theme}_Light-Btn`}>
-                        Enregistrer
-                      </button>
-                      <button
-                        type="button"
-                        className={`btn-secondaire-user ${theme}_Light-Btn-inverse`}
-                        onClick={handleCancelEditUser}
-                      >
-                        Annuler
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <>
-                    <div className="user-info">
-                      <div className="user-header">
-                        <h3>{u.pseudo}</h3>
-                        {u.id === user.id && (
-                          <span className={`badge-current ${theme}_Border`}>Vous</span>
+                      <div className="form-group">
+                        <label>Pseudo:</label>
+                        <input
+                          type="text"
+                          name="pseudo"
+                          value={userFormData.pseudo}
+                          onChange={handleUserChange}
+                          className={`form-input ${theme}_light-background`}
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Rôles:</label>
+                        <div className="roles-checkboxes">
+                          {rolesList.map((role) => (
+                            <label key={role} className="checkbox-label">
+                              <input
+                                type="checkbox"
+                                checked={userFormData.roles.includes(role)}
+                                onChange={() => handleRoleChange(role)}
+                              />
+                              {role}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="form-actions">
+                        <button
+                          type="submit"
+                          className={`btn-primaire-user ${theme}_Light-Btn`}
+                        >
+                          Enregistrer
+                        </button>
+                        <button
+                          type="button"
+                          className={`btn-secondaire-user ${theme}_Light-Btn-inverse`}
+                          onClick={handleCancelEditUser}
+                        >
+                          Annuler
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <>
+                      <div className="user-info">
+                        <div className="user-header">
+                          <h3>{u.pseudo}</h3>
+                          {u.id === user.id && (
+                            <span className={`badge-current ${theme}_Border`}>
+                              Vous
+                            </span>
+                          )}
+                        </div>
+                        <p className={`${theme}_subbtle-texte`}>
+                          Email: <strong>{u.email}</strong>
+                        </p>
+                        <div className="user-roles">
+                          {u.roles?.map((role) => (
+                            <span
+                              key={role}
+                              className={`role-badge ${role} ${theme}_Border`}
+                            >
+                              {role.replace("ROLE_", "")}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="user-actions">
+                        {u.id !== user.id && (
+                          <>
+                            <button
+                              className={`btn-primaire-user ${theme}_Light-Btn`}
+                              onClick={() => handleEditUser(u)}
+                            >
+                              Modifier
+                            </button>
+                            <button
+                              className="btn-supp"
+                              onClick={() => handleDeleteUser(u.id)}
+                            >
+                              Supprimer
+                            </button>
+                          </>
                         )}
                       </div>
-                      <p className={`${theme}_subbtle-texte`}>
-                        Email: <strong>{u.email}</strong>
-                      </p>
-                      <div className="user-roles">
-                        {u.roles?.map((role) => (
-                          <span key={role} className={`role-badge ${role} ${theme}_Border`}>
-                            {role.replace("ROLE_", "")}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
-                    <div className="user-actions">
-                      {u.id !== user.id && (
-                        <>
-                          <button
-                            className={`btn-primaire-user ${theme}_Light-Btn`}
-                            onClick={() => handleEditUser(u)}
-                          >
-                            Modifier
-                          </button>
-                          <button
-                            className="btn-supp"
-                            onClick={() => handleDeleteUser(u.id)}
-                          >
-                            Supprimer
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Bloc images */}
+      {activeTab === "images" && (
+        <div className="admin-images">
+          <h2>Images ({images.length})</h2>
+          {loadingImages ? (
+            <SousChargement />
+          ) : images.length === 0 ? (
+            <p className={`${theme}_subbtle-texte`}>Aucune image</p>
+          ) : (
+            <div className="images-grid">
+              {images.map((img) => (
+                <div key={img.id} className="image-card">
+                  <img src={buildImageUrl(img)} alt={img.alt || ""} />
+                  <button
+                    className="btn-supp"
+                    onClick={() => handleDeleteImage(img.id)}
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
