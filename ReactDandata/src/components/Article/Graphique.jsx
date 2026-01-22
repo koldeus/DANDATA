@@ -375,7 +375,7 @@ export default function Graphique({ graphique, metadonnees, theme }) {
               outerRadius={isMobile ? 80 : 120}
               labelLine={false}
               label={({ name, percent, payload }) => {
-                if (percent < 0.05) return null; // < 5% → pas de label
+                if (percent < 0.05) return null;
 
                 return hasTextVariables
                   ? `${name} (${payload[variablesObj[0]?.nom]}%)`
