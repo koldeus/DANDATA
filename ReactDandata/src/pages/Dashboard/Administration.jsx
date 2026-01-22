@@ -9,10 +9,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 export default function Administration({ theme }) {
   const { user, loading } = useUser();
 
-  // --- State onglets ---
   const [activeTab, setActiveTab] = useState("utilisateurs");
 
-  // --- State utilisateurs ---
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
   const [error, setError] = useState("");
@@ -34,7 +32,6 @@ export default function Administration({ theme }) {
     "ROLE_ADMIN",
   ];
 
-  // --- State images ---
   const [images, setImages] = useState([]);
   const [loadingImages, setLoadingImages] = useState(false);
 
@@ -43,7 +40,6 @@ export default function Administration({ theme }) {
     return url && !url.startsWith("http") ? `${API_BASE_URL}/${url}` : url;
   }, []);
 
-  // --- Fetch utilisateurs ---
   useEffect(() => {
     if (activeTab !== "utilisateurs") return;
 
@@ -75,7 +71,6 @@ export default function Administration({ theme }) {
     fetchUtilisateurs();
   }, [activeTab]);
 
-  // --- Fetch images ---
   useEffect(() => {
     if (activeTab !== "images") return;
 
@@ -99,7 +94,6 @@ export default function Administration({ theme }) {
     fetchImages();
   }, [activeTab]);
 
-  // --- Gestion utilisateurs ---
   const handleEditUser = (u) => {
     setEditingUser(u);
     setUserFormData({
@@ -199,7 +193,6 @@ export default function Administration({ theme }) {
     }
   };
 
-  // --- Gestion images ---
   const handleDeleteImage = async (id) => {
     if (!window.confirm("Supprimer cette image ?")) return;
     try {
@@ -237,13 +230,13 @@ export default function Administration({ theme }) {
       {/* Onglets */}
       <div className="admin-tabs">
         <button
-          className={activeTab === "utilisateurs" ? "active" : ""}
+          className={activeTab === "utilisateurs" ? "active tab" : "tab"}
           onClick={() => setActiveTab("utilisateurs")}
         >
           Utilisateurs
         </button>
         <button
-          className={activeTab === "images" ? "active" : ""}
+          className={activeTab === "images" ? "active tab" : "tab"}
           onClick={() => setActiveTab("images")}
         >
           Images

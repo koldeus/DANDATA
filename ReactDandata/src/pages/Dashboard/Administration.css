@@ -231,10 +231,6 @@
   margin-bottom: 20px;
 }
 
-.admin-tabs button.active {
-  font-weight: bold;
-  border-bottom: 2px solid red;
-}
 
 .images-grid {
   display: grid;

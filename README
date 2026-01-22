@@ -41,3 +41,44 @@ npm install
 
 # Lancer le serveur de développement
 npm start
+
+
+une fois sur le site les différent compt existant sont : 
+
+------ Administrateur -------
+
+Email : admin@dandata.com
+Mot De Passe : Admin123!
+
+------ Auteur -------
+
+Email : auteur@dandata.com
+Mot De Passe : Author123!
+
+------ Editeur et Designer -------
+
+Email : editeur@dandata.com
+Mot De Passe : Editor123!
+
+------ DataProvider -------
+
+Email : data@dandata.com
+Mot De Passe : Data123!
+
+------ utilisateur -------
+
+Email : user1@dandata.com
+Mot De Passe : User123!
+
+Email : user2@dandata.com
+Mot De Passe : User223!
+
+Email : user3@dandata.com
+Mot De Passe : User323!
+
+Email : user4@dandata.com
+Mot De Passe : User423!
+
+Email : user5@dandata.com
+Mot De Passe : User523!
+
