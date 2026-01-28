@@ -92,7 +92,7 @@ class AppFixtures extends Fixture
 
         $site = new Site();
         $site->setNom('DanData');
-        $site->setTheme($themes[1]); 
+        $site->setTheme($themes[1]);
         $site->setAdmin($admin);
         $manager->persist($site);
 
@@ -181,11 +181,28 @@ class AppFixtures extends Fixture
             $manager->persist($variable);
             $variables1[] = $variable;
         }
-        $meta1->setVariableIdentification($variables1[1]); 
+        $meta1->setVariableIdentification($variables1[1]);
         $variables2 = [];
         $variablesData2 = [
-            ['nom' => 'Genre', 'num_string' => true, 'color' => '#FF6B6B'],
-            ['nom' => 'Number of Games', 'num_string' => true, 'color' => '#4ECDC4'],
+            ['nom' => 'AppID', 'num_string' => true, 'color' => '#FF6B6B'],
+            ['nom' => 'Game Name', 'num_string' => false, 'color' => '#4ECDC4'],
+            ['nom' => 'Playtime Forever (minutes)', 'num_string' => true, 'color' => '#45B7D1'],
+            [
+                'nom' => 'Playtime Forever (hours)',
+                'num_string' => true,
+                'color' => '#FFA07A'
+            ],
+            ['nom' => 'Playtime 2 Weeks (minutes)', 'num_string' => true, 'color' => '#98D8C8'],
+            [
+                'nom' => 'Playtime 2 Weeks (hours)',
+                'num_string' => true,
+                'color' => '#F7DC6F'
+            ],
+            [
+                'nom' => 'Last Played',
+                'num_string' => false,
+                'color' => '#BB8FCE'
+            ],
         ];
 
         foreach ($variablesData2 as $varData) {
@@ -198,7 +215,7 @@ class AppFixtures extends Fixture
             $variables2[] = $variable;
         }
 
-        $meta2->setVariableIdentification($variables2[0]); 
+        $meta2->setVariableIdentification($variables2[1]);
 
         $articles = [];
 
@@ -207,10 +224,10 @@ class AppFixtures extends Fixture
         $article1->setSlug('steam-explose-les-records-dota-2-et-counter-strike-2-en-tete');
         $article1->setResume('Steam continue de battre des records de fréquentation avec plus de 42 millions d\'utilisateurs simultanés en janvier 2026.');
         $article1->setAuteur($admin);
-        $article1->setTheme($themes[3]); 
+        $article1->setTheme($themes[3]);
         $article1->setImagePrincipale($images[0]);
         $article1->addCategorie($categories[0]);
-        $article1->addCategorie($categories[6]); 
+        $article1->addCategorie($categories[6]);
         $article1->setCreatedAt(new \DateTimeImmutable('2026-01-16 14:12:53'));
         $manager->persist($article1);
         $articles[] = $article1;
